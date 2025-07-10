@@ -77,7 +77,10 @@ export default function MapScreen() {
 
   const handleBookTable = () => {
     if (selectedBRC) {
-      router.push(`/booking/index?brcId=${selectedBRC}`);
+      router.push({
+        pathname: '/booking/index',
+        params: { brcId: selectedBRC }
+      });
     }
   };
 

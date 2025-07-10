@@ -34,7 +34,7 @@ export default function HomeScreen() {
   };
 
   const handleSeeAllEvents = () => {
-    router.push('/events/index');
+    router.push('/(tabs)/discover');
   };
 
   const handleSeeAllUsers = () => {

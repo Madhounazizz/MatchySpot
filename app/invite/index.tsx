@@ -106,9 +106,9 @@ export default function InviteFriendsScreen() {
     try {
       if (Platform.OS === 'web') {
         // Web clipboard implementation
-        if (typeof navigator !== 'undefined' && navigator?.clipboard?.writeText) {
+        if (typeof navigator !== 'undefined' && navigator.clipboard && navigator.clipboard.writeText) {
           await navigator.clipboard.writeText(inviteLink);
-        } else if (typeof document !== 'undefined') {
+        } else {
           // Fallback for older browsers
           const textArea = document.createElement('textarea');
           textArea.value = inviteLink;
@@ -134,9 +134,6 @@ export default function InviteFriendsScreen() {
         setShowCopySuccess(false);
       }, 2000);
       
-      if (Platform.OS !== 'web') {
-        alert('Invite link copied to clipboard!');
-      }
     } catch (error) {
       console.error('Copy error:', error);
       alert('Unable to copy link');

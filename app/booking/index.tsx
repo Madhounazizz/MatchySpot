@@ -17,7 +17,8 @@ const guestOptions = [1, 2, 3, 4, 5, 6, 7, 8];
 
 export default function BookingScreen() {
   const router = useRouter();
-  const { brcId } = useLocalSearchParams<{ brcId?: string }>();
+  const params = useLocalSearchParams<{ brcId?: string }>();
+  const brcId = params.brcId;
   
   console.log('BookingScreen - brcId:', brcId);
   const [selectedDate, setSelectedDate] = useState('today');
@@ -51,7 +52,7 @@ export default function BookingScreen() {
         [
           {
             text: 'View Booking',
-            onPress: () => router.push('/(tabs)'),
+            onPress: () => router.push('/(tabs)/profile'),
           },
           {
             text: 'Done',
