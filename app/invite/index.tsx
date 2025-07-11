@@ -10,8 +10,7 @@ import {
   Platform,
   Linking,
 } from 'react-native';
-
-
+import * as Clipboard from 'expo-clipboard';
 import { Stack, router } from 'expo-router';
 import {
   ArrowLeft,
@@ -122,9 +121,8 @@ export default function InviteFriendsScreen() {
           document.body.removeChild(textArea);
         }
       } else {
-        // Mobile clipboard - use expo-clipboard directly since it's already installed
-        const { setStringAsync } = require('expo-clipboard');
-        await setStringAsync(inviteLink);
+        // Mobile clipboard - use expo-clipboard
+        await Clipboard.setStringAsync(inviteLink);
       }
       
       setCopiedLink(true);
