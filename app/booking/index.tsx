@@ -69,13 +69,19 @@ export default function BookingScreen() {
           },
           {
             text: 'Done',
-            onPress: () => router.push('/(tabs)'),
+            onPress: () => router.replace('/(tabs)'),
             style: 'default',
           },
         ]
       );
     } else {
       console.log('Cannot continue - missing requirements:', { step, time, selectedTable });
+      // Show helpful message
+      if (step === 1 && !time) {
+        Alert.alert('Select Time', 'Please select a time slot to continue.');
+      } else if (step === 2 && !selectedTable) {
+        Alert.alert('Choose Table', 'Please select a table to continue.');
+      }
     }
   };
   

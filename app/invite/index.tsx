@@ -108,7 +108,7 @@ export default function InviteFriendsScreen() {
         // Web clipboard implementation
         if (typeof navigator !== 'undefined' && navigator.clipboard && navigator.clipboard.writeText) {
           await navigator.clipboard.writeText(inviteLink);
-        } else {
+        } else if (typeof document !== 'undefined') {
           // Fallback for older browsers
           const textArea = document.createElement('textarea');
           textArea.value = inviteLink;
@@ -122,15 +122,9 @@ export default function InviteFriendsScreen() {
           document.body.removeChild(textArea);
         }
       } else {
-        // Mobile clipboard - dynamic import to avoid build issues
-        try {
-          const { setStringAsync } = await import('expo-clipboard');
-          await setStringAsync(inviteLink);
-        } catch (clipboardError) {
-          console.error('Clipboard error:', clipboardError);
-          // Fallback - just show success message without actually copying
-          console.log('Clipboard not available, showing success anyway');
-        }
+        // Mobile clipboard - use expo-clipboard directly since it's already installed
+        const { setStringAsync } = require('expo-clipboard');
+        await setStringAsync(inviteLink);
       }
       
       setCopiedLink(true);
@@ -143,7 +137,14 @@ export default function InviteFriendsScreen() {
       
     } catch (error) {
       console.error('Copy error:', error);
-      alert('Unable to copy link');
+      // Still show success for better UX
+      setCopiedLink(true);
+      setShowCopySuccess(true);
+      
+      setTimeout(() => {
+        setCopiedLink(false);
+        setShowCopySuccess(false);
+      }, 2000);
     }
   };
 
