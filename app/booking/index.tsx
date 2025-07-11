@@ -21,6 +21,7 @@ export default function BookingScreen() {
   const brcId = params.brcId;
   
   console.log('BookingScreen - brcId:', brcId);
+  console.log('BookingScreen - all params:', params);
   const [selectedDate, setSelectedDate] = useState('today');
   const [time, setTime] = useState('');
   const [guests, setGuests] = useState(2);
@@ -31,7 +32,14 @@ export default function BookingScreen() {
   
   const selectedBRC = brcId ? brcs.find(brc => brc.id === brcId) : brcs[0];
   
+  console.log('Selected BRC:', selectedBRC?.name || 'None found');
+  
+  if (!selectedBRC) {
+    console.error('No BRC found for booking');
+  }
+  
   const handleTimeSelect = (selectedTime: string) => {
+    console.log('Time selected:', selectedTime);
     setTime(selectedTime);
   };
   
@@ -40,11 +48,16 @@ export default function BookingScreen() {
   };
   
   const handleContinue = () => {
+    console.log('Continue pressed - Step:', step, 'Time:', time, 'Table:', selectedTable);
+    
     if (step === 1 && time) {
+      console.log('Moving to step 2');
       setStep(2);
     } else if (step === 2 && selectedTable) {
+      console.log('Moving to step 3');
       setStep(3);
     } else if (step === 3) {
+      console.log('Completing booking');
       // Complete booking
       Alert.alert(
         'Booking Confirmed! 🎉',
@@ -61,6 +74,8 @@ export default function BookingScreen() {
           },
         ]
       );
+    } else {
+      console.log('Cannot continue - missing requirements:', { step, time, selectedTable });
     }
   };
   
@@ -98,6 +113,7 @@ export default function BookingScreen() {
   };
 
   const handleTableSelect = (tableName: string) => {
+    console.log('Table selected:', tableName);
     setSelectedTable(tableName);
   };
 
@@ -106,7 +122,7 @@ export default function BookingScreen() {
       <Stack.Screen 
         options={{
           title: 'Book a Table',
-          headerStyle: { backgroundColor: colors.white },
+          headerStyle: { backgroundColor: colors.background },
           headerTintColor: colors.text,
           headerTitleStyle: { fontWeight: '600' },
           headerLeft: () => (
@@ -511,7 +527,7 @@ export default function BookingScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.white,
+    backgroundColor: colors.background,
   },
   brcHeader: {
     flexDirection: 'row',
@@ -963,7 +979,7 @@ const styles = StyleSheet.create({
   footer: {
     flexDirection: 'row',
     padding: 16,
-    backgroundColor: colors.white,
+    backgroundColor: colors.background,
     borderTopWidth: 1,
     borderTopColor: colors.backgroundLight,
     ...shadows.medium,

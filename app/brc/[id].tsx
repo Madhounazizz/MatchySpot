@@ -38,10 +38,16 @@ export default function BRCDetailScreen() {
 
   const handleBookTable = () => {
     console.log('Navigating to booking with brcId:', brc.id);
-    router.push({
-      pathname: '/booking/index',
-      params: { brcId: brc.id }
-    });
+    try {
+      router.push({
+        pathname: '/booking/index',
+        params: { brcId: brc.id }
+      });
+    } catch (error) {
+      console.error('Navigation error:', error);
+      // Fallback navigation
+      router.push('/booking/index');
+    }
   };
 
   const handleShare = () => {
