@@ -58,22 +58,17 @@ export default function BookingScreen() {
       setStep(3);
     } else if (step === 3) {
       console.log('Completing booking');
-      // Complete booking
-      Alert.alert(
-        'Booking Confirmed! 🎉',
-        `Your table at ${selectedBRC?.name} has been reserved for ${getDateText()} at ${time} for ${guests} guests.`,
-        [
-          {
-            text: 'View Booking',
-            onPress: () => router.push('/(tabs)/profile'),
-          },
-          {
-            text: 'Done',
-            onPress: () => router.replace('/(tabs)'),
-            style: 'default',
-          },
-        ]
-      );
+      // Complete booking - navigate to success screen
+      router.push({
+        pathname: '/booking/success',
+        params: {
+          brcId: selectedBRC?.id,
+          date: getDateText(),
+          time: time,
+          guests: guests.toString(),
+          table: selectedTable,
+        },
+      });
     } else {
       console.log('Cannot continue - missing requirements:', { step, time, selectedTable });
       // Show helpful message

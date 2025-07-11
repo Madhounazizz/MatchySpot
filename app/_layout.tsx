@@ -89,6 +89,13 @@ function RootLayoutNav() {
               }} 
             />
             <Stack.Screen 
+              name="booking/success" 
+              options={{ 
+                title: "Booking Confirmed",
+                headerBackTitle: "Back",
+              }} 
+            />
+            <Stack.Screen 
               name="events/[id]" 
               options={{ 
                 title: "Event Details",

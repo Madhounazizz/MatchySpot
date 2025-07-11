@@ -10,7 +10,7 @@ import {
   Platform,
   Linking,
 } from 'react-native';
-import * as Clipboard from 'expo-clipboard';
+import * as ExpoClipboard from 'expo-clipboard';
 import { Stack, router } from 'expo-router';
 import {
   ArrowLeft,
@@ -122,7 +122,7 @@ export default function InviteFriendsScreen() {
         }
       } else {
         // Mobile clipboard - use expo-clipboard
-        await Clipboard.setStringAsync(inviteLink);
+        await ExpoClipboard.setStringAsync(inviteLink);
       }
       
       setCopiedLink(true);
@@ -167,7 +167,9 @@ export default function InviteFriendsScreen() {
       
       setInvitesSent(prev => prev + 1);
       setEmail('');
-      alert('Invitation sent successfully!');
+      
+      // Show success message
+      alert('🎉 Invite sent successfully!\n\nYour friend will receive an email invitation to join BRC.');
     } catch (error) {
       alert('Failed to send invitation. Please try again.');
     } finally {
