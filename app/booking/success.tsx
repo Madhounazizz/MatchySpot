@@ -32,7 +32,8 @@ export default function BookingSuccessScreen() {
 
   const handleContactPlace = () => {
     if (selectedBRC) {
-      router.push(`/chat/${selectedBRC.id}`);
+      // Navigate to a conversation with the place (using first conversation as example)
+      router.push('/chat/1');
     }
   };
 

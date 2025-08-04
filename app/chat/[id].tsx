@@ -32,8 +32,26 @@ export default function ChatDetailScreen() {
   
   if (!conversation || !currentUser) {
     return (
-      <View style={styles.container}>
-        <Text>Conversation not found</Text>
+      <View style={styles.errorContainer}>
+        <Stack.Screen
+          options={{
+            title: 'Chat',
+            headerStyle: { backgroundColor: colors.background },
+            headerTintColor: colors.text,
+          }}
+        />
+        <View style={styles.errorContent}>
+          <Text style={styles.errorTitle}>Conversation not found</Text>
+          <Text style={styles.errorText}>
+            This conversation may have been deleted or you don't have access to it.
+          </Text>
+          <TouchableOpacity 
+            style={styles.backButton} 
+            onPress={() => router.back()}
+          >
+            <Text style={styles.backButtonText}>Go Back</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   }
@@ -341,5 +359,41 @@ const styles = StyleSheet.create({
   },
   disabledSendButton: {
     backgroundColor: colors.backgroundDark,
+  },
+  errorContainer: {
+    flex: 1,
+    backgroundColor: colors.background,
+  },
+  errorContent: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 32,
+  },
+  errorTitle: {
+    fontSize: 24,
+    fontWeight: '600',
+    color: colors.text,
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+  errorText: {
+    fontSize: 16,
+    color: colors.textLight,
+    textAlign: 'center',
+    lineHeight: 24,
+    marginBottom: 32,
+  },
+  backButton: {
+    backgroundColor: colors.primary,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 24,
+    ...shadows.medium,
+  },
+  backButtonText: {
+    color: colors.white,
+    fontSize: 16,
+    fontWeight: '600',
   },
 });
