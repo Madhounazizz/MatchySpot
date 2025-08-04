@@ -17,17 +17,8 @@ export default function ChatDetailScreen() {
   const flatListRef = useRef<FlatList>(null);
   
   const conversation = conversations.find((c) => c.id === id);
-  
-  if (!conversation || !currentUser) {
-    return (
-      <View style={styles.container}>
-        <Text>Conversation not found</Text>
-      </View>
-    );
-  }
-  
-  const otherUser = conversation.participants.find(
-    (user) => user.id !== currentUser.id
+  const otherUser = conversation?.participants.find(
+    (user) => user.id !== currentUser?.id
   );
 
   useEffect(() => {
@@ -38,6 +29,14 @@ export default function ChatDetailScreen() {
       }, 100);
     }
   }, [messages]);
+  
+  if (!conversation || !currentUser) {
+    return (
+      <View style={styles.container}>
+        <Text>Conversation not found</Text>
+      </View>
+    );
+  }
 
   const handleSend = () => {
     if (message.trim() === '') return;

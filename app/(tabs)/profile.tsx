@@ -1,8 +1,8 @@
 import React from 'react';
-import { StyleSheet, View, Text, ScrollView, TouchableOpacity, Platform } from 'react-native';
+import { StyleSheet, View, Text, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { Image } from 'expo-image';
-import { useRouter } from 'expo-router';
-import { Settings, Heart, Wallet, Star, Calendar, LogOut, ChevronRight, Users } from 'lucide-react-native';
+import { useRouter, Stack } from 'expo-router';
+import { Settings, Heart, Wallet, Star, Calendar, LogOut, ChevronRight, Users, Edit } from 'lucide-react-native';
 import { colors, shadows } from '@/constants/colors';
 import Button from '@/components/Button';
 import { useUserStore } from '@/store/useUserStore';
@@ -13,10 +13,38 @@ export default function ProfileScreen() {
   const router = useRouter();
   const { currentUser, favorites, logout } = useUserStore();
   
+  const handleLogout = () => {
+    Alert.alert(
+      'Log Out',
+      'Are you sure you want to log out?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Log Out',
+          style: 'destructive',
+          onPress: () => {
+            logout();
+            router.replace('/auth/login');
+          },
+        },
+      ]
+    );
+  };
+  
   if (!currentUser) {
     return (
       <View style={styles.container}>
-        <Text>Please log in</Text>
+        <View style={styles.loginPrompt}>
+          <Text style={styles.loginPromptTitle}>Please log in</Text>
+          <Button
+            title="Go to Login"
+            onPress={() => router.push('/auth/login')}
+            style={styles.loginButton}
+          />
+        </View>
       </View>
     );
   }
@@ -38,29 +66,45 @@ export default function ProfileScreen() {
 
 
   return (
-    <ScrollView 
-      style={styles.container}
-      showsVerticalScrollIndicator={false}
-    >
-      <View style={styles.header}>
-        <View style={styles.profileInfo}>
-          <Image
-            source={{ uri: currentUser.avatar }}
-            style={styles.avatar}
-            contentFit="cover"
-            transition={200}
-          />
+    <View style={styles.container}>
+      <Stack.Screen 
+        options={{
+          headerShown: false,
+        }}
+      />
+      
+      <ScrollView 
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
+        <View style={styles.header}>
+          <View style={styles.headerTop}>
+            <Text style={styles.headerTitle}>Profile</Text>
+            <TouchableOpacity style={styles.settingsButton} hitSlop={10}>
+              <Settings size={24} color={colors.text} />
+            </TouchableOpacity>
+          </View>
           
-          <View style={styles.nameContainer}>
-            <Text style={styles.name}>{currentUser.name}</Text>
-            <Text style={styles.bio}>{currentUser.bio}</Text>
+          <View style={styles.profileInfo}>
+            <View style={styles.avatarContainer}>
+              <Image
+                source={{ uri: currentUser.avatar }}
+                style={styles.avatar}
+                contentFit="cover"
+                transition={200}
+              />
+              <TouchableOpacity style={styles.editAvatarButton}>
+                <Edit size={16} color={colors.white} />
+              </TouchableOpacity>
+            </View>
+            
+            <View style={styles.nameContainer}>
+              <Text style={styles.name}>{currentUser.name}</Text>
+              <Text style={styles.bio}>{currentUser.bio}</Text>
+            </View>
           </View>
         </View>
-        
-        <TouchableOpacity style={styles.settingsButton} hitSlop={10}>
-          <Settings size={24} color={colors.text} />
-        </TouchableOpacity>
-      </View>
       
       <View style={styles.statsContainer}>
         <View style={styles.statItem}>
@@ -147,7 +191,7 @@ export default function ProfileScreen() {
           <ChevronRight size={20} color={colors.textLight} />
         </TouchableOpacity>
         
-        <TouchableOpacity style={styles.menuItem} onPress={logout}>
+        <TouchableOpacity style={styles.menuItem} onPress={handleLogout}>
           <View style={[styles.menuIconContainer, { backgroundColor: colors.error }]}>
             <LogOut size={20} color={colors.white} />
           </View>
@@ -186,7 +230,8 @@ export default function ProfileScreen() {
           </ScrollView>
         </View>
       )}
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 }
 
@@ -195,21 +240,56 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.backgroundLight,
   },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 100,
+  },
   header: {
+    backgroundColor: colors.white,
+    paddingTop: 60,
+    paddingBottom: 24,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.backgroundLight,
+  },
+  headerTop: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
-    padding: 16,
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  headerTitle: {
+    fontSize: 32,
+    fontWeight: '700',
+    color: colors.text,
   },
   profileInfo: {
     flexDirection: 'row',
     alignItems: 'center',
   },
+  avatarContainer: {
+    position: 'relative',
+    marginRight: 16,
+  },
   avatar: {
     width: 80,
     height: 80,
     borderRadius: 40,
-    marginRight: 16,
+  },
+  editAvatarButton: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    backgroundColor: colors.primary,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: colors.white,
   },
   nameContainer: {
     flex: 1,
@@ -226,12 +306,15 @@ const styles = StyleSheet.create({
   },
   settingsButton: {
     padding: 8,
+    backgroundColor: colors.backgroundLight,
+    borderRadius: 20,
   },
   statsContainer: {
     flexDirection: 'row',
     backgroundColor: colors.white,
     borderRadius: 16,
     marginHorizontal: 16,
+    marginTop: 16,
     marginBottom: 16,
     padding: 16,
     ...shadows.small,
@@ -382,5 +465,21 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: colors.textLight,
     textTransform: 'capitalize',
+  },
+  loginPrompt: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 32,
+  },
+  loginPromptTitle: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: colors.text,
+    marginBottom: 24,
+    textAlign: 'center',
+  },
+  loginButton: {
+    width: 200,
   },
 });

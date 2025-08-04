@@ -5,6 +5,8 @@ import { colors } from '@/constants/colors';
 
 type SearchBarProps = {
   placeholder?: string;
+  value?: string;
+  onChangeText?: (text: string) => void;
   onSearch?: (text: string) => void;
   onFilterPress?: () => void;
   onLocationPress?: () => void;
@@ -12,14 +14,22 @@ type SearchBarProps = {
 
 export default function SearchBar({
   placeholder = 'Search bars, restaurants, cafés...',
+  value,
+  onChangeText,
   onSearch,
   onFilterPress,
   onLocationPress,
 }: SearchBarProps) {
-  const [searchText, setSearchText] = React.useState('');
+  const [internalSearchText, setInternalSearchText] = React.useState('');
+  const searchText = value !== undefined ? value : internalSearchText;
 
   const handleChangeText = (text: string) => {
-    setSearchText(text);
+    if (value === undefined) {
+      setInternalSearchText(text);
+    }
+    if (onChangeText) {
+      onChangeText(text);
+    }
     if (onSearch) {
       onSearch(text);
     }
