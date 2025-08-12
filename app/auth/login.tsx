@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Dimensions } from 'react-native';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Mail, Lock, Eye, EyeOff, Heart } from 'lucide-react-native';
+import { Mail, Lock, Eye, EyeOff, Heart, Store, Users } from 'lucide-react-native';
 import { colors } from '@/constants/colors';
 import Button from '@/components/Button';
 import { useUserStore } from '@/store/useUserStore';
@@ -16,6 +16,7 @@ export default function LoginScreen() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [accountType, setAccountType] = useState<'user' | 'restaurant'>('user');
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -69,19 +70,52 @@ export default function LoginScreen() {
                 <Heart size={40} color={colors.primary} fill={colors.primary} />
               </LinearGradient>
             </View>
-            <Text style={styles.appName}>MATCHY MATCHY</Text>
+            <Text style={styles.appName}>MATCHYSPOT</Text>
             <Text style={styles.title}>Welcome Back!</Text>
             <Text style={styles.subtitle}>Sign in to continue your journey</Text>
           </View>
 
           <View style={styles.formContainer}>
+            <View style={styles.accountTypeContainer}>
+              <Text style={styles.accountTypeTitle}>I am a:</Text>
+              <View style={styles.accountTypeButtons}>
+                <TouchableOpacity
+                  style={[
+                    styles.accountTypeButton,
+                    accountType === 'user' && styles.accountTypeButtonActive
+                  ]}
+                  onPress={() => setAccountType('user')}
+                >
+                  <Users size={24} color={accountType === 'user' ? colors.white : colors.primary} />
+                  <Text style={[
+                    styles.accountTypeButtonText,
+                    accountType === 'user' && styles.accountTypeButtonTextActive
+                  ]}>User</Text>
+                </TouchableOpacity>
+                
+                <TouchableOpacity
+                  style={[
+                    styles.accountTypeButton,
+                    accountType === 'restaurant' && styles.accountTypeButtonActive
+                  ]}
+                  onPress={() => setAccountType('restaurant')}
+                >
+                  <Store size={24} color={accountType === 'restaurant' ? colors.white : colors.primary} />
+                  <Text style={[
+                    styles.accountTypeButtonText,
+                    accountType === 'restaurant' && styles.accountTypeButtonTextActive
+                  ]}>Restaurant</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+
             <View style={styles.inputContainer}>
               <View style={styles.inputIconContainer}>
                 <Mail size={20} color={colors.primary} />
               </View>
               <TextInput
                 style={styles.input}
-                placeholder="Email address"
+                placeholder={accountType === 'restaurant' ? 'Restaurant email' : 'Email address'}
                 placeholderTextColor={colors.textExtraLight}
                 value={email}
                 onChangeText={setEmail}
@@ -151,7 +185,7 @@ export default function LoginScreen() {
           </View>
 
           <View style={styles.footer}>
-            <Text style={styles.footerText}>Don't have an account? </Text>
+            <Text style={styles.footerText}>Don&apos;t have an account? </Text>
             <TouchableOpacity onPress={handleSignUp}>
               <Text style={styles.signUpText}>Sign Up</Text>
             </TouchableOpacity>
@@ -324,5 +358,48 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: colors.primary,
     fontWeight: '700',
+  },
+  accountTypeContainer: {
+    marginBottom: 24,
+  },
+  accountTypeTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.text,
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+  accountTypeButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  accountTypeButton: {
+    flex: 1,
+    backgroundColor: colors.white,
+    borderRadius: 16,
+    paddingVertical: 20,
+    paddingHorizontal: 16,
+    alignItems: 'center',
+    marginHorizontal: 6,
+    borderWidth: 2,
+    borderColor: colors.primary,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  accountTypeButtonActive: {
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
+  },
+  accountTypeButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: colors.primary,
+    marginTop: 8,
+  },
+  accountTypeButtonTextActive: {
+    color: colors.white,
   },
 });

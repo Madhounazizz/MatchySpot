@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView, Dimensions } from 'react-native';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Mail, Lock, User, Eye, EyeOff, Calendar, Heart } from 'lucide-react-native';
+import { Mail, Lock, User, Eye, EyeOff, Calendar, Heart, Store, Users, Phone, MapPin } from 'lucide-react-native';
 import { colors, shadows } from '@/constants/colors';
 import Button from '@/components/Button';
 import { useUserStore } from '@/store/useUserStore';
@@ -19,18 +19,24 @@ export default function SignUpScreen() {
     password: '',
     confirmPassword: '',
     dateOfBirth: '',
+    restaurantName: '',
+    phone: '',
+    address: '',
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(0);
+  const [accountType, setAccountType] = useState<'user' | 'restaurant'>('user');
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
   const handleContinue = () => {
-    if (step === 1) {
+    if (step === 0) {
+      setStep(1);
+    } else if (step === 1) {
       setStep(2);
     } else {
       handleSignUp();
@@ -52,7 +58,10 @@ export default function SignUpScreen() {
     router.push('/auth/login');
   };
 
-  const isStep1Valid = formData.firstName && formData.lastName && formData.email;
+  const isStep0Valid = accountType !== null;
+  const isStep1Valid = accountType === 'restaurant' 
+    ? formData.restaurantName && formData.firstName && formData.email && formData.phone && formData.address
+    : formData.firstName && formData.lastName && formData.email;
   const isStep2Valid = formData.password && formData.confirmPassword && formData.password === formData.confirmPassword;
 
   return (
@@ -76,7 +85,7 @@ export default function SignUpScreen() {
                 <Heart size={40} color={colors.primary} fill={colors.primary} />
               </LinearGradient>
             </View>
-            <Text style={styles.appName}>MATCHY MATCHY</Text>
+            <Text style={styles.appName}>MATCHYSPOT</Text>
             <Text style={styles.title}>Create Account</Text>
             <Text style={styles.subtitle}>Join the community and start matching!</Text>
           </View>
@@ -84,41 +93,148 @@ export default function SignUpScreen() {
           <View style={styles.stepIndicator}>
             <View style={[styles.stepDot, styles.activeStep]} />
             <View style={styles.stepLine} />
-            <View style={[styles.stepDot, step === 2 && styles.activeStep]} />
+            <View style={[styles.stepDot, step >= 1 && styles.activeStep]} />
+            <View style={styles.stepLine} />
+            <View style={[styles.stepDot, step >= 2 && styles.activeStep]} />
           </View>
 
           <View style={styles.formContainer}>
-            {step === 1 ? (
+            {step === 0 ? (
               <>
-                <Text style={styles.stepTitle}>Personal Information</Text>
+                <Text style={styles.stepTitle}>Choose Account Type</Text>
+                <Text style={styles.stepSubtitle}>Select how you want to use MatchySpot</Text>
                 
-                <View style={styles.inputContainer}>
-                  <View style={styles.inputIconContainer}>
-                    <User size={20} color={colors.primary} />
-                  </View>
-                  <TextInput
-                    style={styles.input}
-                    placeholder="First name"
-                    placeholderTextColor={colors.textExtraLight}
-                    value={formData.firstName}
-                    onChangeText={(value) => handleInputChange('firstName', value)}
-                    autoCapitalize="words"
-                  />
+                <View style={styles.accountTypeButtons}>
+                  <TouchableOpacity
+                    style={[
+                      styles.accountTypeCard,
+                      accountType === 'user' && styles.accountTypeCardActive
+                    ]}
+                    onPress={() => setAccountType('user')}
+                  >
+                    <Users size={40} color={accountType === 'user' ? colors.white : colors.primary} />
+                    <Text style={[
+                      styles.accountTypeCardTitle,
+                      accountType === 'user' && styles.accountTypeCardTitleActive
+                    ]}>I&apos;m a User</Text>
+                    <Text style={[
+                      styles.accountTypeCardDescription,
+                      accountType === 'user' && styles.accountTypeCardDescriptionActive
+                    ]}>Find and book amazing restaurants</Text>
+                  </TouchableOpacity>
+                  
+                  <TouchableOpacity
+                    style={[
+                      styles.accountTypeCard,
+                      accountType === 'restaurant' && styles.accountTypeCardActive
+                    ]}
+                    onPress={() => setAccountType('restaurant')}
+                  >
+                    <Store size={40} color={accountType === 'restaurant' ? colors.white : colors.primary} />
+                    <Text style={[
+                      styles.accountTypeCardTitle,
+                      accountType === 'restaurant' && styles.accountTypeCardTitleActive
+                    ]}>I&apos;m a Restaurant</Text>
+                    <Text style={[
+                      styles.accountTypeCardDescription,
+                      accountType === 'restaurant' && styles.accountTypeCardDescriptionActive
+                    ]}>Manage bookings and connect with diners</Text>
+                  </TouchableOpacity>
                 </View>
+              </>
+            ) : step === 1 ? (
+              <>
+                <Text style={styles.stepTitle}>{accountType === 'restaurant' ? 'Restaurant Information' : 'Personal Information'}</Text>
+                
+                {accountType === 'restaurant' ? (
+                  <>
+                    <View style={styles.inputContainer}>
+                      <View style={styles.inputIconContainer}>
+                        <Store size={20} color={colors.primary} />
+                      </View>
+                      <TextInput
+                        style={styles.input}
+                        placeholder="Restaurant name"
+                        placeholderTextColor={colors.textExtraLight}
+                        value={formData.restaurantName}
+                        onChangeText={(value) => handleInputChange('restaurantName', value)}
+                        autoCapitalize="words"
+                      />
+                    </View>
 
-                <View style={styles.inputContainer}>
-                  <View style={styles.inputIconContainer}>
-                    <User size={20} color={colors.primary} />
-                  </View>
-                  <TextInput
-                    style={styles.input}
-                    placeholder="Last name"
-                    placeholderTextColor={colors.textExtraLight}
-                    value={formData.lastName}
-                    onChangeText={(value) => handleInputChange('lastName', value)}
-                    autoCapitalize="words"
-                  />
-                </View>
+                    <View style={styles.inputContainer}>
+                      <View style={styles.inputIconContainer}>
+                        <User size={20} color={colors.primary} />
+                      </View>
+                      <TextInput
+                        style={styles.input}
+                        placeholder="Owner/Manager name"
+                        placeholderTextColor={colors.textExtraLight}
+                        value={formData.firstName}
+                        onChangeText={(value) => handleInputChange('firstName', value)}
+                        autoCapitalize="words"
+                      />
+                    </View>
+
+                    <View style={styles.inputContainer}>
+                      <View style={styles.inputIconContainer}>
+                        <Phone size={20} color={colors.primary} />
+                      </View>
+                      <TextInput
+                        style={styles.input}
+                        placeholder="Phone number"
+                        placeholderTextColor={colors.textExtraLight}
+                        value={formData.phone}
+                        onChangeText={(value) => handleInputChange('phone', value)}
+                        keyboardType="phone-pad"
+                      />
+                    </View>
+
+                    <View style={styles.inputContainer}>
+                      <View style={styles.inputIconContainer}>
+                        <MapPin size={20} color={colors.primary} />
+                      </View>
+                      <TextInput
+                        style={styles.input}
+                        placeholder="Restaurant address"
+                        placeholderTextColor={colors.textExtraLight}
+                        value={formData.address}
+                        onChangeText={(value) => handleInputChange('address', value)}
+                        autoCapitalize="words"
+                      />
+                    </View>
+                  </>
+                ) : (
+                  <>
+                    <View style={styles.inputContainer}>
+                      <View style={styles.inputIconContainer}>
+                        <User size={20} color={colors.primary} />
+                      </View>
+                      <TextInput
+                        style={styles.input}
+                        placeholder="First name"
+                        placeholderTextColor={colors.textExtraLight}
+                        value={formData.firstName}
+                        onChangeText={(value) => handleInputChange('firstName', value)}
+                        autoCapitalize="words"
+                      />
+                    </View>
+
+                    <View style={styles.inputContainer}>
+                      <View style={styles.inputIconContainer}>
+                        <User size={20} color={colors.primary} />
+                      </View>
+                      <TextInput
+                        style={styles.input}
+                        placeholder="Last name"
+                        placeholderTextColor={colors.textExtraLight}
+                        value={formData.lastName}
+                        onChangeText={(value) => handleInputChange('lastName', value)}
+                        autoCapitalize="words"
+                      />
+                    </View>
+                  </>
+                )}
 
                 <View style={styles.inputContainer}>
                   <View style={styles.inputIconContainer}>
@@ -126,7 +242,7 @@ export default function SignUpScreen() {
                   </View>
                   <TextInput
                     style={styles.input}
-                    placeholder="Email address"
+                    placeholder={accountType === 'restaurant' ? 'Restaurant email' : 'Email address'}
                     placeholderTextColor={colors.textExtraLight}
                     value={formData.email}
                     onChangeText={(value) => handleInputChange('email', value)}
@@ -136,19 +252,21 @@ export default function SignUpScreen() {
                   />
                 </View>
 
-                <View style={styles.inputContainer}>
-                  <View style={styles.inputIconContainer}>
-                    <Calendar size={20} color={colors.primary} />
+                {accountType === 'user' && (
+                  <View style={styles.inputContainer}>
+                    <View style={styles.inputIconContainer}>
+                      <Calendar size={20} color={colors.primary} />
+                    </View>
+                    <TextInput
+                      style={styles.input}
+                      placeholder="Date of birth (MM/DD/YYYY)"
+                      placeholderTextColor={colors.textExtraLight}
+                      value={formData.dateOfBirth}
+                      onChangeText={(value) => handleInputChange('dateOfBirth', value)}
+                      keyboardType="numeric"
+                    />
                   </View>
-                  <TextInput
-                    style={styles.input}
-                    placeholder="Date of birth (MM/DD/YYYY)"
-                    placeholderTextColor={colors.textExtraLight}
-                    value={formData.dateOfBirth}
-                    onChangeText={(value) => handleInputChange('dateOfBirth', value)}
-                    keyboardType="numeric"
-                  />
-                </View>
+                )}
               </>
             ) : (
               <>
@@ -220,19 +338,19 @@ export default function SignUpScreen() {
             )}
 
             <Button
-              title={step === 1 ? "Continue" : "Create Account"}
+              title={step === 0 ? "Continue" : step === 1 ? "Continue" : "Create Account"}
               onPress={handleContinue}
               loading={loading}
-              disabled={step === 1 ? !isStep1Valid : !isStep2Valid}
+              disabled={step === 0 ? !isStep0Valid : step === 1 ? !isStep1Valid : !isStep2Valid}
               fullWidth
               style={styles.continueButton}
             />
 
-            {step === 2 && (
+            {step > 0 && (
               <Button
                 title="Back"
                 variant="outline"
-                onPress={() => setStep(1)}
+                onPress={() => setStep(step - 1)}
                 fullWidth
                 style={styles.backButton}
               />
@@ -442,5 +560,50 @@ const styles = StyleSheet.create({
   termsLink: {
     color: colors.primary,
     fontWeight: '600',
+  },
+  stepSubtitle: {
+    fontSize: 14,
+    color: colors.textLight,
+    textAlign: 'center',
+    marginBottom: 30,
+  },
+  accountTypeButtons: {
+    gap: 16,
+  },
+  accountTypeCard: {
+    backgroundColor: colors.white,
+    borderRadius: 20,
+    padding: 24,
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: colors.backgroundDark,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  accountTypeCardActive: {
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
+  },
+  accountTypeCardTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: colors.text,
+    marginTop: 16,
+    marginBottom: 8,
+  },
+  accountTypeCardTitleActive: {
+    color: colors.white,
+  },
+  accountTypeCardDescription: {
+    fontSize: 14,
+    color: colors.textLight,
+    textAlign: 'center',
+    lineHeight: 20,
+  },
+  accountTypeCardDescriptionActive: {
+    color: 'rgba(255, 255, 255, 0.8)',
   },
 });
