@@ -72,7 +72,7 @@ export default function StaffScreen() {
   };
 
   const handleStaffAction = (staff: Staff) => {
-    const actions = [
+    const actions: Array<{text: string; onPress?: () => void; style?: 'default' | 'cancel' | 'destructive'}> = [
       { text: 'View Details', onPress: () => console.log('View details for', staff.name) },
       { text: 'Edit Schedule', onPress: () => console.log('Edit schedule for', staff.name) },
     ];
