@@ -30,6 +30,8 @@ export type User = {
   matchPercentage?: number;
   lastActive?: string;
   isOnline?: boolean;
+  userType?: 'customer' | 'restaurant';
+  restaurantId?: string;
 };
 
 export type Event = {
@@ -88,4 +90,56 @@ export type Transaction = {
   date: string;
   brcId?: string;
   brcName?: string;
+};
+
+export type Reservation = {
+  id: string;
+  customerName: string;
+  customerPhone: string;
+  customerEmail: string;
+  customerAvatar?: string;
+  date: string;
+  time: string;
+  partySize: number;
+  status: 'pending' | 'confirmed' | 'seated' | 'completed' | 'cancelled' | 'no-show';
+  specialRequests?: string;
+  tableNumber?: string;
+  createdAt: string;
+  updatedAt: string;
+  brcId: string;
+  estimatedDuration: number;
+};
+
+export type Staff = {
+  id: string;
+  name: string;
+  avatar: string;
+  role: 'manager' | 'waiter' | 'host' | 'chef' | 'bartender';
+  email: string;
+  phone: string;
+  isActive: boolean;
+  shift: {
+    start: string;
+    end: string;
+    days: string[];
+  };
+  joinedDate: string;
+};
+
+export type Table = {
+  id: string;
+  number: string;
+  capacity: number;
+  status: 'available' | 'occupied' | 'reserved' | 'cleaning';
+  location: string;
+  reservationId?: string;
+};
+
+export type RestaurantStats = {
+  todayReservations: number;
+  todayRevenue: number;
+  occupancyRate: number;
+  averageRating: number;
+  totalReviews: number;
+  pendingReservations: number;
 };
