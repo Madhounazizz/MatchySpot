@@ -29,11 +29,15 @@ export default function LoginScreen() {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1500));
       
-      // Login user
-      login();
+      // Login user with selected account type
+      login(accountType === 'restaurant' ? 'restaurant' : 'customer');
       
-      // Navigate to main app
-      router.replace('/(tabs)');
+      // Navigate to appropriate interface
+      if (accountType === 'restaurant') {
+        router.replace('/(restaurant)');
+      } else {
+        router.replace('/(tabs)');
+      }
     } catch (error) {
       console.error('Login error:', error);
     } finally {
