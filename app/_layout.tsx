@@ -40,7 +40,7 @@ export default function RootLayout() {
 }
 
 function RootLayoutNav() {
-  const { isLoggedIn, isRestaurantUser } = useUserStore();
+  const { isLoggedIn } = useUserStore();
 
   return (
     <>
@@ -73,11 +73,8 @@ function RootLayoutNav() {
           </>
         ) : (
           <>
-            {isRestaurantUser() ? (
-              <Stack.Screen name="(restaurant)" options={{ headerShown: false }} />
-            ) : (
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            )}
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="(restaurant)" options={{ headerShown: false }} />
             <Stack.Screen 
               name="brc/[id]" 
               options={{ 

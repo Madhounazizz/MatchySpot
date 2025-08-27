@@ -34,7 +34,7 @@ export default function LoginScreen() {
       
       // Navigate to appropriate interface
       if (accountType === 'restaurant') {
-        router.replace('/(restaurant)');
+        router.replace('/(restaurant)/dashboard');
       } else {
         router.replace('/(tabs)');
       }
