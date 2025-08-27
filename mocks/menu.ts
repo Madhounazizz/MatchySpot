@@ -10,6 +10,7 @@ export type MenuItem = {
   isVegetarian?: boolean;
   isVegan?: boolean;
   isGlutenFree?: boolean;
+  isAvailable?: boolean;
 };
 
 export const menuItems: MenuItem[] = [

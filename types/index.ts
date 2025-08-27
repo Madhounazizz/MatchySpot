@@ -143,3 +143,34 @@ export type RestaurantStats = {
   totalReviews: number;
   pendingReservations: number;
 };
+
+export type MenuAnalytics = {
+  totalItems: number;
+  availableItems: number;
+  popularItems: string[];
+  categoryBreakdown: Record<string, number>;
+  averagePrice: number;
+  topRatedItems: string[];
+};
+
+export type BusinessHours = {
+  day: string;
+  isOpen: boolean;
+  openTime: string;
+  closeTime: string;
+};
+
+export type RestaurantProfile = {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  address: string;
+  website: string;
+  description: string;
+  cuisine: string[];
+  priceRange: '$' | '$$' | '$$$' | '$$$$';
+  businessHours: BusinessHours[];
+  features: string[];
+  images: string[];
+};
