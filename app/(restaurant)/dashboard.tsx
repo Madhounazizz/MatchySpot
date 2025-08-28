@@ -24,6 +24,10 @@ import {
   Bell,
   ArrowUpRight,
   MapPin,
+  Activity,
+  Zap,
+  Award,
+  Target,
 } from 'lucide-react-native';
 import { colors, shadows } from '@/constants/colors';
 import { mockReservations } from '@/mocks/reservations';
@@ -31,7 +35,7 @@ import { mockStaff } from '@/mocks/staff';
 import { RestaurantStats } from '@/types';
 
 const { width } = Dimensions.get('window');
-const cardWidth = (width - 60) / 2;
+const cardWidth = (width - 48) / 2;
 
 const mockStats: RestaurantStats = {
   todayReservations: 24,
@@ -41,6 +45,13 @@ const mockStats: RestaurantStats = {
   totalReviews: 342,
   pendingReservations: 3,
 };
+
+const recentActivities = [
+  { id: '1', type: 'reservation', message: 'New reservation from John Smith', time: '2 min ago', icon: Calendar, color: colors.primary },
+  { id: '2', type: 'review', message: '5-star review received', time: '15 min ago', icon: Star, color: colors.warning },
+  { id: '3', type: 'staff', message: 'Sarah clocked in', time: '1 hour ago', icon: Users, color: colors.success },
+  { id: '4', type: 'order', message: 'Table 12 order completed', time: '2 hours ago', icon: CheckCircle, color: colors.success },
+];
 
 const getTimeOfDayGreeting = () => {
   const hour = new Date().getHours();
@@ -67,7 +78,8 @@ export default function RestaurantDashboard() {
     subtitle, 
     color = colors.primary,
     trend,
-    onPress 
+    onPress,
+    gradient = false
   }: {
     icon: any;
     title: string;
@@ -76,37 +88,61 @@ export default function RestaurantDashboard() {
     color?: string;
     trend?: 'up' | 'down' | 'neutral';
     onPress?: () => void;
-  }) => (
-    <TouchableOpacity 
-      style={[styles.statCard, onPress && styles.pressableCard]} 
-      onPress={onPress}
-      activeOpacity={onPress ? 0.8 : 1}
-    >
-      <View style={styles.statCardHeader}>
-        <View style={[styles.statIconContainer, { backgroundColor: color + '10' }]}>
-          <Icon size={22} color={color} strokeWidth={2.5} />
-        </View>
-        {trend && (
-          <View style={[styles.trendIndicator, { 
-            backgroundColor: trend === 'up' ? colors.success + '15' : 
-                           trend === 'down' ? colors.error + '15' : colors.textLight + '15' 
-          }]}>
-            <ArrowUpRight 
-              size={12} 
-              color={trend === 'up' ? colors.success : 
-                     trend === 'down' ? colors.error : colors.textLight}
-              style={trend === 'down' ? { transform: [{ rotate: '90deg' }] } : {}}
-            />
+    gradient?: boolean;
+  }) => {
+    const CardContent = (
+      <>
+        <View style={styles.statCardHeader}>
+          <View style={[styles.statIconContainer, { backgroundColor: gradient ? 'rgba(255,255,255,0.2)' : color + '15' }]}>
+            <Icon size={24} color={gradient ? colors.white : color} strokeWidth={2.5} />
           </View>
-        )}
-      </View>
-      <View style={styles.statContent}>
-        <Text style={styles.statValue}>{value}</Text>
-        <Text style={styles.statTitle}>{title}</Text>
-        {subtitle && <Text style={styles.statSubtitle}>{subtitle}</Text>}
-      </View>
-    </TouchableOpacity>
-  );
+          {trend && (
+            <View style={[styles.trendIndicator, { 
+              backgroundColor: trend === 'up' ? (gradient ? 'rgba(255,255,255,0.2)' : colors.success + '15') : 
+                             trend === 'down' ? (gradient ? 'rgba(255,255,255,0.2)' : colors.error + '15') : 
+                             (gradient ? 'rgba(255,255,255,0.2)' : colors.textLight + '15')
+            }]}>
+              <ArrowUpRight 
+                size={14} 
+                color={gradient ? colors.white : (trend === 'up' ? colors.success : 
+                       trend === 'down' ? colors.error : colors.textLight)}
+                style={trend === 'down' ? { transform: [{ rotate: '90deg' }] } : {}}
+              />
+            </View>
+          )}
+        </View>
+        <View style={styles.statContent}>
+          <Text style={[styles.statValue, gradient && { color: colors.white }]}>{value}</Text>
+          <Text style={[styles.statTitle, gradient && { color: 'rgba(255,255,255,0.9)' }]}>{title}</Text>
+          {subtitle && <Text style={[styles.statSubtitle, gradient && { color: 'rgba(255,255,255,0.7)' }]}>{subtitle}</Text>}
+        </View>
+      </>
+    );
+
+    if (gradient) {
+      return (
+        <TouchableOpacity 
+          style={[styles.statCard, styles.gradientCard]} 
+          onPress={onPress}
+          activeOpacity={onPress ? 0.8 : 1}
+        >
+          <View style={[styles.gradientBackground, { backgroundColor: color }]}>
+            {CardContent}
+          </View>
+        </TouchableOpacity>
+      );
+    }
+
+    return (
+      <TouchableOpacity 
+        style={[styles.statCard, onPress && styles.pressableCard]} 
+        onPress={onPress}
+        activeOpacity={onPress ? 0.8 : 1}
+      >
+        {CardContent}
+      </TouchableOpacity>
+    );
+  };
 
   const QuickActionCard = ({ 
     icon: Icon, 
@@ -148,21 +184,44 @@ export default function RestaurantDashboard() {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        {/* Enhanced Header */}
+        {/* Modern Header with Gradient */}
         <View style={styles.header}>
-          <View style={styles.headerTop}>
-            <View style={styles.headerLeft}>
-              <Text style={styles.welcomeText}>{getTimeOfDayGreeting()}!</Text>
-              <Text style={styles.restaurantName}>Bella Vista Restaurant</Text>
-              <View style={styles.locationContainer}>
-                <MapPin size={14} color={colors.textLight} />
-                <Text style={styles.locationText}>Downtown, NYC</Text>
+          <View style={styles.gradientHeader}>
+            <View style={styles.headerTop}>
+              <View style={styles.headerLeft}>
+                <Text style={styles.welcomeText}>{getTimeOfDayGreeting()}!</Text>
+                <Text style={styles.restaurantName}>Bella Vista Restaurant</Text>
+                <View style={styles.locationContainer}>
+                  <MapPin size={16} color="rgba(255,255,255,0.8)" />
+                  <Text style={styles.locationText}>Downtown, NYC</Text>
+                </View>
+              </View>
+              <View style={styles.headerActions}>
+                <TouchableOpacity style={styles.headerButton}>
+                  <Activity size={20} color={colors.white} />
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.notificationButton}>
+                  <Bell size={20} color={colors.white} />
+                  <View style={styles.notificationDot} />
+                </TouchableOpacity>
               </View>
             </View>
-            <TouchableOpacity style={styles.notificationButton}>
-              <Bell size={20} color={colors.text} />
-              <View style={styles.notificationDot} />
-            </TouchableOpacity>
+            
+            {/* Live Status Bar */}
+            <View style={styles.liveStatusBar}>
+              <View style={styles.statusItem}>
+                <View style={styles.liveIndicator} />
+                <Text style={styles.liveText}>Live</Text>
+              </View>
+              <View style={styles.statusItem}>
+                <Zap size={14} color="rgba(255,255,255,0.9)" />
+                <Text style={styles.statusText}>{activeStaff.length} staff active</Text>
+              </View>
+              <View style={styles.statusItem}>
+                <Target size={14} color="rgba(255,255,255,0.9)" />
+                <Text style={styles.statusText}>{mockStats.occupancyRate}% occupied</Text>
+              </View>
+            </View>
           </View>
         </View>
 
@@ -170,36 +229,37 @@ export default function RestaurantDashboard() {
         <View style={styles.statsSection}>
           <View style={styles.statsGrid}>
             <StatCard
+              icon={DollarSign}
+              title={"Today's Revenue"}
+              value={`${mockStats.todayRevenue.toLocaleString()}`}
+              subtitle="+18% vs yesterday"
+              color={colors.success}
+              trend="up"
+              gradient={true}
+            />
+            <StatCard
               icon={Calendar}
-              title={"Today's Reservations"}
+              title={"Reservations"}
               value={mockStats.todayReservations}
               subtitle={`${pendingReservations.length} pending`}
               color={colors.primary}
               trend="up"
             />
             <StatCard
-              icon={DollarSign}
-              title={"Today's Revenue"}
-              value={`${mockStats.todayRevenue.toLocaleString()}`}
-              subtitle="+12% vs yesterday"
-              color={colors.success}
-              trend="up"
-            />
-            <StatCard
-              icon={TrendingUp}
-              title={"Occupancy Rate"}
+              icon={Activity}
+              title={"Occupancy"}
               value={`${mockStats.occupancyRate}%`}
-              subtitle="Above average"
+              subtitle="Peak hours: 7-9 PM"
               color={colors.secondary}
               trend="up"
             />
             <StatCard
-              icon={Star}
-              title={"Average Rating"}
+              icon={Award}
+              title={"Rating"}
               value={mockStats.averageRating}
               subtitle={`${mockStats.totalReviews} reviews`}
               color={colors.warning}
-              trend="neutral"
+              trend="up"
             />
           </View>
         </View>
@@ -296,42 +356,34 @@ export default function RestaurantDashboard() {
         {/* Enhanced Recent Activity */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Recent Activity</Text>
+            <Text style={styles.sectionTitle}>Live Activity Feed</Text>
             <TouchableOpacity style={styles.seeAllButton}>
               <Text style={styles.seeAllText}>View All</Text>
             </TouchableOpacity>
           </View>
           <View style={styles.activityList}>
-            {todayReservations.slice(0, 4).map((reservation, index) => (
-              <TouchableOpacity key={reservation.id} style={[
+            {recentActivities.map((activity, index) => (
+              <TouchableOpacity key={activity.id} style={[
                 styles.activityItem,
-                index === todayReservations.slice(0, 4).length - 1 && styles.lastActivityItem
+                index === recentActivities.length - 1 && styles.lastActivityItem
               ]}>
                 <View style={styles.activityLeft}>
                   <View style={[styles.activityIcon, {
-                    backgroundColor: getStatusColor(reservation.status) + '15'
+                    backgroundColor: activity.color + '15'
                   }]}>
-                    <Calendar size={16} color={getStatusColor(reservation.status)} />
+                    <activity.icon size={18} color={activity.color} strokeWidth={2.5} />
                   </View>
                   <View style={styles.activityContent}>
                     <Text style={styles.activityTitle}>
-                      {reservation.customerName}
+                      {activity.message}
                     </Text>
                     <Text style={styles.activityTime}>
-                      {reservation.time} • Party of {reservation.partySize}
+                      {activity.time}
                     </Text>
                   </View>
                 </View>
-                <View style={[
-                  styles.statusBadge,
-                  { backgroundColor: getStatusColor(reservation.status) + '12' }
-                ]}>
-                  <Text style={[
-                    styles.statusText,
-                    { color: getStatusColor(reservation.status) }
-                  ]}>
-                    {reservation.status}
-                  </Text>
+                <View style={styles.activityIndicator}>
+                  <View style={[styles.activityDot, { backgroundColor: activity.color }]} />
                 </View>
               </TouchableOpacity>
             ))}
@@ -372,51 +424,104 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    paddingHorizontal: 24,
     paddingTop: Platform.OS === 'ios' ? 10 : 20,
-    paddingBottom: 24,
-    backgroundColor: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    paddingBottom: 0,
     borderBottomLeftRadius: 32,
     borderBottomRightRadius: 32,
-    ...shadows.card,
-    elevation: 8,
+    overflow: 'hidden',
+    ...shadows.large,
+    elevation: 12,
+  },
+  gradientHeader: {
+    paddingHorizontal: 24,
+    paddingBottom: 24,
+    backgroundColor: colors.primary,
+    background: 'linear-gradient(135deg, #FF6F61 0%, #E55A4D 100%)',
   },
   headerTop: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
+    marginBottom: 20,
   },
   headerLeft: {
     flex: 1,
   },
+  headerActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  headerButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backdropFilter: 'blur(10px)',
+  },
   welcomeText: {
     fontSize: 16,
-    color: 'rgba(255, 255, 255, 0.8)',
-    marginBottom: 4,
-    fontWeight: '500',
+    color: 'rgba(255, 255, 255, 0.9)',
+    marginBottom: 6,
+    fontWeight: '600',
   },
   restaurantName: {
-    fontSize: 28,
-    fontWeight: '800',
+    fontSize: 32,
+    fontWeight: '900',
     color: colors.white,
     marginBottom: 8,
-    letterSpacing: -0.5,
+    letterSpacing: -0.8,
   },
   locationContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: 6,
   },
   locationText: {
-    fontSize: 14,
-    color: 'rgba(255, 255, 255, 0.7)',
+    fontSize: 15,
+    color: 'rgba(255, 255, 255, 0.8)',
     fontWeight: '500',
   },
+  liveStatusBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backdropFilter: 'blur(10px)',
+  },
+  statusItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  liveIndicator: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: colors.success,
+  },
+  liveText: {
+    fontSize: 12,
+    color: colors.white,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  statusText: {
+    fontSize: 12,
+    color: 'rgba(255, 255, 255, 0.9)',
+    fontWeight: '600',
+  },
   notificationButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
@@ -424,12 +529,14 @@ const styles = StyleSheet.create({
   },
   notificationDot: {
     position: 'absolute',
-    top: 12,
-    right: 12,
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: colors.error,
+    top: 10,
+    right: 10,
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: colors.warning,
+    borderWidth: 2,
+    borderColor: colors.white,
   },
   statsSection: {
     paddingHorizontal: 24,
@@ -442,12 +549,21 @@ const styles = StyleSheet.create({
   },
   statCard: {
     backgroundColor: colors.white,
-    borderRadius: 24,
+    borderRadius: 28,
     padding: 24,
     width: cardWidth,
     ...shadows.card,
     borderWidth: 0,
-    elevation: 4,
+    elevation: 6,
+  },
+  gradientCard: {
+    overflow: 'hidden',
+    ...shadows.large,
+    elevation: 8,
+  },
+  gradientBackground: {
+    borderRadius: 28,
+    padding: 24,
   },
   pressableCard: {
     transform: [{ scale: 1 }],
@@ -456,42 +572,45 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 20,
   },
   statIconContainer: {
-    width: 52,
-    height: 52,
-    borderRadius: 16,
+    width: 56,
+    height: 56,
+    borderRadius: 18,
     alignItems: 'center',
     justifyContent: 'center',
   },
   trendIndicator: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    gap: 4,
   },
   statContent: {
     flex: 1,
   },
   statValue: {
-    fontSize: 32,
+    fontSize: 36,
     fontWeight: '900',
     color: colors.text,
-    marginBottom: 6,
-    letterSpacing: -0.8,
+    marginBottom: 8,
+    letterSpacing: -1,
   },
   statTitle: {
-    fontSize: 13,
+    fontSize: 14,
     color: colors.textLight,
-    marginBottom: 4,
-    fontWeight: '600',
+    marginBottom: 6,
+    fontWeight: '700',
+    letterSpacing: -0.2,
   },
   statSubtitle: {
-    fontSize: 11,
+    fontSize: 12,
     color: colors.textExtraLight,
     fontWeight: '500',
+    lineHeight: 16,
   },
   section: {
     marginTop: 40,
@@ -589,9 +708,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 16,
+    paddingVertical: 18,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border + '40',
+    borderBottomColor: colors.border + '30',
   },
   lastActivityItem: {
     borderBottomWidth: 0,
@@ -602,38 +721,36 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   activityIcon: {
-    width: 36,
-    height: 36,
-    borderRadius: 10,
+    width: 44,
+    height: 44,
+    borderRadius: 14,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 12,
+    marginRight: 16,
   },
   activityContent: {
     flex: 1,
   },
   activityTitle: {
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '600',
     color: colors.text,
-    marginBottom: 2,
-    letterSpacing: -0.1,
+    marginBottom: 4,
+    letterSpacing: -0.2,
   },
   activityTime: {
-    fontSize: 12,
+    fontSize: 13,
     color: colors.textLight,
     fontWeight: '500',
   },
-  statusBadge: {
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 8,
+  activityIndicator: {
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  statusText: {
-    fontSize: 11,
-    fontWeight: '700',
-    textTransform: 'capitalize',
-    letterSpacing: 0.3,
+  activityDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
   },
   bottomSpacing: {
     height: 32,

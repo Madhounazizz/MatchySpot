@@ -257,25 +257,25 @@ function getCategoryColor(category: string): string {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8fafc',
+    backgroundColor: '#f5f7fa',
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 24,
-    paddingVertical: 20,
+    paddingVertical: 24,
     backgroundColor: colors.white,
     borderBottomLeftRadius: 32,
     borderBottomRightRadius: 32,
-    ...shadows.card,
-    elevation: 6,
+    ...shadows.large,
+    elevation: 8,
   },
   title: {
-    fontSize: 32,
+    fontSize: 36,
     fontWeight: '900',
     color: colors.text,
-    letterSpacing: -0.8,
+    letterSpacing: -1,
   },
   addButton: {
     flexDirection: 'row',
@@ -372,19 +372,21 @@ const styles = StyleSheet.create({
   menuItemCard: {
     backgroundColor: colors.white,
     marginHorizontal: 24,
-    marginBottom: 20,
-    borderRadius: 20,
+    marginBottom: 24,
+    borderRadius: 24,
     ...shadows.card,
-    elevation: 4,
+    elevation: 6,
     overflow: 'hidden',
+    borderLeftWidth: 4,
+    borderLeftColor: colors.primary,
   },
   itemImage: {
     width: '100%',
-    height: 140,
+    height: 160,
     backgroundColor: colors.backgroundLight,
   },
   itemContent: {
-    padding: 20,
+    padding: 24,
   },
   itemHeader: {
     flexDirection: 'row',
@@ -393,12 +395,12 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   itemName: {
-    fontSize: 20,
-    fontWeight: '700',
+    fontSize: 22,
+    fontWeight: '800',
     color: colors.text,
     flex: 1,
     marginRight: 16,
-    letterSpacing: -0.2,
+    letterSpacing: -0.3,
   },
   itemActions: {
     flexDirection: 'row',
@@ -428,10 +430,10 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   itemPrice: {
-    fontSize: 18,
-    fontWeight: '800',
+    fontSize: 20,
+    fontWeight: '900',
     color: colors.success,
-    letterSpacing: -0.2,
+    letterSpacing: -0.3,
   },
   ratingContainer: {
     flexDirection: 'row',
