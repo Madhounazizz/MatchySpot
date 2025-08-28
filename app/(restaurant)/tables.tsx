@@ -146,6 +146,7 @@ export default function TablesScreen() {
         ]}
         onPress={() => handleTableAction(table)}
         activeOpacity={0.7}
+        testID={`table-${table.id}`}
       >
         <View style={styles.tableHeader}>
           <View style={styles.tableInfo}>
@@ -327,6 +328,9 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     ...shadows.large,
     elevation: 10,
+    borderWidth: 1,
+    borderColor: colors.border,
+    overflow: 'hidden',
   },
   tableHeader: {
     flexDirection: 'row',

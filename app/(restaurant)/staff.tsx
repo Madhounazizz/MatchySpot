@@ -131,6 +131,7 @@ export default function StaffScreen() {
         ]}
         onPress={() => handleStaffAction(staff)}
         activeOpacity={0.95}
+        testID={`staff-${staff.id}`}
       >
         <View style={styles.staffHeader}>
           <View style={styles.staffInfo}>
@@ -367,7 +368,9 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     ...shadows.large,
     elevation: 12,
-    borderWidth: 0,
+    borderWidth: 1,
+    borderColor: colors.border,
+    overflow: 'hidden',
   },
   inactiveCard: {
     opacity: 0.75,

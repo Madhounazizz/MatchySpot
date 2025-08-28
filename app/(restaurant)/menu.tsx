@@ -76,7 +76,7 @@ export default function MenuManagement() {
   };
 
   const MenuItemCard = ({ item }: { item: MenuItem }) => (
-    <TouchableOpacity style={styles.menuItemCard} activeOpacity={0.95}>
+    <TouchableOpacity style={styles.menuItemCard} activeOpacity={0.95} testID={`menu-item-${item.id}`}>
       <View style={styles.cardImageContainer}>
         <Image source={{ uri: item.image }} style={styles.itemImage} />
         <View style={styles.imageOverlay}>
@@ -400,7 +400,8 @@ const styles = StyleSheet.create({
     ...shadows.large,
     elevation: 12,
     overflow: 'hidden',
-    borderWidth: 0,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   cardImageContainer: {
     position: 'relative',

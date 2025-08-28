@@ -86,7 +86,7 @@ export default function ReservationsScreen() {
   );
 
   const ReservationCard = ({ reservation }: { reservation: Reservation }) => (
-    <TouchableOpacity style={styles.reservationCard} activeOpacity={0.95}>
+    <TouchableOpacity style={styles.reservationCard} activeOpacity={0.95} testID={`reservation-${reservation.id}`}>
       <View style={styles.cardHeader}>
         <View style={styles.statusIndicatorBar}>
           <View style={[
@@ -426,7 +426,9 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     ...shadows.large,
     elevation: 12,
-    borderWidth: 0,
+    borderWidth: 1,
+    borderColor: colors.border,
+    overflow: 'hidden',
   },
   cardHeader: {
     flexDirection: 'row',
