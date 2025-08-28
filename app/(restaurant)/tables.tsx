@@ -18,6 +18,7 @@ import {
   MapPin,
 } from 'lucide-react-native';
 import { colors, shadows } from '@/constants/colors';
+import { LinearGradient } from 'expo-linear-gradient';
 import { mockTables } from '@/mocks/tables';
 import { mockReservations } from '@/mocks/reservations';
 import { Table } from '@/types';
@@ -215,14 +216,19 @@ export default function TablesScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
+      <LinearGradient
+        colors={[colors.white, colors.backgroundLight]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.header}
+      >
         <Text style={styles.title}>Table Management</Text>
         <View style={styles.occupancyRate}>
           <Text style={styles.occupancyText}>
             {Math.round(((filterCounts.occupied + filterCounts.reserved) / filterCounts.all) * 100)}% occupied
           </Text>
         </View>
-      </View>
+      </LinearGradient>
 
       <ScrollView
         horizontal

@@ -20,8 +20,10 @@ import {
   X,
   MoreVertical,
   Filter,
+  Plus,
 } from 'lucide-react-native';
 import { colors, shadows } from '@/constants/colors';
+import { LinearGradient } from 'expo-linear-gradient';
 import { mockReservations } from '@/mocks/reservations';
 import { Reservation } from '@/types';
 
@@ -219,20 +221,29 @@ export default function ReservationsScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
+      <LinearGradient
+        colors={[colors.white, colors.backgroundLight]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.header}
+      >
         <View>
           <Text style={styles.title}>Reservations</Text>
           <Text style={styles.subtitle}>{filteredReservations.length} reservations today</Text>
         </View>
         <View style={styles.headerActions}>
-          <TouchableOpacity style={styles.calendarButton}>
+          <TouchableOpacity style={styles.calendarButton} testID="reservations-calendar-btn">
             <Calendar size={20} color={colors.primary} />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.filterIcon}>
+          <TouchableOpacity style={styles.filterIcon} testID="reservations-filter-btn">
             <Filter size={20} color={colors.primary} />
           </TouchableOpacity>
         </View>
-      </View>
+          <TouchableOpacity style={styles.addButton} testID="reservations-add-btn" activeOpacity={0.9}>
+            <Plus size={20} color={colors.white} />
+            <Text style={styles.addButtonText}>New</Text>
+          </TouchableOpacity>
+      </LinearGradient>
 
       <View style={styles.dateSelector}>
         <Text style={styles.selectedDate}>Today - January 20, 2025</Text>
@@ -258,12 +269,12 @@ export default function ReservationsScreen() {
         style={styles.filterContainer}
         contentContainerStyle={styles.filterContent}
       >
-        <FilterButton status={"all"} label={"All"} />
-        <FilterButton status={"pending"} label={"Pending"} />
-        <FilterButton status={"confirmed"} label={"Confirmed"} />
-        <FilterButton status={"seated"} label={"Seated"} />
-        <FilterButton status={"completed"} label={"Completed"} />
-        <FilterButton status={"cancelled"} label={"Cancelled"} />
+        <FilterButton status={"all"} label={`All (${mockReservations.filter(r => r.date === selectedDate).length})`} />
+        <FilterButton status={"pending"} label={`Pending (${mockReservations.filter(r => r.date === selectedDate && r.status === 'pending').length})`} />
+        <FilterButton status={"confirmed"} label={`Confirmed (${mockReservations.filter(r => r.date === selectedDate && r.status === 'confirmed').length})`} />
+        <FilterButton status={"seated"} label={`Seated (${mockReservations.filter(r => r.date === selectedDate && r.status === 'seated').length})`} />
+        <FilterButton status={"completed"} label={`Completed (${mockReservations.filter(r => r.date === selectedDate && r.status === 'completed').length})`} />
+        <FilterButton status={"cancelled"} label={`Cancelled (${mockReservations.filter(r => r.date === selectedDate && r.status === 'cancelled').length})`} />
       </ScrollView>
 
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
@@ -342,6 +353,22 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     ...shadows.small,
     elevation: 4,
+  },
+  addButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.primary,
+    paddingHorizontal: 18,
+    paddingVertical: 12,
+    borderRadius: 16,
+    gap: 8,
+    ...shadows.card,
+    elevation: 8,
+  },
+  addButtonText: {
+    color: colors.white,
+    fontWeight: '800',
+    fontSize: 14,
   },
   dateSelector: {
     paddingHorizontal: 28,

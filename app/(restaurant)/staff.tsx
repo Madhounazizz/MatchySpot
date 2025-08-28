@@ -22,6 +22,7 @@ import {
   Filter,
 } from 'lucide-react-native';
 import { colors, shadows } from '@/constants/colors';
+import { LinearGradient } from 'expo-linear-gradient';
 import { mockStaff } from '@/mocks/staff';
 import { Staff } from '@/types';
 
@@ -232,7 +233,12 @@ export default function StaffScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
+      <LinearGradient
+        colors={[colors.white, colors.backgroundLight]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.header}
+      >
         <Text style={styles.title}>Staff Management</Text>
         <View style={styles.headerActions}>
           <TouchableOpacity style={styles.filterIcon}>
@@ -242,7 +248,7 @@ export default function StaffScreen() {
             <Plus size={24} color={colors.white} />
           </TouchableOpacity>
         </View>
-      </View>
+      </LinearGradient>
 
       <ScrollView
         horizontal
