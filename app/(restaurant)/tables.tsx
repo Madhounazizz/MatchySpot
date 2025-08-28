@@ -17,7 +17,7 @@ import {
   Utensils,
   MapPin,
 } from 'lucide-react-native';
-import { colors } from '@/constants/colors';
+import { colors, shadows } from '@/constants/colors';
 import { mockTables } from '@/mocks/tables';
 import { mockReservations } from '@/mocks/reservations';
 import { Table } from '@/types';
@@ -250,7 +250,7 @@ export default function TablesScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: colors.backgroundLight,
   },
   header: {
     flexDirection: 'row',
@@ -258,11 +258,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 20,
     paddingVertical: 16,
+    backgroundColor: colors.white,
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
+    ...shadows.small,
   },
   title: {
     fontSize: 28,
-    fontWeight: '700',
+    fontWeight: '800',
     color: colors.text,
+    letterSpacing: -0.5,
   },
   occupancyRate: {
     backgroundColor: colors.primary + '15',

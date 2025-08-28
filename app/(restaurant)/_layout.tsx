@@ -1,6 +1,6 @@
 import React from "react";
 import { Tabs } from "expo-router";
-import { BarChart3, Calendar, Users, Settings, ClipboardList, Menu } from "lucide-react-native";
+import { BarChart3, Calendar, Users, Settings, ClipboardList, Menu, TrendingUp } from "lucide-react-native";
 import { colors } from "@/constants/colors";
 
 export default function RestaurantTabLayout() {
@@ -92,6 +92,19 @@ export default function RestaurantTabLayout() {
             <Menu 
               size={focused ? 26 : 24} 
               color={color}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="analytics"
+        options={{
+          title: "Analytics",
+          tabBarIcon: ({ color, focused }) => (
+            <TrendingUp 
+              size={focused ? 26 : 24} 
+              color={color}
+              fill={focused ? color : 'transparent'}
             />
           ),
         }}

@@ -241,6 +241,58 @@ export default function RestaurantDashboard() {
           </View>
         </View>
 
+        {/* Performance Insights */}
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Performance Insights</Text>
+            <TouchableOpacity style={styles.seeAllButton}>
+              <Text style={styles.seeAllText}>View Analytics</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.insightsCard}>
+            <View style={styles.insightRow}>
+              <View style={styles.insightItem}>
+                <View style={[styles.insightIcon, { backgroundColor: colors.success + '15' }]}>
+                  <TrendingUp size={18} color={colors.success} />
+                </View>
+                <View style={styles.insightContent}>
+                  <Text style={styles.insightValue}>+18%</Text>
+                  <Text style={styles.insightLabel}>Revenue Growth</Text>
+                </View>
+              </View>
+              <View style={styles.insightItem}>
+                <View style={[styles.insightIcon, { backgroundColor: colors.primary + '15' }]}>
+                  <Clock size={18} color={colors.primary} />
+                </View>
+                <View style={styles.insightContent}>
+                  <Text style={styles.insightValue}>42min</Text>
+                  <Text style={styles.insightLabel}>Avg. Table Turn</Text>
+                </View>
+              </View>
+            </View>
+            <View style={styles.insightRow}>
+              <View style={styles.insightItem}>
+                <View style={[styles.insightIcon, { backgroundColor: colors.warning + '15' }]}>
+                  <Star size={18} color={colors.warning} />
+                </View>
+                <View style={styles.insightContent}>
+                  <Text style={styles.insightValue}>4.6★</Text>
+                  <Text style={styles.insightLabel}>Customer Rating</Text>
+                </View>
+              </View>
+              <View style={styles.insightItem}>
+                <View style={[styles.insightIcon, { backgroundColor: colors.accent + '15' }]}>
+                  <Users size={18} color={colors.accent} />
+                </View>
+                <View style={styles.insightContent}>
+                  <Text style={styles.insightValue}>89%</Text>
+                  <Text style={styles.insightLabel}>Customer Return</Text>
+                </View>
+              </View>
+            </View>
+          </View>
+        </View>
+
         {/* Enhanced Recent Activity */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
@@ -583,5 +635,47 @@ const styles = StyleSheet.create({
   },
   bottomSpacing: {
     height: 32,
+  },
+  insightsCard: {
+    backgroundColor: colors.white,
+    borderRadius: 20,
+    padding: 20,
+    ...shadows.card,
+    borderWidth: 1,
+    borderColor: colors.border + '20',
+  },
+  insightRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 16,
+  },
+  insightItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+    marginHorizontal: 8,
+  },
+  insightIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  insightContent: {
+    flex: 1,
+  },
+  insightValue: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: colors.text,
+    marginBottom: 2,
+    letterSpacing: -0.2,
+  },
+  insightLabel: {
+    fontSize: 11,
+    color: colors.textLight,
+    fontWeight: '500',
   },
 });

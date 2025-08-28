@@ -21,7 +21,7 @@ import {
   Plus,
   Filter,
 } from 'lucide-react-native';
-import { colors } from '@/constants/colors';
+import { colors, shadows } from '@/constants/colors';
 import { mockStaff } from '@/mocks/staff';
 import { Staff } from '@/types';
 
@@ -277,7 +277,7 @@ export default function StaffScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: colors.backgroundLight,
   },
   header: {
     flexDirection: 'row',
@@ -285,11 +285,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 20,
     paddingVertical: 16,
+    backgroundColor: colors.white,
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
+    ...shadows.small,
   },
   title: {
     fontSize: 28,
-    fontWeight: '700',
+    fontWeight: '800',
     color: colors.text,
+    letterSpacing: -0.5,
   },
   headerActions: {
     flexDirection: 'row',

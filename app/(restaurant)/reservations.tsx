@@ -21,7 +21,7 @@ import {
   MoreVertical,
   Filter,
 } from 'lucide-react-native';
-import { colors } from '@/constants/colors';
+import { colors, shadows } from '@/constants/colors';
 import { mockReservations } from '@/mocks/reservations';
 import { Reservation } from '@/types';
 
@@ -199,14 +199,36 @@ export default function ReservationsScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Reservations</Text>
-        <TouchableOpacity style={styles.filterIcon}>
-          <Filter size={24} color={colors.primary} />
-        </TouchableOpacity>
+        <View>
+          <Text style={styles.title}>Reservations</Text>
+          <Text style={styles.subtitle}>{filteredReservations.length} reservations today</Text>
+        </View>
+        <View style={styles.headerActions}>
+          <TouchableOpacity style={styles.calendarButton}>
+            <Calendar size={20} color={colors.primary} />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.filterIcon}>
+            <Filter size={20} color={colors.primary} />
+          </TouchableOpacity>
+        </View>
       </View>
 
       <View style={styles.dateSelector}>
         <Text style={styles.selectedDate}>Today - January 20, 2025</Text>
+        <View style={styles.statsRow}>
+          <View style={styles.statItem}>
+            <Text style={styles.statNumber}>{mockReservations.filter(r => r.status === 'pending').length}</Text>
+            <Text style={styles.statLabel}>Pending</Text>
+          </View>
+          <View style={styles.statItem}>
+            <Text style={styles.statNumber}>{mockReservations.filter(r => r.status === 'confirmed').length}</Text>
+            <Text style={styles.statLabel}>Confirmed</Text>
+          </View>
+          <View style={styles.statItem}>
+            <Text style={styles.statNumber}>{mockReservations.filter(r => r.status === 'seated').length}</Text>
+            <Text style={styles.statLabel}>Seated</Text>
+          </View>
+        </View>
       </View>
 
       <ScrollView
@@ -249,7 +271,7 @@ export default function ReservationsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: colors.backgroundLight,
   },
   header: {
     flexDirection: 'row',
@@ -257,22 +279,75 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 20,
     paddingVertical: 16,
+    backgroundColor: colors.white,
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
+    ...shadows.small,
   },
   title: {
     fontSize: 28,
-    fontWeight: '700',
+    fontWeight: '800',
     color: colors.text,
+    letterSpacing: -0.5,
+  },
+  subtitle: {
+    fontSize: 14,
+    color: colors.textLight,
+    marginTop: 2,
+  },
+  headerActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  calendarButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: colors.backgroundLight,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   filterIcon: {
-    padding: 8,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: colors.backgroundLight,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   dateSelector: {
     paddingHorizontal: 20,
-    paddingBottom: 16,
+    paddingVertical: 20,
   },
   selectedDate: {
-    fontSize: 16,
+    fontSize: 18,
+    fontWeight: '600',
+    color: colors.text,
+    marginBottom: 16,
+  },
+  statsRow: {
+    flexDirection: 'row',
+    backgroundColor: colors.white,
+    borderRadius: 16,
+    padding: 16,
+    ...shadows.small,
+  },
+  statItem: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  statNumber: {
+    fontSize: 20,
+    fontWeight: '800',
+    color: colors.primary,
+    letterSpacing: -0.3,
+  },
+  statLabel: {
+    fontSize: 12,
     color: colors.textLight,
+    marginTop: 4,
+    fontWeight: '600',
   },
   filterContainer: {
     paddingLeft: 20,
