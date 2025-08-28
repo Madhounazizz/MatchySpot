@@ -86,67 +86,88 @@ export default function ReservationsScreen() {
   );
 
   const ReservationCard = ({ reservation }: { reservation: Reservation }) => (
-    <View style={styles.reservationCard}>
+    <TouchableOpacity style={styles.reservationCard} activeOpacity={0.95}>
+      <View style={styles.cardHeader}>
+        <View style={styles.statusIndicatorBar}>
+          <View style={[
+            styles.statusIndicator,
+            { backgroundColor: getStatusColor(reservation.status) }
+          ]} />
+          <View style={[
+            styles.statusBadge,
+            { backgroundColor: getStatusColor(reservation.status) }
+          ]}>
+            <Text style={styles.statusText}>
+              {reservation.status.toUpperCase()}
+            </Text>
+          </View>
+        </View>
+        <TouchableOpacity style={styles.moreButton}>
+          <MoreVertical size={18} color={colors.textLight} strokeWidth={2} />
+        </TouchableOpacity>
+      </View>
+
       <View style={styles.reservationHeader}>
         <View style={styles.customerInfo}>
-          {reservation.customerAvatar && (
-            <Image
-              source={{ uri: reservation.customerAvatar }}
-              style={styles.customerAvatar}
-            />
-          )}
+          <View style={styles.avatarContainer}>
+            {reservation.customerAvatar ? (
+              <Image
+                source={{ uri: reservation.customerAvatar }}
+                style={styles.customerAvatar}
+              />
+            ) : (
+              <View style={styles.avatarPlaceholder}>
+                <Users size={24} color={colors.white} strokeWidth={2.5} />
+              </View>
+            )}
+          </View>
           <View style={styles.customerDetails}>
             <Text style={styles.customerName}>{reservation.customerName}</Text>
             <View style={styles.reservationMeta}>
-              <Clock size={14} color={colors.textLight} />
-              <Text style={styles.reservationTime}>{reservation.time}</Text>
-              <Users size={14} color={colors.textLight} />
-              <Text style={styles.partySize}>Party of {reservation.partySize}</Text>
+              <View style={styles.metaItem}>
+                <Clock size={16} color={colors.primary} strokeWidth={2.5} />
+                <Text style={styles.reservationTime}>{reservation.time}</Text>
+              </View>
+              <View style={styles.metaItem}>
+                <Users size={16} color={colors.secondary} strokeWidth={2.5} />
+                <Text style={styles.partySize}>Party of {reservation.partySize}</Text>
+              </View>
             </View>
           </View>
-        </View>
-        <View style={styles.reservationActions}>
-          <View
-            style={[
-              styles.statusBadge,
-              { backgroundColor: getStatusColor(reservation.status) + '15' },
-            ]}
-          >
-            <Text
-              style={[
-                styles.statusText,
-                { color: getStatusColor(reservation.status) },
-              ]}
-            >
-              {reservation.status}
-            </Text>
-          </View>
-          <TouchableOpacity style={styles.moreButton}>
-            <MoreVertical size={16} color={colors.textLight} />
-          </TouchableOpacity>
         </View>
       </View>
 
       {reservation.specialRequests && (
-        <View style={styles.specialRequests}>
-          <MessageSquare size={14} color={colors.textLight} />
+        <View style={styles.specialRequestsCard}>
+          <View style={styles.specialRequestsHeader}>
+            <MessageSquare size={16} color={colors.accent} strokeWidth={2.5} />
+            <Text style={styles.specialRequestsLabel}>Special Requests</Text>
+          </View>
           <Text style={styles.specialRequestsText}>{reservation.specialRequests}</Text>
         </View>
       )}
 
-      <View style={styles.reservationDetails}>
-        <View style={styles.detailItem}>
-          <Phone size={14} color={colors.textLight} />
-          <Text style={styles.detailText}>{reservation.customerPhone}</Text>
-        </View>
-        <View style={styles.detailItem}>
-          <Mail size={14} color={colors.textLight} />
-          <Text style={styles.detailText}>{reservation.customerEmail}</Text>
+      <View style={styles.contactSection}>
+        <View style={styles.contactGrid}>
+          <View style={styles.contactItem}>
+            <View style={styles.contactIcon}>
+              <Phone size={16} color={colors.primary} strokeWidth={2.5} />
+            </View>
+            <Text style={styles.contactText}>{reservation.customerPhone}</Text>
+          </View>
+          <View style={styles.contactItem}>
+            <View style={styles.contactIcon}>
+              <Mail size={16} color={colors.secondary} strokeWidth={2.5} />
+            </View>
+            <Text style={styles.contactText}>{reservation.customerEmail}</Text>
+          </View>
         </View>
         {reservation.tableNumber && (
-          <View style={styles.detailItem}>
-            <Text style={styles.tableLabel}>Table:</Text>
-            <Text style={styles.tableNumber}>{reservation.tableNumber}</Text>
+          <View style={styles.tableInfo}>
+            <Text style={styles.tableLabel}>Assigned Table</Text>
+            <View style={styles.tableNumberBadge}>
+              <Text style={styles.tableNumber}>#{reservation.tableNumber}</Text>
+            </View>
           </View>
         )}
       </View>
@@ -157,14 +178,14 @@ export default function ReservationsScreen() {
             style={[styles.actionButton, styles.confirmButton]}
             onPress={() => handleStatusUpdate(reservation.id, 'confirmed')}
           >
-            <Check size={16} color={colors.white} />
+            <Check size={18} color={colors.white} strokeWidth={2.5} />
             <Text style={styles.confirmButtonText}>Confirm</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.actionButton, styles.rejectButton]}
             onPress={() => handleStatusUpdate(reservation.id, 'cancelled')}
           >
-            <X size={16} color={colors.white} />
+            <X size={18} color={colors.white} strokeWidth={2.5} />
             <Text style={styles.rejectButtonText}>Decline</Text>
           </TouchableOpacity>
         </View>
@@ -176,7 +197,7 @@ export default function ReservationsScreen() {
             style={[styles.actionButton, styles.seatButton]}
             onPress={() => handleStatusUpdate(reservation.id, 'seated')}
           >
-            <Users size={16} color={colors.white} />
+            <Users size={18} color={colors.white} strokeWidth={2.5} />
             <Text style={styles.seatButtonText}>Seat Guests</Text>
           </TouchableOpacity>
         </View>
@@ -188,12 +209,12 @@ export default function ReservationsScreen() {
             style={[styles.actionButton, styles.completeButton]}
             onPress={() => handleStatusUpdate(reservation.id, 'completed')}
           >
-            <Check size={16} color={colors.white} />
+            <Check size={18} color={colors.white} strokeWidth={2.5} />
             <Text style={styles.completeButtonText}>Complete</Text>
           </TouchableOpacity>
         </View>
       )}
-    </View>
+    </TouchableOpacity>
   );
 
   return (
@@ -400,113 +421,182 @@ const styles = StyleSheet.create({
   },
   reservationCard: {
     backgroundColor: colors.white,
-    borderRadius: 32,
-    padding: 32,
-    marginBottom: 24,
+    borderRadius: 28,
+    padding: 24,
+    marginBottom: 20,
     ...shadows.large,
-    elevation: 10,
-    borderLeftWidth: 6,
-    borderLeftColor: colors.primary,
+    elevation: 12,
+    borderWidth: 0,
   },
-  reservationHeader: {
+  cardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: 12,
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  statusIndicatorBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  statusIndicator: {
+    width: 4,
+    height: 32,
+    borderRadius: 2,
+  },
+  statusBadge: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    ...shadows.small,
+    elevation: 4,
+  },
+  statusText: {
+    fontSize: 11,
+    fontWeight: '800',
+    color: colors.white,
+    letterSpacing: 0.5,
+  },
+  moreButton: {
+    padding: 8,
+    borderRadius: 12,
+    backgroundColor: colors.backgroundLight,
+  },
+  reservationHeader: {
+    marginBottom: 20,
   },
   customerInfo: {
     flexDirection: 'row',
-    flex: 1,
+    alignItems: 'center',
+  },
+  avatarContainer: {
+    marginRight: 16,
   },
   customerAvatar: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
-    marginRight: 24,
-    borderWidth: 4,
-    borderColor: colors.primary + '20',
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    borderWidth: 3,
+    borderColor: colors.white,
+    ...shadows.card,
+    elevation: 8,
+  },
+  avatarPlaceholder: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    ...shadows.card,
+    elevation: 8,
   },
   customerDetails: {
     flex: 1,
   },
   customerName: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: '900',
     color: colors.text,
-    marginBottom: 10,
-    letterSpacing: -0.5,
+    marginBottom: 8,
+    letterSpacing: -0.3,
   },
   reservationMeta: {
+    gap: 16,
+  },
+  metaItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: 8,
+    marginBottom: 4,
   },
   reservationTime: {
-    fontSize: 16,
-    color: colors.textLight,
-    marginRight: 12,
-    fontWeight: '600',
+    fontSize: 15,
+    color: colors.primary,
+    fontWeight: '700',
   },
   partySize: {
-    fontSize: 16,
-    color: colors.textLight,
-    fontWeight: '600',
+    fontSize: 15,
+    color: colors.secondary,
+    fontWeight: '700',
   },
-  reservationActions: {
-    alignItems: 'flex-end',
-    gap: 8,
-  },
-  statusBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
-  },
-  statusText: {
-    fontSize: 11,
-    fontWeight: '600',
-    textTransform: 'capitalize',
-  },
-  moreButton: {
-    padding: 4,
-  },
-  specialRequests: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    backgroundColor: colors.accent,
-    padding: 24,
+  specialRequestsCard: {
+    backgroundColor: colors.accent + '40',
+    padding: 20,
     borderRadius: 20,
-    marginBottom: 24,
-    gap: 16,
+    marginBottom: 20,
     borderLeftWidth: 4,
-    borderLeftColor: colors.secondary,
+    borderLeftColor: colors.accent,
+  },
+  specialRequestsHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 8,
+  },
+  specialRequestsLabel: {
+    fontSize: 14,
+    fontWeight: '800',
+    color: colors.accent,
+    letterSpacing: -0.1,
   },
   specialRequestsText: {
     fontSize: 14,
     color: colors.text,
-    flex: 1,
+    lineHeight: 20,
+    fontWeight: '500',
   },
-  reservationDetails: {
-    gap: 8,
+  contactSection: {
+    marginBottom: 20,
+  },
+  contactGrid: {
+    gap: 12,
     marginBottom: 16,
   },
-  detailItem: {
+  contactItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 12,
   },
-  detailText: {
+  contactIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: colors.backgroundLight,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  contactText: {
     fontSize: 14,
     color: colors.textLight,
+    fontWeight: '600',
+    flex: 1,
+  },
+  tableInfo: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: colors.backgroundLight,
+    padding: 16,
+    borderRadius: 16,
   },
   tableLabel: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: '700',
     color: colors.text,
+  },
+  tableNumberBadge: {
+    backgroundColor: colors.primary,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 12,
+    ...shadows.small,
+    elevation: 4,
   },
   tableNumber: {
     fontSize: 14,
-    fontWeight: '600',
-    color: colors.primary,
+    fontWeight: '800',
+    color: colors.white,
   },
   actionButtons: {
     flexDirection: 'row',

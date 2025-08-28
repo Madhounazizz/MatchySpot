@@ -130,74 +130,82 @@ export default function StaffScreen() {
           !staff.isActive && styles.inactiveCard,
         ]}
         onPress={() => handleStaffAction(staff)}
-        activeOpacity={0.7}
+        activeOpacity={0.95}
       >
         <View style={styles.staffHeader}>
           <View style={styles.staffInfo}>
-            <Image source={{ uri: staff.avatar }} style={styles.staffAvatar} />
+            <View style={styles.avatarContainer}>
+              <Image source={{ uri: staff.avatar }} style={styles.staffAvatar} />
+              <View style={[
+                styles.statusIndicator,
+                { backgroundColor: staff.isActive ? colors.success : colors.error }
+              ]} />
+            </View>
             <View style={styles.staffDetails}>
-              <View style={styles.nameRow}>
-                <Text style={styles.staffName}>{staff.name}</Text>
-                {staff.isActive ? (
-                  <CheckCircle size={16} color={colors.success} />
-                ) : (
-                  <XCircle size={16} color={colors.error} />
-                )}
-              </View>
-              <View style={styles.roleContainer}>
-                <View style={[styles.roleBadge, { backgroundColor: roleColor + '15' }]}>
-                  <RoleIcon size={12} color={roleColor} />
-                  <Text style={[styles.roleText, { color: roleColor }]}>
-                    {staff.role.charAt(0).toUpperCase() + staff.role.slice(1)}
-                  </Text>
-                </View>
+              <Text style={styles.staffName}>{staff.name}</Text>
+              <View style={[styles.roleBadge, { backgroundColor: roleColor + '12' }]}>
+                <RoleIcon size={14} color={roleColor} strokeWidth={2.5} />
+                <Text style={[styles.roleText, { color: roleColor }]}>
+                  {staff.role.charAt(0).toUpperCase() + staff.role.slice(1)}
+                </Text>
               </View>
             </View>
           </View>
           <TouchableOpacity style={styles.moreButton}>
-            <MoreVertical size={20} color={colors.textLight} />
+            <MoreVertical size={20} color={colors.textLight} strokeWidth={2} />
           </TouchableOpacity>
         </View>
 
-        <View style={styles.contactInfo}>
-          <View style={styles.contactItem}>
-            <Phone size={14} color={colors.textLight} />
-            <Text style={styles.contactText}>{staff.phone}</Text>
-          </View>
-          <View style={styles.contactItem}>
-            <Mail size={14} color={colors.textLight} />
-            <Text style={styles.contactText}>{staff.email}</Text>
+        <View style={styles.contactSection}>
+          <View style={styles.contactInfo}>
+            <View style={styles.contactItem}>
+              <View style={styles.contactIcon}>
+                <Phone size={16} color={colors.primary} strokeWidth={2.5} />
+              </View>
+              <Text style={styles.contactText}>{staff.phone}</Text>
+            </View>
+            <View style={styles.contactItem}>
+              <View style={styles.contactIcon}>
+                <Mail size={16} color={colors.secondary} strokeWidth={2.5} />
+              </View>
+              <Text style={styles.contactText}>{staff.email}</Text>
+            </View>
           </View>
         </View>
 
-        <View style={styles.scheduleInfo}>
+        <View style={styles.scheduleCard}>
           <View style={styles.scheduleHeader}>
-            <Clock size={14} color={colors.primary} />
-            <Text style={styles.scheduleLabel}>Schedule</Text>
+            <View style={styles.scheduleIcon}>
+              <Clock size={16} color={colors.white} strokeWidth={2.5} />
+            </View>
+            <Text style={styles.scheduleLabel}>Work Schedule</Text>
           </View>
-          <Text style={styles.scheduleTime}>
-            {staff.shift.start} - {staff.shift.end}
-          </Text>
-          <Text style={styles.scheduleDays}>
-            {staff.shift.days.join(', ')}
-          </Text>
+          <View style={styles.scheduleDetails}>
+            <Text style={styles.scheduleTime}>
+              {staff.shift.start} - {staff.shift.end}
+            </Text>
+            <Text style={styles.scheduleDays}>
+              {staff.shift.days.join(' • ')}
+            </Text>
+          </View>
         </View>
 
         <View style={styles.staffFooter}>
           <View style={styles.joinedInfo}>
-            <Calendar size={12} color={colors.textLight} />
+            <Calendar size={14} color={colors.textLight} strokeWidth={2} />
             <Text style={styles.joinedText}>
-              Joined {new Date(staff.joinedDate).toLocaleDateString()}
+              Joined {new Date(staff.joinedDate).toLocaleDateString('en-US', { 
+                month: 'short', 
+                day: 'numeric', 
+                year: 'numeric' 
+              })}
             </Text>
           </View>
           <View style={[
             styles.statusBadge,
-            { backgroundColor: staff.isActive ? colors.success + '15' : colors.error + '15' }
+            { backgroundColor: staff.isActive ? colors.success : colors.error }
           ]}>
-            <Text style={[
-              styles.statusText,
-              { color: staff.isActive ? colors.success : colors.error }
-            ]}>
+            <Text style={styles.statusText}>
               {staff.isActive ? 'Active' : 'Inactive'}
             </Text>
           </View>
@@ -354,114 +362,147 @@ const styles = StyleSheet.create({
   },
   staffCard: {
     backgroundColor: colors.white,
-    borderRadius: 32,
-    padding: 32,
-    marginBottom: 24,
+    borderRadius: 28,
+    padding: 28,
+    marginBottom: 20,
     ...shadows.large,
-    elevation: 10,
-    borderLeftWidth: 6,
-    borderLeftColor: colors.primary,
+    elevation: 12,
+    borderWidth: 0,
   },
   inactiveCard: {
-    opacity: 0.7,
+    opacity: 0.75,
   },
   staffHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: 12,
+    marginBottom: 20,
   },
   staffInfo: {
     flexDirection: 'row',
     flex: 1,
+    alignItems: 'center',
+  },
+  avatarContainer: {
+    position: 'relative',
+    marginRight: 20,
   },
   staffAvatar: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    marginRight: 24,
-    borderWidth: 4,
-    borderColor: colors.primary + '20',
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    borderWidth: 3,
+    borderColor: colors.white,
+    ...shadows.card,
+    elevation: 8,
+  },
+  statusIndicator: {
+    position: 'absolute',
+    bottom: 2,
+    right: 2,
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    borderWidth: 3,
+    borderColor: colors.white,
+    ...shadows.small,
+    elevation: 4,
   },
   staffDetails: {
     flex: 1,
   },
-  nameRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 6,
-  },
   staffName: {
-    fontSize: 26,
+    fontSize: 22,
     fontWeight: '900',
     color: colors.text,
-    flex: 1,
-    letterSpacing: -0.6,
-  },
-  roleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    marginBottom: 8,
+    letterSpacing: -0.4,
   },
   roleBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16,
-    gap: 6,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 20,
+    gap: 8,
+    alignSelf: 'flex-start',
   },
   roleText: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '800',
+    letterSpacing: 0.3,
   },
   moreButton: {
-    padding: 4,
+    padding: 8,
+    borderRadius: 12,
+    backgroundColor: colors.backgroundLight,
+  },
+  contactSection: {
+    marginBottom: 20,
   },
   contactInfo: {
-    gap: 8,
-    marginBottom: 12,
+    gap: 12,
   },
   contactItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 12,
+  },
+  contactIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: colors.backgroundLight,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   contactText: {
-    fontSize: 16,
+    fontSize: 15,
     color: colors.textLight,
     fontWeight: '600',
+    flex: 1,
   },
-  scheduleInfo: {
-    backgroundColor: colors.accent,
-    padding: 24,
+  scheduleCard: {
+    backgroundColor: colors.primary,
+    padding: 20,
     borderRadius: 20,
-    marginBottom: 24,
-    borderLeftWidth: 5,
-    borderLeftColor: colors.secondary,
-    ...shadows.small,
-    elevation: 3,
+    marginBottom: 20,
+    ...shadows.card,
+    elevation: 8,
   },
   scheduleHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    marginBottom: 6,
+    gap: 10,
+    marginBottom: 12,
+  },
+  scheduleIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   scheduleLabel: {
     fontSize: 16,
     fontWeight: '800',
-    color: colors.primary,
+    color: colors.white,
+    letterSpacing: -0.2,
+  },
+  scheduleDetails: {
+    paddingLeft: 42,
   },
   scheduleTime: {
     fontSize: 18,
-    fontWeight: '800',
-    color: colors.text,
-    marginBottom: 6,
+    fontWeight: '900',
+    color: colors.white,
+    marginBottom: 4,
+    letterSpacing: -0.3,
   },
   scheduleDays: {
-    fontSize: 16,
-    color: colors.textLight,
+    fontSize: 14,
+    color: 'rgba(255, 255, 255, 0.8)',
     fontWeight: '600',
   },
   staffFooter: {
@@ -472,21 +513,26 @@ const styles = StyleSheet.create({
   joinedInfo: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: 8,
   },
   joinedText: {
-    fontSize: 14,
+    fontSize: 13,
     color: colors.textLight,
     fontWeight: '600',
   },
   statusBadge: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 10,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    ...shadows.small,
+    elevation: 4,
   },
   statusText: {
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: '800',
+    color: colors.white,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   emptyState: {
     alignItems: 'center',

@@ -76,78 +76,99 @@ export default function MenuManagement() {
   };
 
   const MenuItemCard = ({ item }: { item: MenuItem }) => (
-    <View style={styles.menuItemCard}>
-      <Image source={{ uri: item.image }} style={styles.itemImage} />
+    <TouchableOpacity style={styles.menuItemCard} activeOpacity={0.95}>
+      <View style={styles.cardImageContainer}>
+        <Image source={{ uri: item.image }} style={styles.itemImage} />
+        <View style={styles.imageOverlay}>
+          <View style={[styles.availabilityBadge, { 
+            backgroundColor: item.isAvailable !== false ? colors.success : colors.error 
+          }]}>
+            <Text style={styles.availabilityText}>
+              {item.isAvailable !== false ? 'Available' : 'Unavailable'}
+            </Text>
+          </View>
+        </View>
+      </View>
+      
       <View style={styles.itemContent}>
         <View style={styles.itemHeader}>
-          <Text style={styles.itemName}>{item.name}</Text>
+          <View style={styles.itemTitleSection}>
+            <Text style={styles.itemName}>{item.name}</Text>
+            <View style={styles.ratingPriceRow}>
+              <View style={styles.ratingContainer}>
+                <Star size={16} color={colors.warning} fill={colors.warning} />
+                <Text style={styles.itemRating}>{item.rating}</Text>
+              </View>
+              <View style={styles.priceContainer}>
+                <Text style={styles.itemPrice}>${item.price}</Text>
+              </View>
+            </View>
+          </View>
+          
           <View style={styles.itemActions}>
             <TouchableOpacity
-              style={[styles.actionButton, { backgroundColor: colors.primary + '15' }]}
+              style={[styles.actionButton, { 
+                backgroundColor: item.isAvailable !== false ? colors.success + '15' : colors.textLight + '15' 
+              }]}
               onPress={() => toggleItemVisibility(item.id)}
             >
               {item.isAvailable !== false ? (
-                <Eye size={16} color={colors.primary} />
+                <Eye size={18} color={colors.success} strokeWidth={2.5} />
               ) : (
-                <EyeOff size={16} color={colors.textLight} />
+                <EyeOff size={18} color={colors.textLight} strokeWidth={2.5} />
               )}
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.actionButton, { backgroundColor: colors.warning + '15' }]}
+              style={[styles.actionButton, { backgroundColor: colors.primary + '15' }]}
               onPress={() => {
                 setEditingItem(item);
                 setShowAddModal(true);
               }}
             >
-              <Edit3 size={16} color={colors.warning} />
+              <Edit3 size={18} color={colors.primary} strokeWidth={2.5} />
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.actionButton, { backgroundColor: colors.error + '15' }]}
               onPress={() => deleteItem(item.id)}
             >
-              <Trash2 size={16} color={colors.error} />
+              <Trash2 size={18} color={colors.error} strokeWidth={2.5} />
             </TouchableOpacity>
           </View>
         </View>
+        
         <Text style={styles.itemDescription} numberOfLines={2}>
           {item.description}
         </Text>
+        
         <View style={styles.itemFooter}>
-          <View style={styles.priceContainer}>
-            <DollarSign size={16} color={colors.success} />
-            <Text style={styles.itemPrice}>${item.price}</Text>
-          </View>
-          <View style={styles.ratingContainer}>
-            <Star size={14} color={colors.accent} fill={colors.accent} />
-            <Text style={styles.itemRating}>{item.rating}</Text>
-          </View>
-          <View style={[styles.categoryBadge, { backgroundColor: getCategoryColor(item.category) + '15' }]}>
+          <View style={[styles.categoryBadge, { backgroundColor: getCategoryColor(item.category) + '12' }]}>
             <Text style={[styles.categoryText, { color: getCategoryColor(item.category) }]}>
               {item.category}
             </Text>
           </View>
+          
+          {(item.isVegetarian || item.isVegan || item.isGlutenFree) && (
+            <View style={styles.dietaryTags}>
+              {item.isVegetarian && (
+                <View style={[styles.dietaryTag, { backgroundColor: colors.success + '12' }]}>
+                  <Text style={[styles.dietaryTagText, { color: colors.success }]}>V</Text>
+                </View>
+              )}
+              {item.isVegan && (
+                <View style={[styles.dietaryTag, { backgroundColor: colors.primary + '12' }]}>
+                  <Text style={[styles.dietaryTagText, { color: colors.primary }]}>VG</Text>
+                </View>
+              )}
+              {item.isGlutenFree && (
+                <View style={[styles.dietaryTag, { backgroundColor: colors.warning + '12' }]}>
+                  <Text style={[styles.dietaryTagText, { color: colors.warning }]}>GF</Text>
+                </View>
+              )}
+            </View>
+          )}
         </View>
-        {(item.isVegetarian || item.isVegan || item.isGlutenFree) && (
-          <View style={styles.dietaryTags}>
-            {item.isVegetarian && (
-              <View style={[styles.dietaryTag, { backgroundColor: colors.success + '15' }]}>
-                <Text style={[styles.dietaryTagText, { color: colors.success }]}>Vegetarian</Text>
-              </View>
-            )}
-            {item.isVegan && (
-              <View style={[styles.dietaryTag, { backgroundColor: colors.primary + '15' }]}>
-                <Text style={[styles.dietaryTagText, { color: colors.primary }]}>Vegan</Text>
-              </View>
-            )}
-            {item.isGlutenFree && (
-              <View style={[styles.dietaryTag, { backgroundColor: colors.warning + '15' }]}>
-                <Text style={[styles.dietaryTagText, { color: colors.warning }]}>Gluten-Free</Text>
-              </View>
-            )}
-          </View>
-        )}
       </View>
-    </View>
+    </TouchableOpacity>
   );
 
   return (
@@ -374,106 +395,145 @@ const styles = StyleSheet.create({
   menuItemCard: {
     backgroundColor: colors.white,
     marginHorizontal: 28,
-    marginBottom: 28,
-    borderRadius: 32,
+    marginBottom: 24,
+    borderRadius: 28,
     ...shadows.large,
-    elevation: 10,
+    elevation: 12,
     overflow: 'hidden',
-    borderLeftWidth: 6,
-    borderLeftColor: colors.primary,
+    borderWidth: 0,
+  },
+  cardImageContainer: {
+    position: 'relative',
+    height: 200,
   },
   itemImage: {
     width: '100%',
-    height: 180,
+    height: '100%',
     backgroundColor: colors.backgroundLight,
   },
+  imageOverlay: {
+    position: 'absolute',
+    top: 16,
+    right: 16,
+  },
+  availabilityBadge: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+    ...shadows.small,
+    elevation: 4,
+  },
+  availabilityText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: colors.white,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
   itemContent: {
-    padding: 32,
+    padding: 24,
   },
   itemHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: 8,
+    marginBottom: 16,
+  },
+  itemTitleSection: {
+    marginBottom: 16,
   },
   itemName: {
-    fontSize: 26,
+    fontSize: 24,
     fontWeight: '900',
     color: colors.text,
-    flex: 1,
-    marginRight: 20,
-    letterSpacing: -0.6,
+    marginBottom: 12,
+    letterSpacing: -0.5,
+    lineHeight: 28,
+  },
+  ratingPriceRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   itemActions: {
     flexDirection: 'row',
-    gap: 8,
+    gap: 12,
+    justifyContent: 'flex-end',
   },
   actionButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 14,
+    width: 48,
+    height: 48,
+    borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
-    ...shadows.small,
-    elevation: 3,
+    ...shadows.card,
+    elevation: 6,
   },
   itemDescription: {
     fontSize: 16,
     color: colors.textLight,
     lineHeight: 24,
-    marginBottom: 16,
+    marginBottom: 20,
     fontWeight: '500',
   },
   itemFooter: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    gap: 16,
   },
   priceContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
+    backgroundColor: colors.success + '12',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
   },
   itemPrice: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: '900',
     color: colors.success,
-    letterSpacing: -0.6,
+    letterSpacing: -0.4,
   },
   ratingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
-  },
-  itemRating: {
-    fontSize: 16,
-    fontWeight: '800',
-    color: colors.text,
-  },
-  categoryBadge: {
+    gap: 6,
+    backgroundColor: colors.warning + '12',
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 10,
-    marginLeft: 'auto',
+    borderRadius: 16,
   },
-  categoryText: {
+  itemRating: {
     fontSize: 14,
     fontWeight: '800',
+    color: colors.warning,
+  },
+  categoryBadge: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: 'transparent',
+  },
+  categoryText: {
+    fontSize: 13,
+    fontWeight: '800',
     textTransform: 'capitalize',
+    letterSpacing: 0.3,
   },
   dietaryTags: {
     flexDirection: 'row',
-    gap: 6,
-    marginTop: 8,
+    gap: 8,
   },
   dietaryTag: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'transparent',
   },
   dietaryTagText: {
-    fontSize: 12,
-    fontWeight: '700',
+    fontSize: 11,
+    fontWeight: '900',
+    letterSpacing: 0.2,
   },
   emptyState: {
     alignItems: 'center',
