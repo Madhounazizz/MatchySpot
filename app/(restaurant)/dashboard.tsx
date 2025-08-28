@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import {
   View,
   Text,
@@ -19,7 +19,7 @@ import {
   AlertCircle,
   CheckCircle,
   ChefHat,
-  Settings,
+  Settings as SettingsIcon,
   BarChart3,
   Bell,
   ArrowUpRight,
@@ -28,11 +28,6 @@ import {
   Zap,
   Award,
   Target,
-  Sparkles,
-  TrendingDown,
-  Eye,
-  Coffee,
-  Utensils,
 } from 'lucide-react-native';
 import { colors, shadows } from '@/constants/colors';
 import { mockReservations } from '@/mocks/reservations';
@@ -40,7 +35,7 @@ import { mockStaff } from '@/mocks/staff';
 import { RestaurantStats } from '@/types';
 
 const { width } = Dimensions.get('window');
-const cardWidth = (width - 48) / 2;
+const cardWidth = (width - 28 * 2 - 20) / 2;
 
 const mockStats: RestaurantStats = {
   todayReservations: 24,
@@ -66,17 +61,18 @@ const getTimeOfDayGreeting = () => {
 };
 
 export default function RestaurantDashboard() {
+  console.log('[Dashboard] Render');
   const todayReservations = mockReservations.filter(
     (reservation) => reservation.date === '2025-01-20'
   );
-  
+
   const pendingReservations = todayReservations.filter(
     (reservation) => reservation.status === 'pending'
   );
-  
+
   const activeStaff = mockStaff.filter((staff) => staff.isActive);
 
-  const StatCard = ({ 
+  const StatCard = memo(({ 
     icon: Icon, 
     title, 
     value, 
@@ -98,14 +94,14 @@ export default function RestaurantDashboard() {
     const CardContent = (
       <>
         <View style={styles.statCardHeader}>
-          <View style={[styles.statIconContainer, { backgroundColor: gradient ? 'rgba(255,255,255,0.2)' : color + '15' }]}>
+          <View style={[styles.statIconContainer, { backgroundColor: gradient ? 'rgba(255,255,255,0.2)' : (color + '20') }]}>
             <Icon size={24} color={gradient ? colors.white : color} strokeWidth={2.5} />
           </View>
           {trend && (
             <View style={[styles.trendIndicator, { 
-              backgroundColor: trend === 'up' ? (gradient ? 'rgba(255,255,255,0.2)' : colors.success + '15') : 
-                             trend === 'down' ? (gradient ? 'rgba(255,255,255,0.2)' : colors.error + '15') : 
-                             (gradient ? 'rgba(255,255,255,0.2)' : colors.textLight + '15')
+              backgroundColor: trend === 'up' ? (gradient ? 'rgba(255,255,255,0.2)' : colors.success + '20') : 
+                             trend === 'down' ? (gradient ? 'rgba(255,255,255,0.2)' : colors.error + '20') : 
+                             (gradient ? 'rgba(255,255,255,0.2)' : colors.textLight + '20')
             }]}>
               <ArrowUpRight 
                 size={14} 
@@ -117,9 +113,11 @@ export default function RestaurantDashboard() {
           )}
         </View>
         <View style={styles.statContent}>
-          <Text style={[styles.statValue, gradient && { color: colors.white }]}>{value}</Text>
-          <Text style={[styles.statTitle, gradient && { color: 'rgba(255,255,255,0.9)' }]}>{title}</Text>
-          {subtitle && <Text style={[styles.statSubtitle, gradient && { color: 'rgba(255,255,255,0.7)' }]}>{subtitle}</Text>}
+          <Text style={[styles.statValue, gradient ? { color: colors.white } : undefined]}>{value}</Text>
+          <Text style={[styles.statTitle, gradient ? { color: 'rgba(255,255,255,0.9)' } : undefined]}>{title}</Text>
+          {subtitle ? (
+            <Text style={[styles.statSubtitle, gradient ? { color: 'rgba(255,255,255,0.7)' } : undefined]}>{subtitle}</Text>
+          ) : null}
         </View>
       </>
     );
@@ -130,6 +128,7 @@ export default function RestaurantDashboard() {
           style={[styles.statCard, styles.gradientCard]} 
           onPress={onPress}
           activeOpacity={onPress ? 0.8 : 1}
+          testID={`stat-${title.toLowerCase().replace(/\s+/g, '-')}`}
         >
           <View style={[styles.gradientBackground, { backgroundColor: color }]}>
             {CardContent}
@@ -140,16 +139,17 @@ export default function RestaurantDashboard() {
 
     return (
       <TouchableOpacity 
-        style={[styles.statCard, onPress && styles.pressableCard]} 
+        style={[styles.statCard]} 
         onPress={onPress}
         activeOpacity={onPress ? 0.8 : 1}
+        testID={`stat-${title.toLowerCase().replace(/\s+/g, '-')}`}
       >
         {CardContent}
       </TouchableOpacity>
     );
-  };
+  }, (prev, next) => prev.value === next.value && prev.subtitle === next.subtitle && prev.color === next.color && prev.trend === next.trend);
 
-  const QuickActionCard = ({ 
+  const QuickActionCard = memo(({ 
     icon: Icon, 
     title, 
     description, 
@@ -168,36 +168,36 @@ export default function RestaurantDashboard() {
       style={styles.actionCard} 
       onPress={onPress}
       activeOpacity={0.8}
+      testID={`quick-action-${title.toLowerCase().replace(/\s+/g, '-')}`}
     >
       <View style={styles.actionHeader}>
         <View style={[styles.actionIconContainer, { backgroundColor: color + '12' }]}>
           <Icon size={18} color={color} strokeWidth={2.5} />
         </View>
-        {badge && badge > 0 && (
+        {badge && badge > 0 ? (
           <View style={styles.badge}>
             <Text style={styles.badgeText}>{badge > 99 ? '99+' : badge}</Text>
           </View>
-        )}
+        ) : null}
       </View>
       <View style={styles.actionContent}>
         <Text style={styles.actionTitle}>{title}</Text>
         <Text style={styles.actionDescription}>{description}</Text>
       </View>
     </TouchableOpacity>
-  );
+  ), (prev, next) => prev.description === next.description && prev.badge === next.badge && prev.color === next.color);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} testID="restaurant-dashboard">
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        {/* Modern Header with Gradient */}
-        <View style={styles.header}>
+        <View style={styles.header} testID="dashboard-header">
           <View style={styles.gradientHeader}>
             <View style={styles.headerTop}>
               <View style={styles.headerLeft}>
                 <Text style={styles.welcomeText}>{getTimeOfDayGreeting()}!</Text>
                 <Text style={styles.restaurantName}>Bella Vista Restaurant</Text>
                 <View style={styles.locationContainer}>
-                  <MapPin size={16} color="rgba(255,255,255,0.8)" />
+                  <MapPin size={16} color={colors.white} />
                   <Text style={styles.locationText}>Downtown, NYC</Text>
                 </View>
               </View>
@@ -209,38 +209,41 @@ export default function RestaurantDashboard() {
                   <Bell size={20} color={colors.white} />
                   <View style={styles.notificationDot} />
                 </TouchableOpacity>
+                <TouchableOpacity style={styles.headerButton}>
+                  <SettingsIcon size={20} color={colors.white} />
+                </TouchableOpacity>
               </View>
             </View>
-            
-            {/* Live Status Bar */}
-            <View style={styles.liveStatusBar}>
-              <View style={styles.statusItem}>
-                <View style={styles.liveIndicator} />
-                <Text style={styles.liveText}>Live</Text>
-              </View>
-              <View style={styles.statusItem}>
-                <Zap size={14} color="rgba(255,255,255,0.9)" />
-                <Text style={styles.statusText}>{activeStaff.length} staff active</Text>
-              </View>
-              <View style={styles.statusItem}>
-                <Target size={14} color="rgba(255,255,255,0.9)" />
-                <Text style={styles.statusText}>{mockStats.occupancyRate}% occupied</Text>
+
+            <View style={styles.liveStatusBar} testID="live-status">
+              <View style={styles.statusItemRow}>
+                <View style={styles.statusItemLeft}>
+                  <View style={styles.liveIndicator} />
+                  <Text style={styles.liveText}>Live</Text>
+                </View>
+                <View style={styles.statusItemLeft}>
+                  <Zap size={14} color={'rgba(255,255,255,0.9)'} />
+                  <Text style={styles.statusText}>{activeStaff.length} staff active</Text>
+                </View>
+                <View style={styles.statusItemLeft}>
+                  <Target size={14} color={'rgba(255,255,255,0.9)'} />
+                  <Text style={styles.statusText}>{mockStats.occupancyRate}% occupied</Text>
+                </View>
               </View>
             </View>
           </View>
         </View>
 
-        {/* Enhanced Stats Grid */}
-        <View style={styles.statsSection}>
+        <View style={styles.statsSection} testID="stats-section">
           <View style={styles.statsGrid}>
             <StatCard
               icon={DollarSign}
               title={"Today's Revenue"}
-              value={`${mockStats.todayRevenue.toLocaleString()}`}
-              subtitle="+18% vs yesterday"
+              value={`$${mockStats.todayRevenue.toLocaleString()}`}
+              subtitle={'+18% vs yesterday'}
               color={colors.success}
               trend="up"
-              gradient={true}
+              gradient
             />
             <StatCard
               icon={Calendar}
@@ -254,7 +257,7 @@ export default function RestaurantDashboard() {
               icon={Activity}
               title={"Occupancy"}
               value={`${mockStats.occupancyRate}%`}
-              subtitle="Peak hours: 7-9 PM"
+              subtitle={'Peak hours: 7-9 PM'}
               color={colors.secondary}
               trend="up"
             />
@@ -269,8 +272,7 @@ export default function RestaurantDashboard() {
           </View>
         </View>
 
-        {/* Enhanced Quick Actions */}
-        <View style={styles.section}>
+        <View style={styles.section} testID="quick-actions-section">
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Quick Actions</Text>
             <TouchableOpacity style={styles.seeAllButton}>
@@ -294,20 +296,19 @@ export default function RestaurantDashboard() {
             <QuickActionCard
               icon={ChefHat}
               title={"Menu Management"}
-              description={"Update dishes & pricing"}
+              description={'Update dishes & pricing'}
               color={colors.secondary}
             />
             <QuickActionCard
               icon={BarChart3}
               title={"Analytics"}
-              description={"View detailed reports"}
+              description={'View detailed reports'}
               color={colors.success}
             />
           </View>
         </View>
 
-        {/* Performance Insights */}
-        <View style={styles.section}>
+        <View style={styles.section} testID="insights-section">
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Performance Insights</Text>
             <TouchableOpacity style={styles.seeAllButton}>
@@ -358,8 +359,7 @@ export default function RestaurantDashboard() {
           </View>
         </View>
 
-        {/* Enhanced Recent Activity */}
-        <View style={styles.section}>
+        <View style={styles.section} testID="activity-section">
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Live Activity Feed</Text>
             <TouchableOpacity style={styles.seeAllButton}>
@@ -370,7 +370,7 @@ export default function RestaurantDashboard() {
             {recentActivities.map((activity, index) => (
               <TouchableOpacity key={activity.id} style={[
                 styles.activityItem,
-                index === recentActivities.length - 1 && styles.lastActivityItem
+                index === recentActivities.length - 1 ? styles.lastActivityItem : undefined
               ]}>
                 <View style={styles.activityLeft}>
                   <View style={[styles.activityIcon, {
@@ -395,29 +395,10 @@ export default function RestaurantDashboard() {
           </View>
         </View>
 
-        {/* Bottom Spacing */}
         <View style={styles.bottomSpacing} />
       </ScrollView>
     </SafeAreaView>
   );
-}
-
-function getStatusColor(status: string): string {
-  switch (status) {
-    case 'confirmed':
-      return colors.success;
-    case 'pending':
-      return colors.warning;
-    case 'seated':
-      return colors.primary;
-    case 'completed':
-      return colors.textLight;
-    case 'cancelled':
-    case 'no-show':
-      return colors.error;
-    default:
-      return colors.textLight;
-  }
 }
 
 const styles = StyleSheet.create({
@@ -440,8 +421,7 @@ const styles = StyleSheet.create({
   gradientHeader: {
     paddingHorizontal: 28,
     paddingBottom: 32,
-    backgroundColor: '#6366f1',
-    background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%)',
+    backgroundColor: colors.primary,
   },
   headerTop: {
     flexDirection: 'row',
@@ -455,7 +435,6 @@ const styles = StyleSheet.create({
   headerActions: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 16,
   },
   headerButton: {
     width: 48,
@@ -464,9 +443,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     alignItems: 'center',
     justifyContent: 'center',
-    backdropFilter: 'blur(20px)',
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.3)',
+    marginRight: 12,
   },
   welcomeText: {
     fontSize: 18,
@@ -475,47 +454,47 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   restaurantName: {
-    fontSize: 36,
+    fontSize: 32,
     fontWeight: '900',
     color: colors.white,
-    marginBottom: 12,
-    letterSpacing: -1.2,
-    textShadowColor: 'rgba(0, 0, 0, 0.1)',
-    textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 4,
+    marginBottom: 10,
+    letterSpacing: -0.8,
   },
   locationContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    marginTop: 4,
   },
   locationText: {
     fontSize: 15,
     color: 'rgba(255, 255, 255, 0.8)',
     fontWeight: '500',
+    marginLeft: 6,
   },
   liveStatusBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
     backgroundColor: 'rgba(255, 255, 255, 0.15)',
-    borderRadius: 20,
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    backdropFilter: 'blur(20px)',
+    borderRadius: 18,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.2)',
   },
-  statusItem: {
+  statusItemRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    justifyContent: 'space-between',
+  },
+  statusItemLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginRight: 12,
   },
   liveIndicator: {
     width: 8,
     height: 8,
     borderRadius: 4,
     backgroundColor: colors.success,
+    marginRight: 6,
   },
   liveText: {
     fontSize: 12,
@@ -523,11 +502,13 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
+    marginRight: 8,
   },
   statusText: {
     fontSize: 12,
     color: 'rgba(255, 255, 255, 0.9)',
     fontWeight: '600',
+    marginLeft: 6,
   },
   notificationButton: {
     width: 44,
@@ -537,7 +518,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
-    backdropFilter: 'blur(10px)',
+    marginRight: 12,
   },
   notificationDot: {
     position: 'absolute',
@@ -552,47 +533,43 @@ const styles = StyleSheet.create({
   },
   statsSection: {
     paddingHorizontal: 28,
-    paddingTop: 40,
+    paddingTop: 28,
   },
   statsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 20,
+    marginHorizontal: -10,
   },
   statCard: {
     backgroundColor: colors.white,
-    borderRadius: 28,
-    padding: 24,
+    borderRadius: 20,
+    padding: 18,
     width: cardWidth,
     ...shadows.large,
     borderWidth: 0,
-    elevation: 12,
-    borderTopWidth: 0,
+    elevation: 8,
+    margin: 10,
   },
   gradientCard: {
     overflow: 'hidden',
     ...shadows.large,
-    elevation: 15,
-    borderTopWidth: 0,
+    elevation: 12,
   },
   gradientBackground: {
-    borderRadius: 28,
-    padding: 24,
+    borderRadius: 20,
+    padding: 18,
     backgroundColor: colors.success,
-  },
-  pressableCard: {
-    transform: [{ scale: 1 }],
   },
   statCardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 14,
   },
   statIconContainer: {
-    width: 64,
-    height: 64,
-    borderRadius: 20,
+    width: 56,
+    height: 56,
+    borderRadius: 18,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -602,46 +579,43 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
-    gap: 4,
   },
   statContent: {
     flex: 1,
   },
   statValue: {
-    fontSize: 40,
+    fontSize: 32,
     fontWeight: '900',
     color: colors.text,
-    marginBottom: 10,
-    letterSpacing: -1.5,
+    marginBottom: 8,
+    letterSpacing: -0.5,
   },
   statTitle: {
-    fontSize: 15,
+    fontSize: 14,
     color: colors.textLight,
-    marginBottom: 8,
+    marginBottom: 6,
     fontWeight: '700',
-    letterSpacing: -0.3,
   },
   statSubtitle: {
-    fontSize: 13,
+    fontSize: 12,
     color: colors.textExtraLight,
     fontWeight: '600',
     lineHeight: 18,
   },
   section: {
-    marginTop: 48,
+    marginTop: 28,
     paddingHorizontal: 28,
   },
   sectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 12,
   },
   sectionTitle: {
-    fontSize: 26,
+    fontSize: 22,
     fontWeight: '900',
     color: colors.text,
-    letterSpacing: -0.6,
   },
   seeAllButton: {
     paddingHorizontal: 12,
@@ -657,16 +631,17 @@ const styles = StyleSheet.create({
   actionsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 12,
+    marginHorizontal: -8,
   },
   actionCard: {
     backgroundColor: colors.white,
-    borderRadius: 24,
-    padding: 20,
+    borderRadius: 18,
+    padding: 16,
     width: cardWidth,
     ...shadows.card,
     borderWidth: 0,
-    elevation: 10,
+    elevation: 6,
+    margin: 8,
     borderTopWidth: 3,
     borderTopColor: colors.primary,
   },
@@ -674,12 +649,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 12,
+    marginBottom: 10,
   },
   actionIconContainer: {
-    width: 52,
-    height: 52,
-    borderRadius: 16,
+    width: 48,
+    height: 48,
+    borderRadius: 14,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -704,8 +679,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '800',
     color: colors.text,
-    marginBottom: 6,
-    letterSpacing: -0.3,
+    marginBottom: 4,
   },
   actionDescription: {
     fontSize: 13,
@@ -715,8 +689,8 @@ const styles = StyleSheet.create({
   },
   activityList: {
     backgroundColor: colors.white,
-    borderRadius: 24,
-    padding: 24,
+    borderRadius: 20,
+    padding: 20,
     ...shadows.large,
     borderWidth: 0,
     elevation: 12,
@@ -727,7 +701,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 18,
+    paddingVertical: 16,
     borderBottomWidth: 1,
     borderBottomColor: colors.border + '30',
   },
@@ -755,7 +729,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: colors.text,
     marginBottom: 4,
-    letterSpacing: -0.2,
   },
   activityTime: {
     fontSize: 13,
@@ -776,8 +749,8 @@ const styles = StyleSheet.create({
   },
   insightsCard: {
     backgroundColor: colors.white,
-    borderRadius: 24,
-    padding: 24,
+    borderRadius: 20,
+    padding: 20,
     ...shadows.large,
     borderWidth: 0,
     elevation: 12,
@@ -787,13 +760,13 @@ const styles = StyleSheet.create({
   insightRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 16,
+    marginBottom: 12,
   },
   insightItem: {
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
-    marginHorizontal: 8,
+    marginHorizontal: 6,
   },
   insightIcon: {
     width: 36,
@@ -811,7 +784,6 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: colors.text,
     marginBottom: 2,
-    letterSpacing: -0.2,
   },
   insightLabel: {
     fontSize: 11,
