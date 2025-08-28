@@ -149,17 +149,18 @@ export default function TablesScreen() {
         if (!d) return setDrag(null);
         const dropX = gesture.moveX;
         const dropY = gesture.moveY;
-        let droppedOn: TableWithPos | null = null;
+        let droppedOnId: string | null = null;
         Object.entries(tableFrames.current).forEach(([id, frame]) => {
           const withinX = dropX >= frame.x && dropX <= frame.x + frame.w;
           const withinY = dropY >= frame.y && dropY <= frame.y + frame.h;
           if (withinX && withinY) {
             const t = tables.find(tb => tb.id === id) || null;
-            if (t) droppedOn = t;
+            if (t) droppedOnId = t.id;
           }
         });
-        if (droppedOn && d.type === 'reservation') {
-          updateTable(droppedOn.id, { status: 'reserved', reservationId: d.id });
+        if (droppedOnId !== null && d.type === 'reservation') {
+          console.log('Dropping reservation on table', droppedOnId, 'reservation', d.id);
+          updateTable(droppedOnId, { status: 'reserved', reservationId: d.id });
         }
         setDrag(null);
       },
