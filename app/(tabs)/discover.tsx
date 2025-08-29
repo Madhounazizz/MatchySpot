@@ -165,21 +165,7 @@ export default function DiscoverScreen() {
 
   return (
     <View style={styles.container}>
-      {/* QR Scanner Button */}
-      <TouchableOpacity
-        style={styles.qrButton}
-        onPress={() => router.push('/qr-scanner')}
-      >
-        <LinearGradient
-          colors={['#FF6B6B', '#4ECDC4']}
-          style={styles.qrButtonGradient}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
-        >
-          <QrCode size={24} color="#FFF" />
-          <Text style={styles.qrButtonText}>Scan QR</Text>
-        </LinearGradient>
-      </TouchableOpacity>
+
 
       <View style={styles.cardsContainer}>{renderCards()}</View>
       
@@ -507,25 +493,5 @@ const styles = StyleSheet.create({
     color: colors.textLight,
     textAlign: 'center',
   },
-  qrButton: {
-    position: 'absolute',
-    top: 60,
-    right: 20,
-    zIndex: 10,
-    borderRadius: 25,
-    overflow: 'hidden',
-    ...shadows.medium,
-  },
-  qrButtonGradient: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    gap: 8,
-  },
-  qrButtonText: {
-    color: '#FFF',
-    fontSize: 16,
-    fontWeight: '600' as const,
-  },
+
 });

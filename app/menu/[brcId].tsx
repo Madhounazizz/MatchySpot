@@ -100,17 +100,13 @@ export default function MenuScreen() {
     
     Alert.alert(
       '✅ Order Placed Successfully!',
-      `Your access code: ${code}\n\nUse this code to join the restaurant chatroom`,
+      `Your access code: ${code}\n\nRedirecting to chatroom...`,
       [
         {
-          text: 'Join Chatroom',
+          text: 'OK',
           onPress: () => {
             router.push(`/brc/chatroom/${brcId}`);
           },
-        },
-        {
-          text: 'Later',
-          style: 'cancel',
         },
       ]
     );
@@ -120,7 +116,7 @@ export default function MenuScreen() {
     setCart([]);
     setCustomerName('');
     setTableNumber('');
-  }, [brcId, createSession, router]);
+  }, [brcId, createSession, router, customerName, tableNumber]);
 
   return (
     <View style={styles.container}>

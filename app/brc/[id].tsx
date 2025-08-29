@@ -1,32 +1,26 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import { StyleSheet, View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { Image } from 'expo-image';
 import { useLocalSearchParams, Stack, useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Heart, Star, MapPin, Clock, Phone, Share, Calendar, MessageCircle, ThumbsUp, ShoppingBag } from 'lucide-react-native';
+import { Heart, Star, MapPin, Clock, Phone, Share, Calendar, MessageCircle, ThumbsUp } from 'lucide-react-native';
 import { colors, shadows } from '@/constants/colors';
 import Button from '@/components/Button';
 import { brcs } from '@/mocks/brcs';
 import { menuItems } from '@/mocks/menu';
 import { reviews } from '@/mocks/reviews';
 import { useUserStore } from '@/store/useUserStore';
-import OrderPaymentModal from '@/components/OrderPaymentModal';
-import AccessCodeModal from '@/components/AccessCodeModal';
-import JoinChatroomModal from '@/components/JoinChatroomModal';
-import { useBRCChat } from '@/store/useBRCChatStore';
+
 
 
 
 export default function BRCDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
-  const { toggleFavorite, isFavorite, currentUser } = useUserStore();
-  const { createSession } = useBRCChat();
+  const { toggleFavorite, isFavorite } = useUserStore();
+
   const [selectedMenuCategory, setSelectedMenuCategory] = useState('all');
-  const [showOrderModal, setShowOrderModal] = useState(false);
-  const [showAccessCodeModal, setShowAccessCodeModal] = useState(false);
-  const [showJoinModal, setShowJoinModal] = useState(false);
-  const [accessCode, setAccessCode] = useState('');
+
   
   const brc = brcs.find((b) => b.id === id);
   const brcMenuItems = menuItems.filter((item) => item.brcId === id);
@@ -64,42 +58,10 @@ export default function BRCDetailScreen() {
   };
 
   const handleViewAllReviews = () => {
-    router.push(`/reviews/index?brcId=${brc.id}`);
+    router.push('/reviews');
   };
 
-  const handlePlaceOrder = () => {
-    setShowOrderModal(true);
-  };
 
-  const handlePaymentComplete = (code: string) => {
-    setAccessCode(code);
-    setShowOrderModal(false);
-    setShowAccessCodeModal(true);
-  };
-
-  const handleJoinChatroom = () => {
-    setShowAccessCodeModal(false);
-    setShowJoinModal(true);
-  };
-
-  const handleJoinComplete = async (isAnonymous: boolean, customNickname?: string) => {
-    try {
-      await createSession(brc.id, isAnonymous, customNickname);
-      
-      setShowJoinModal(false);
-      router.push(`/brc/chatroom/${brc.id}`);
-    } catch {
-      Alert.alert('Error', 'Failed to join chatroom. Please try again.');
-    }
-  };
-
-  const generateAnonymousName = () => {
-    const adjectives = ['Cool', 'Happy', 'Swift', 'Bright', 'Clever', 'Friendly', 'Lucky', 'Sunny'];
-    const nouns = ['Panda', 'Tiger', 'Eagle', 'Dolphin', 'Fox', 'Wolf', 'Bear', 'Lion'];
-    const adj = adjectives[Math.floor(Math.random() * adjectives.length)];
-    const noun = nouns[Math.floor(Math.random() * nouns.length)];
-    return `${adj}${noun}${Math.floor(Math.random() * 99) + 1}`;
-  };
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -363,13 +325,6 @@ export default function BRCDetailScreen() {
           
           <View style={styles.actionsContainer}>
             <Button
-              title="Place Order"
-              onPress={handlePlaceOrder}
-              style={styles.actionButton}
-              icon={<ShoppingBag size={20} color={colors.white} />}
-            />
-            
-            <Button
               title="View on Map"
               variant="outline"
               onPress={() => router.push('/map')}
@@ -380,28 +335,7 @@ export default function BRCDetailScreen() {
         </View>
       </ScrollView>
       
-      <OrderPaymentModal
-        visible={showOrderModal}
-        onClose={() => setShowOrderModal(false)}
-        onPaymentComplete={handlePaymentComplete}
-        brcName={brc.name}
-      />
-      
-      <AccessCodeModal
-        visible={showAccessCodeModal}
-        onClose={() => setShowAccessCodeModal(false)}
-        onJoinChatroom={handleJoinChatroom}
-        accessCode={accessCode}
-        brcName={brc.name}
-      />
-      
-      <JoinChatroomModal
-        visible={showJoinModal}
-        onClose={() => setShowJoinModal(false)}
-        onJoin={handleJoinComplete}
-        brcName={brc.name}
-        generateAnonymousName={generateAnonymousName}
-      />
+
       
       <View style={styles.footer}>
         <View style={styles.footerContent}>
