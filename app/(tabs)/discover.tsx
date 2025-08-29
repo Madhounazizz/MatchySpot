@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, Animated, PanResponder, Dimensions, Image } from 'react-native';
+import { StyleSheet, View, Text, Animated, PanResponder, Dimensions, Image, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { X, Heart, Star, MapPin, Calendar, Coffee } from 'lucide-react-native';
+import { X, Heart, Star, MapPin, Calendar, Coffee, QrCode } from 'lucide-react-native';
 import { colors, shadows } from '@/constants/colors';
 import Button from '@/components/Button';
 import { users } from '@/mocks/users';
 import { brcs } from '@/mocks/brcs';
+import { useRouter } from 'expo-router';
 
 const { width, height } = Dimensions.get('window');
 const CARD_WIDTH = width * 0.9;
@@ -13,6 +14,7 @@ const CARD_HEIGHT = height * 0.6;
 const SWIPE_THRESHOLD = width * 0.3;
 
 export default function DiscoverScreen() {
+  const router = useRouter();
   const [currentIndex, setCurrentIndex] = useState(0);
   const position = new Animated.ValueXY();
   const rotate = position.x.interpolate({
@@ -163,6 +165,22 @@ export default function DiscoverScreen() {
 
   return (
     <View style={styles.container}>
+      {/* QR Scanner Button */}
+      <TouchableOpacity
+        style={styles.qrButton}
+        onPress={() => router.push('/qr-scanner')}
+      >
+        <LinearGradient
+          colors={['#FF6B6B', '#4ECDC4']}
+          style={styles.qrButtonGradient}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+        >
+          <QrCode size={24} color="#FFF" />
+          <Text style={styles.qrButtonText}>Scan QR</Text>
+        </LinearGradient>
+      </TouchableOpacity>
+
       <View style={styles.cardsContainer}>{renderCards()}</View>
       
       <View style={styles.buttonsContainer}>
@@ -488,5 +506,26 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: colors.textLight,
     textAlign: 'center',
+  },
+  qrButton: {
+    position: 'absolute',
+    top: 60,
+    right: 20,
+    zIndex: 10,
+    borderRadius: 25,
+    overflow: 'hidden',
+    ...shadows.medium,
+  },
+  qrButtonGradient: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    gap: 8,
+  },
+  qrButtonText: {
+    color: '#FFF',
+    fontSize: 16,
+    fontWeight: '600' as const,
   },
 });
