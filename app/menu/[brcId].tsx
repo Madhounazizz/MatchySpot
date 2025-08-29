@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   Image,
   Alert,
-  Dimensions,
   Modal,
   TextInput,
 } from 'react-native';
@@ -18,8 +17,6 @@ import { useBRCChat } from '@/store/useBRCChatStore';
 import { useUserStore } from '@/store/useUserStore';
 import { menuItems } from '@/mocks/menu';
 import { brcs } from '@/mocks/brcs';
-
-const { width } = Dimensions.get('window');
 
 interface CartItem {
   id: string;
@@ -100,13 +97,16 @@ export default function MenuScreen() {
     try {
       // Ensure user is logged in before creating session
       if (!isLoggedIn) {
+        console.log('User not logged in, logging in as customer...');
         login('customer');
-        // Wait a bit for the login to complete
-        await new Promise(resolve => setTimeout(resolve, 100));
+        // Wait for the login to complete
+        await new Promise(resolve => setTimeout(resolve, 500));
       }
 
+      console.log('Creating session for brcId:', brcId);
       // Generate access code for chatroom
       const code = await createSession(brcId || '', false);
+      console.log('Session created with code:', code);
     
       Alert.alert(
         '✅ Order Placed Successfully!',
@@ -128,7 +128,8 @@ export default function MenuScreen() {
       setTableNumber('');
     } catch (error) {
       console.error('Failed to create session:', error);
-      Alert.alert('Error', 'Failed to place order. Please try again.');
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      Alert.alert('Error', `Failed to place order: ${errorMessage}. Please try again.`);
     }
   }, [brcId, createSession, router, customerName, tableNumber, isLoggedIn, login]);
 
