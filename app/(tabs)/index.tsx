@@ -38,14 +38,7 @@ export default function HomeScreen() {
     router.push('/(tabs)/discover');
   };
 
-  const handleSeeAllUsers = () => {
-    router.push('/discover');
-  };
 
-  const handleUserPress = (userId: string) => {
-    // Navigate to user profile or start chat
-    router.push(`/chat/${userId}`);
-  };
 
   const filteredBRCs = selectedCategory === 'all' 
     ? brcs 
@@ -65,19 +58,25 @@ export default function HomeScreen() {
         
         <SearchBar />
         
-        {/* QR Scanner Button */}
+        {/* QR Scanner Button with Fox Design */}
         <TouchableOpacity
           style={styles.qrScannerButton}
           onPress={() => router.push('/qr-scanner')}
         >
           <LinearGradient
-            colors={['#FF6B6B', '#4ECDC4']}
+            colors={['#FF6B35', '#F7931E']}
             style={styles.qrGradient}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
           >
-            <QrCode size={24} color="#FFF" />
-            <Text style={styles.qrButtonText}>Scan QR Code to Order</Text>
+            <View style={styles.foxContainer}>
+              <Text style={styles.foxEmoji}>🦊</Text>
+              <QrCode size={24} color="#FFF" />
+            </View>
+            <View style={styles.qrTextContainer}>
+              <Text style={styles.qrButtonText}>Scan QR Code</Text>
+              <Text style={styles.qrSubText}>Order & Join Chatroom</Text>
+            </View>
           </LinearGradient>
         </TouchableOpacity>
         
@@ -127,21 +126,7 @@ export default function HomeScreen() {
           ))}
         </ScrollView>
         
-        <SectionHeader
-          title="People You Might Like"
-          onSeeAllPress={handleSeeAllUsers}
-        />
-        
-        <View style={styles.usersContainer}>
-          {suggestedUsers.map((user) => (
-            <UserCard
-              key={user.id}
-              user={user}
-              onPress={() => handleUserPress(user.id)}
-            />
-          ))}
-        </View>
-        
+
         <SectionHeader
           title="Near You"
           onSeeAllPress={handleSeeAllBRCs}
@@ -231,14 +216,32 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 16,
+    paddingVertical: 20,
     paddingHorizontal: 24,
-    gap: 12,
+    gap: 16,
+  },
+  foxContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  foxEmoji: {
+    fontSize: 28,
+  },
+  qrTextContainer: {
+    alignItems: 'center',
   },
   qrButtonText: {
     fontSize: 18,
     fontWeight: '700',
     color: '#FFF',
+  },
+  qrSubText: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#FFF',
+    opacity: 0.9,
+    marginTop: 2,
   },
   testQRButton: {
     marginHorizontal: 16,
