@@ -38,11 +38,12 @@ export default function MenuScreen() {
   const [tableNumber, setTableNumber] = useState('');
   
   const brc = brcs.find(b => b.id === brcId);
-  const categories = ['All', 'Starters', 'Mains', 'Desserts', 'Beverages'];
+  const categories = ['All', 'Appetizer', 'Main', 'Dessert', 'Drink'];
   
+  const brcMenuItems = menuItems.filter(item => item.brcId === brcId);
   const filteredMenu = selectedCategory === 'All' 
-    ? menuItems 
-    : menuItems.filter(item => item.category === selectedCategory);
+    ? brcMenuItems 
+    : brcMenuItems.filter(item => item.category === selectedCategory.toLowerCase());
 
   const addToCart = (item: typeof menuItems[0]) => {
     setCart(prev => {

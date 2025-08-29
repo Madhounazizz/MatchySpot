@@ -44,9 +44,9 @@ export default function BRCChatroomScreen() {
     }
 
     if (chatroom) {
-      setMessages(chatroom.messages);
+      setMessages([...chatroom.messages]);
     }
-  }, [currentSession, brcId, chatroom, router]);
+  }, [currentSession, brcId, chatroom?.messages, router]);
 
   useEffect(() => {
     if (flatListRef.current && messages.length > 0) {
@@ -84,8 +84,10 @@ export default function BRCChatroomScreen() {
       await sendMessage(brcId!, message);
       setMessage('');
       
-      if (chatroom) {
-        setMessages([...chatroom.messages]);
+      // Refresh messages from the updated chatroom
+      const updatedChatroom = getCurrentChatroom();
+      if (updatedChatroom) {
+        setMessages([...updatedChatroom.messages]);
       }
     } catch {
       Alert.alert('Error', 'Failed to send message. Please try again.');

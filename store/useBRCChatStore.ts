@@ -22,6 +22,7 @@ export const [BRCChatProvider, useBRCChat] = createContextHook(() => {
   const [chatrooms, setChatrooms] = useState<Record<string, BRCChatroom>>({});
   const [currentSession, setCurrentSession] = useState<BRCSession | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const { currentUser, login } = useUserStore();
 
   useEffect(() => {
     loadChatData();
@@ -56,14 +57,14 @@ export const [BRCChatProvider, useBRCChat] = createContextHook(() => {
 
   const createSession = useCallback(async (brcId: string, isAnonymous: boolean, customNickname?: string): Promise<string> => {
     try {
-      // Get current user from store
-      const userStore = useUserStore.getState();
-      let user = userStore.currentUser;
+      let user = currentUser;
       
       // If no user, auto-login as customer
       if (!user) {
         console.log('No user found, auto-logging in as customer...');
-        userStore.login('customer');
+        login('customer');
+        // Wait a bit for the login to complete
+        await new Promise(resolve => setTimeout(resolve, 100));
         user = useUserStore.getState().currentUser;
       }
       
@@ -119,7 +120,7 @@ export const [BRCChatProvider, useBRCChat] = createContextHook(() => {
       console.error('Error creating session:', error);
       throw error;
     }
-  }, []);
+  }, [currentUser, login]);
 
   const joinChatroom = useCallback((brcId: string) => {
     const chatroomId = `chatroom_${brcId}`;
