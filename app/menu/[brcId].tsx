@@ -15,6 +15,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ArrowLeft, Plus, Minus, ShoppingCart, X } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useBRCChat } from '@/store/useBRCChatStore';
+import { useUserStore } from '@/store/useUserStore';
 import { menuItems } from '@/mocks/menu';
 import { brcs } from '@/mocks/brcs';
 
@@ -32,6 +33,7 @@ export default function MenuScreen() {
   const { brcId } = useLocalSearchParams<{ brcId: string }>();
   const router = useRouter();
   const { createSession } = useBRCChat();
+  const { isLoggedIn, login } = useUserStore();
   
   const [cart, setCart] = useState<CartItem[]>([]);
   const [selectedCategory, setSelectedCategory] = useState('All');
@@ -95,28 +97,38 @@ export default function MenuScreen() {
       return;
     }
 
-    // Generate access code for chatroom
-    const code = await createSession(brcId || '', false);
+    // Ensure user is logged in before creating session
+    if (!isLoggedIn) {
+      login('customer');
+    }
+
+    try {
+      // Generate access code for chatroom
+      const code = await createSession(brcId || '', false);
     
-    Alert.alert(
-      '✅ Order Placed Successfully!',
-      `Your access code: ${code}\n\nRedirecting to chatroom...`,
-      [
-        {
-          text: 'OK',
-          onPress: () => {
-            router.push(`/brc/chatroom/${brcId}`);
+      Alert.alert(
+        '✅ Order Placed Successfully!',
+        `Your access code: ${code}\n\nRedirecting to chatroom...`,
+        [
+          {
+            text: 'OK',
+            onPress: () => {
+              router.push(`/brc/chatroom/${brcId}`);
+            },
           },
-        },
-      ]
-    );
-    
-    setShowCheckout(false);
-    setShowCart(false);
-    setCart([]);
-    setCustomerName('');
-    setTableNumber('');
-  }, [brcId, createSession, router, customerName, tableNumber]);
+        ]
+      );
+      
+      setShowCheckout(false);
+      setShowCart(false);
+      setCart([]);
+      setCustomerName('');
+      setTableNumber('');
+    } catch (error) {
+      console.error('Failed to create session:', error);
+      Alert.alert('Error', 'Failed to place order. Please try again.');
+    }
+  }, [brcId, createSession, router, customerName, tableNumber, isLoggedIn, login]);
 
   return (
     <View style={styles.container}>

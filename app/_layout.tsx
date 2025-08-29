@@ -139,6 +139,27 @@ function RootLayoutNav() {
                 headerBackTitle: "Back",
               }} 
             />
+            <Stack.Screen 
+              name="menu/[brcId]" 
+              options={{ 
+                title: "Menu",
+                headerBackTitle: "Back",
+              }} 
+            />
+            <Stack.Screen 
+              name="qr-scanner" 
+              options={{ 
+                title: "QR Scanner",
+                headerBackTitle: "Back",
+              }} 
+            />
+            <Stack.Screen 
+              name="test-qr" 
+              options={{ 
+                title: "Test QR",
+                headerBackTitle: "Back",
+              }} 
+            />
             <Stack.Screen name="modal" options={{ presentation: "modal" }} />
           </>
         )}
