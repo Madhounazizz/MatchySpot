@@ -96,7 +96,7 @@ export default function MenuScreen() {
     try {
       console.log('Creating session for brcId:', brcId);
       // Generate access code for chatroom
-      const code = await createSession(brcId || '', false, customerName);
+      const code = await createSession(brcId || '', true, customerName);
       console.log('Session created with code:', code);
     
       Alert.alert(
