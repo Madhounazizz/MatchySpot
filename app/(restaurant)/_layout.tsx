@@ -1,6 +1,6 @@
 import React from "react";
 import { Tabs } from "expo-router";
-import { Calendar, ChefHat, ClipboardList, Menu, Settings, Package } from "lucide-react-native";
+import { Calendar, ChefHat, LayoutGrid, Menu, Settings, Package } from "lucide-react-native";
 import { colors } from "@/constants/colors";
 
 export default function RestaurantTabLayout() {
@@ -12,24 +12,22 @@ export default function RestaurantTabLayout() {
         tabBarStyle: {
           backgroundColor: colors.white,
           borderTopWidth: 0,
-          elevation: 12,
+          elevation: 8,
           shadowColor: '#000',
-          shadowOffset: { width: 0, height: -4 },
-          shadowOpacity: 0.1,
-          shadowRadius: 12,
-          height: 70,
-          paddingBottom: 12,
-          paddingTop: 8,
-          borderTopLeftRadius: 20,
-          borderTopRightRadius: 20,
+          shadowOffset: { width: 0, height: -2 },
+          shadowOpacity: 0.08,
+          shadowRadius: 8,
+          height: 65,
+          paddingBottom: 8,
+          paddingTop: 6,
         },
         tabBarLabelStyle: {
-          fontSize: 11,
+          fontSize: 10,
           fontWeight: '600',
-          marginTop: 4,
+          marginTop: 2,
         },
         tabBarIconStyle: {
-          marginTop: 4,
+          marginTop: 2,
         },
         headerShown: false,
         lazy: true,
@@ -41,9 +39,8 @@ export default function RestaurantTabLayout() {
           title: "Reservations",
           tabBarIcon: ({ color, focused }) => (
             <Calendar 
-              size={focused ? 26 : 24} 
+              size={focused ? 22 : 20} 
               color={color}
-              fill={focused ? color : 'transparent'}
             />
           ),
         }}
@@ -54,7 +51,7 @@ export default function RestaurantTabLayout() {
           title: "Orders",
           tabBarIcon: ({ color, focused }) => (
             <ChefHat 
-              size={focused ? 26 : 24} 
+              size={focused ? 22 : 20} 
               color={color}
             />
           ),
@@ -65,8 +62,8 @@ export default function RestaurantTabLayout() {
         options={{
           title: "Tables",
           tabBarIcon: ({ color, focused }) => (
-            <ClipboardList 
-              size={focused ? 26 : 24} 
+            <LayoutGrid 
+              size={focused ? 22 : 20} 
               color={color}
             />
           ),
@@ -78,19 +75,7 @@ export default function RestaurantTabLayout() {
           title: "Menu",
           tabBarIcon: ({ color, focused }) => (
             <Menu 
-              size={focused ? 26 : 24} 
-              color={color}
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="settings"
-        options={{
-          title: "Settings",
-          tabBarIcon: ({ color, focused }) => (
-            <Settings 
-              size={focused ? 26 : 24} 
+              size={focused ? 22 : 20} 
               color={color}
             />
           ),
@@ -102,7 +87,19 @@ export default function RestaurantTabLayout() {
           title: "Inventory",
           tabBarIcon: ({ color, focused }) => (
             <Package 
-              size={focused ? 26 : 24} 
+              size={focused ? 22 : 20} 
+              color={color}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="settings"
+        options={{
+          title: "Settings",
+          tabBarIcon: ({ color, focused }) => (
+            <Settings 
+              size={focused ? 22 : 20} 
               color={color}
             />
           ),

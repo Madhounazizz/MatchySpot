@@ -266,17 +266,14 @@ export default function InventoryScreen() {
 
     return (
       <TouchableOpacity 
-        style={[
-          styles.inventoryCard,
-          { borderLeftColor: statusColor }
-        ]} 
-        activeOpacity={0.95}
+        style={styles.inventoryCard} 
+        activeOpacity={0.9}
         testID={`inventory-${item.id}`}
       >
         <View style={styles.cardHeader}>
           <View style={styles.itemLeft}>
             <View style={[styles.statusIcon, { backgroundColor: statusColor + '15' }]}>
-              <StatusIcon size={20} color={statusColor} strokeWidth={2.5} />
+              <StatusIcon size={16} color={statusColor} strokeWidth={2} />
             </View>
             <View style={styles.itemInfo}>
               <Text style={styles.itemName}>{item.name}</Text>
@@ -288,71 +285,53 @@ export default function InventoryScreen() {
             </View>
           </View>
           <View style={styles.itemActions}>
-            <TouchableOpacity style={styles.editButton}>
-              <Edit3 size={16} color={colors.primary} strokeWidth={2.5} />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.deleteButton}>
-              <Trash2 size={16} color={colors.error} strokeWidth={2.5} />
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        <View style={styles.stockInfo}>
-          <View style={styles.stockNumbers}>
             <Text style={styles.currentStock}>
               {item.currentStock} {item.unit}
             </Text>
-            <Text style={styles.stockRange}>
-              Min: {item.minStock} • Max: {item.maxStock}
-            </Text>
-          </View>
-          <View style={styles.stockBar}>
-            <View 
-              style={[
-                styles.stockFill, 
-                { 
-                  width: `${Math.min(stockPercentage, 100)}%`,
-                  backgroundColor: statusColor 
-                }
-              ]} 
-            />
+            <View style={[styles.statusBadge, { backgroundColor: statusColor + '15' }]}>
+              <Text style={[styles.statusText, { color: statusColor }]}>
+                {item.status === 'low-stock' ? 'Low' : 
+                 item.status === 'out-of-stock' ? 'Out' :
+                 item.status === 'overstocked' ? 'Over' : 'OK'}
+              </Text>
+            </View>
           </View>
         </View>
 
+        <View style={styles.stockBar}>
+          <View 
+            style={[
+              styles.stockFill, 
+              { 
+                width: `${Math.min(stockPercentage, 100)}%`,
+                backgroundColor: statusColor 
+              }
+            ]} 
+          />
+        </View>
+
         <View style={styles.itemDetails}>
-          <View style={styles.detailRow}>
-            <Text style={styles.detailLabel}>Cost per unit:</Text>
-            <Text style={styles.detailValue}>${item.costPerUnit}</Text>
-          </View>
-          <View style={styles.detailRow}>
-            <Text style={styles.detailLabel}>Supplier:</Text>
-            <Text style={styles.detailValue} numberOfLines={1}>{item.supplier}</Text>
-          </View>
-          <View style={styles.detailRow}>
-            <Text style={styles.detailLabel}>Last restocked:</Text>
-            <Text style={styles.detailValue}>{item.lastRestocked}</Text>
-          </View>
+          <Text style={styles.detailText}>
+            ${item.costPerUnit}/{item.unit} • {item.supplier}
+          </Text>
           {item.expiryDate && (
-            <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>Expires:</Text>
-              <Text style={[styles.detailValue, { color: colors.error }]}>{item.expiryDate}</Text>
-            </View>
+            <Text style={[styles.detailText, { color: colors.error }]}>
+              Expires: {item.expiryDate}
+            </Text>
           )}
         </View>
 
         <View style={styles.cardFooter}>
-          <View style={[styles.statusBadge, { backgroundColor: statusColor + '15' }]}>
-            <Text style={[styles.statusText, { color: statusColor }]}>
-              {item.status.replace('-', ' ').toUpperCase()}
-            </Text>
-          </View>
+          <TouchableOpacity style={styles.editButton}>
+            <Edit3 size={14} color={colors.primary} strokeWidth={2} />
+          </TouchableOpacity>
           
           {(item.status === 'low-stock' || item.status === 'out-of-stock') && (
             <TouchableOpacity
               style={[styles.restockButton, { backgroundColor: colors.primary }]}
               onPress={() => handleRestock(item)}
             >
-              <ShoppingCart size={14} color={colors.white} strokeWidth={2.5} />
+              <ShoppingCart size={12} color={colors.white} strokeWidth={2} />
               <Text style={styles.restockButtonText}>Restock</Text>
             </TouchableOpacity>
           )}
@@ -453,31 +432,28 @@ export default function InventoryScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f1f5f9',
+    backgroundColor: colors.backgroundLight,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 28,
-    paddingVertical: 32,
+    paddingHorizontal: 16,
+    paddingVertical: 16,
     backgroundColor: colors.white,
-    borderBottomLeftRadius: 40,
-    borderBottomRightRadius: 40,
-    ...shadows.large,
-    elevation: 12,
+    ...shadows.small,
+    elevation: 4,
   },
   title: {
-    fontSize: 40,
-    fontWeight: '900',
+    fontSize: 24,
+    fontWeight: '700',
     color: colors.text,
-    letterSpacing: -1.5,
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: 14,
     color: colors.textLight,
-    marginTop: 6,
-    fontWeight: '600',
+    marginTop: 2,
+    fontWeight: '500',
   },
   headerActions: {
     flexDirection: 'row',
@@ -485,245 +461,193 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   filterIcon: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
-    backgroundColor: colors.secondary + '15',
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: colors.backgroundLight,
     alignItems: 'center',
     justifyContent: 'center',
-    ...shadows.small,
-    elevation: 4,
   },
   addButton: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.primary,
-    paddingHorizontal: 18,
-    paddingVertical: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
     borderRadius: 16,
-    gap: 8,
-    ...shadows.card,
-    elevation: 8,
+    gap: 6,
   },
   addButtonText: {
     color: colors.white,
-    fontWeight: '800',
+    fontWeight: '600',
     fontSize: 14,
   },
   searchContainer: {
-    paddingHorizontal: 28,
-    paddingVertical: 20,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
     backgroundColor: colors.white,
   },
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.backgroundLight,
-    borderRadius: 20,
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    gap: 12,
-    ...shadows.card,
-    elevation: 6,
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    gap: 8,
   },
   searchInput: {
     flex: 1,
-    fontSize: 16,
+    fontSize: 14,
     color: colors.text,
     fontWeight: '500',
   },
   statsSection: {
-    paddingHorizontal: 28,
-    paddingVertical: 20,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
   },
   statsRow: {
     flexDirection: 'row',
     backgroundColor: colors.white,
-    borderRadius: 32,
-    padding: 28,
-    ...shadows.large,
-    elevation: 18,
-    borderTopWidth: 6,
-    borderTopColor: colors.primary,
-    borderWidth: 0,
-    transform: [{ scale: 1 }],
+    borderRadius: 12,
+    padding: 16,
+    ...shadows.small,
+    elevation: 2,
   },
   statItem: {
     flex: 1,
     alignItems: 'center',
   },
   statNumber: {
-    fontSize: 24,
-    fontWeight: '900',
+    fontSize: 18,
+    fontWeight: '700',
     color: colors.success,
-    letterSpacing: -1,
   },
   statLabel: {
     fontSize: 11,
     color: colors.textLight,
-    marginTop: 6,
-    fontWeight: '700',
-    letterSpacing: -0.2,
+    marginTop: 4,
+    fontWeight: '500',
     textAlign: 'center',
   },
   categoriesContainer: {
     backgroundColor: colors.white,
-    paddingBottom: 8,
+    paddingBottom: 4,
   },
   categoriesContent: {
-    paddingHorizontal: 28,
-    paddingVertical: 16,
-    gap: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    gap: 8,
   },
   categoryPill: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 24,
-    backgroundColor: colors.white,
-    borderWidth: 0,
-    ...shadows.card,
-    elevation: 6,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: colors.backgroundLight,
   },
   categoryPillActive: {
     backgroundColor: colors.primary,
-    ...shadows.large,
-    elevation: 8,
   },
   categoryPillText: {
-    fontSize: 14,
-    fontWeight: '700',
+    fontSize: 13,
+    fontWeight: '600',
     color: colors.textLight,
   },
   categoryPillTextActive: {
     color: colors.white,
-    fontWeight: '800',
+    fontWeight: '600',
   },
   scrollView: {
     flex: 1,
   },
   inventoryList: {
-    paddingHorizontal: 28,
-    paddingBottom: 32,
+    paddingHorizontal: 16,
+    paddingBottom: 20,
   },
   inventoryCard: {
     backgroundColor: colors.white,
-    borderRadius: 32,
-    padding: 32,
-    marginBottom: 32,
-    ...shadows.large,
-    elevation: 18,
-    borderWidth: 0,
-    borderLeftWidth: 6,
-    transform: [{ scale: 1 }],
-    position: 'relative',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 12,
+    ...shadows.small,
+    elevation: 2,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   cardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: 16,
+    marginBottom: 12,
   },
   itemLeft: {
     flexDirection: 'row',
     flex: 1,
   },
   statusIcon: {
-    width: 48,
-    height: 48,
+    width: 32,
+    height: 32,
     borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 16,
+    marginRight: 12,
   },
   itemInfo: {
     flex: 1,
   },
   itemName: {
-    fontSize: 20,
-    fontWeight: '900',
+    fontSize: 16,
+    fontWeight: '600',
     color: colors.text,
-    marginBottom: 8,
+    marginBottom: 4,
   },
   categoryBadge: {
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 12,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 8,
     alignSelf: 'flex-start',
   },
   categoryText: {
-    fontSize: 12,
-    fontWeight: '700',
+    fontSize: 10,
+    fontWeight: '600',
     textTransform: 'capitalize',
   },
   itemActions: {
-    flexDirection: 'row',
-    gap: 8,
+    alignItems: 'flex-end',
+    gap: 4,
   },
   editButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: colors.primary + '15',
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: colors.backgroundLight,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  deleteButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: colors.error + '15',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  stockInfo: {
-    marginBottom: 16,
-  },
-  stockNumbers: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 8,
   },
   currentStock: {
-    fontSize: 18,
-    fontWeight: '800',
+    fontSize: 14,
+    fontWeight: '600',
     color: colors.text,
   },
-  stockRange: {
-    fontSize: 12,
-    color: colors.textLight,
-    fontWeight: '600',
-  },
   stockBar: {
-    height: 6,
+    height: 4,
     backgroundColor: colors.backgroundLight,
-    borderRadius: 3,
+    borderRadius: 2,
     overflow: 'hidden',
+    marginBottom: 8,
   },
   stockFill: {
     height: '100%',
-    borderRadius: 3,
+    borderRadius: 2,
   },
   itemDetails: {
-    marginBottom: 16,
-    gap: 8,
+    marginBottom: 8,
   },
-  detailRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  detailLabel: {
-    fontSize: 14,
+  detailText: {
+    fontSize: 12,
     color: colors.textLight,
     fontWeight: '500',
-  },
-  detailValue: {
-    fontSize: 14,
-    color: colors.text,
-    fontWeight: '600',
-    flex: 1,
-    textAlign: 'right',
+    marginBottom: 2,
   },
   cardFooter: {
     flexDirection: 'row',
@@ -731,28 +655,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   statusBadge: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 12,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
   },
   statusText: {
-    fontSize: 11,
-    fontWeight: '800',
-    letterSpacing: 0.5,
+    fontSize: 10,
+    fontWeight: '600',
   },
   restockButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 12,
-    gap: 6,
-    ...shadows.small,
-    elevation: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+    gap: 4,
   },
   restockButtonText: {
-    fontSize: 12,
-    fontWeight: '700',
+    fontSize: 10,
+    fontWeight: '600',
     color: colors.white,
   },
   emptyState: {

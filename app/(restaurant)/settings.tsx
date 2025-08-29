@@ -30,7 +30,7 @@ import {
   TrendingUp,
 } from 'lucide-react-native';
 import { router } from 'expo-router';
-import { colors } from '@/constants/colors';
+import { colors, shadows } from '@/constants/colors';
 
 
 type SettingsSection = {
@@ -236,7 +236,7 @@ export default function RestaurantSettings() {
     return (
       <View style={styles.settingItem}>
         <View style={styles.settingIcon}>
-          <item.icon size={20} color={colors.primary} />
+          <item.icon size={16} color={colors.primary} />
         </View>
         <View style={styles.settingContent}>
           <Text style={styles.settingTitle}>{item.title}</Text>
@@ -250,7 +250,7 @@ export default function RestaurantSettings() {
                 placeholderTextColor={colors.textLight}
               />
               <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-                <Save size={16} color={colors.white} />
+                <Save size={12} color={colors.white} />
               </TouchableOpacity>
             </View>
           ) : (
@@ -305,7 +305,7 @@ export default function RestaurantSettings() {
       <View style={styles.header}>
         <Text style={styles.title}>Settings</Text>
         <TouchableOpacity style={styles.saveAllButton} onPress={saveSettings}>
-          <Save size={18} color={colors.white} />
+          <Save size={14} color={colors.white} />
           <Text style={styles.saveAllButtonText}>Save All</Text>
         </TouchableOpacity>
       </View>
@@ -337,17 +337,17 @@ export default function RestaurantSettings() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: colors.backgroundLight,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 20,
+    paddingHorizontal: 16,
     paddingVertical: 16,
     backgroundColor: colors.white,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    ...shadows.small,
+    elevation: 4,
   },
   title: {
     fontSize: 24,
@@ -358,49 +358,48 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.primary,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 12,
-    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+    gap: 4,
   },
   saveAllButtonText: {
     color: colors.white,
     fontWeight: '600',
-    fontSize: 14,
+    fontSize: 12,
   },
   scrollView: {
     flex: 1,
   },
   section: {
-    marginTop: 24,
+    marginTop: 16,
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '600',
     color: colors.text,
-    paddingHorizontal: 20,
-    marginBottom: 12,
+    paddingHorizontal: 16,
+    marginBottom: 8,
   },
   sectionContent: {
     backgroundColor: colors.white,
-    marginHorizontal: 20,
-    borderRadius: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
+    marginHorizontal: 16,
+    borderRadius: 12,
+    ...shadows.small,
+    elevation: 2,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   settingItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 16,
+    paddingHorizontal: 12,
+    paddingVertical: 12,
   },
   settingIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 10,
+    width: 32,
+    height: 32,
+    borderRadius: 8,
     backgroundColor: colors.primary + '15',
     alignItems: 'center',
     justifyContent: 'center',
@@ -410,13 +409,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   settingTitle: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '600',
     color: colors.text,
     marginBottom: 2,
   },
   settingSubtitle: {
-    fontSize: 14,
+    fontSize: 12,
     color: colors.textLight,
   },
   settingAction: {
@@ -432,43 +431,43 @@ const styles = StyleSheet.create({
     flex: 1,
     borderWidth: 1,
     borderColor: colors.border,
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    fontSize: 14,
+    borderRadius: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 6,
+    fontSize: 12,
     color: colors.text,
   },
   saveButton: {
     backgroundColor: colors.primary,
-    padding: 8,
-    borderRadius: 6,
+    padding: 6,
+    borderRadius: 4,
   },
   editButton: {
-    backgroundColor: colors.warning + '15',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+    backgroundColor: colors.backgroundLight,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
     borderRadius: 6,
   },
   editButtonText: {
-    color: colors.warning,
-    fontSize: 12,
+    color: colors.primary,
+    fontSize: 10,
     fontWeight: '600',
   },
   actionButton: {
-    backgroundColor: colors.primary + '15',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+    backgroundColor: colors.backgroundLight,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
     borderRadius: 6,
   },
   actionButtonText: {
     color: colors.primary,
-    fontSize: 12,
+    fontSize: 10,
     fontWeight: '600',
   },
   separator: {
     height: 1,
     backgroundColor: colors.border,
-    marginLeft: 68,
+    marginLeft: 56,
   },
   footer: {
     alignItems: 'center',

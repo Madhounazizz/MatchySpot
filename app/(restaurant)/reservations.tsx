@@ -90,20 +90,6 @@ export default function ReservationsScreen() {
   const ReservationCard = ({ reservation }: { reservation: Reservation }) => (
     <TouchableOpacity style={styles.reservationCard} activeOpacity={0.9} testID={`reservation-${reservation.id}`}>
       <View style={styles.cardHeader}>
-        <View style={[
-          styles.statusBadge,
-          { backgroundColor: getStatusColor(reservation.status) + '15' }
-        ]}>
-          <Text style={[styles.statusText, { color: getStatusColor(reservation.status) }]}>
-            {reservation.status.charAt(0).toUpperCase() + reservation.status.slice(1)}
-          </Text>
-        </View>
-        <TouchableOpacity style={styles.moreButton}>
-          <MoreVertical size={16} color={colors.textLight} strokeWidth={2} />
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.reservationHeader}>
         <View style={styles.customerInfo}>
           <View style={styles.avatarContainer}>
             {reservation.customerAvatar ? (
@@ -113,7 +99,7 @@ export default function ReservationsScreen() {
               />
             ) : (
               <View style={styles.avatarPlaceholder}>
-                <Users size={20} color={colors.white} strokeWidth={2} />
+                <Users size={16} color={colors.white} strokeWidth={2} />
               </View>
             )}
           </View>
@@ -121,95 +107,81 @@ export default function ReservationsScreen() {
             <Text style={styles.customerName}>{reservation.customerName}</Text>
             <View style={styles.reservationMeta}>
               <View style={styles.metaItem}>
-                <Clock size={14} color={colors.primary} strokeWidth={2} />
+                <Clock size={12} color={colors.primary} strokeWidth={2} />
                 <Text style={styles.reservationTime}>{reservation.time}</Text>
               </View>
               <View style={styles.metaItem}>
-                <Users size={14} color={colors.secondary} strokeWidth={2} />
-                <Text style={styles.partySize}>Party of {reservation.partySize}</Text>
+                <Users size={12} color={colors.secondary} strokeWidth={2} />
+                <Text style={styles.partySize}>{reservation.partySize} guests</Text>
               </View>
             </View>
           </View>
+        </View>
+        <View style={styles.cardRight}>
+          <View style={[
+            styles.statusBadge,
+            { backgroundColor: getStatusColor(reservation.status) + '15' }
+          ]}>
+            <Text style={[styles.statusText, { color: getStatusColor(reservation.status) }]}>
+              {reservation.status.charAt(0).toUpperCase() + reservation.status.slice(1)}
+            </Text>
+          </View>
+          {reservation.tableNumber && (
+            <View style={styles.tableNumberBadge}>
+              <Text style={styles.tableNumber}>#{reservation.tableNumber}</Text>
+            </View>
+          )}
         </View>
       </View>
 
       {reservation.specialRequests && (
         <View style={styles.specialRequestsCard}>
-          <View style={styles.specialRequestsHeader}>
-            <MessageSquare size={14} color={colors.primary} strokeWidth={2} />
-            <Text style={styles.specialRequestsLabel}>Special Requests</Text>
-          </View>
+          <MessageSquare size={12} color={colors.primary} strokeWidth={2} />
           <Text style={styles.specialRequestsText}>{reservation.specialRequests}</Text>
         </View>
       )}
 
-      <View style={styles.contactSection}>
-        <View style={styles.contactGrid}>
-          <View style={styles.contactItem}>
-            <View style={styles.contactIcon}>
-              <Phone size={14} color={colors.primary} strokeWidth={2} />
-            </View>
-            <Text style={styles.contactText}>{reservation.customerPhone}</Text>
-          </View>
-          <View style={styles.contactItem}>
-            <View style={styles.contactIcon}>
-              <Mail size={14} color={colors.secondary} strokeWidth={2} />
-            </View>
-            <Text style={styles.contactText}>{reservation.customerEmail}</Text>
-          </View>
-        </View>
-        {reservation.tableNumber && (
-          <View style={styles.tableInfo}>
-            <Text style={styles.tableLabel}>Assigned Table</Text>
-            <View style={styles.tableNumberBadge}>
-              <Text style={styles.tableNumber}>#{reservation.tableNumber}</Text>
-            </View>
-          </View>
+      <View style={styles.actionButtons}>
+        {reservation.status === 'pending' && (
+          <>
+            <TouchableOpacity
+              style={[styles.actionButton, styles.confirmButton]}
+              onPress={() => handleStatusUpdate(reservation.id, 'confirmed')}
+            >
+              <Check size={14} color={colors.white} strokeWidth={2} />
+              <Text style={styles.actionButtonText}>Confirm</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.actionButton, styles.rejectButton]}
+              onPress={() => handleStatusUpdate(reservation.id, 'cancelled')}
+            >
+              <X size={14} color={colors.white} strokeWidth={2} />
+              <Text style={styles.actionButtonText}>Cancel</Text>
+            </TouchableOpacity>
+          </>
         )}
-      </View>
-
-      {reservation.status === 'pending' && (
-        <View style={styles.actionButtons}>
-          <TouchableOpacity
-            style={[styles.actionButton, styles.confirmButton]}
-            onPress={() => handleStatusUpdate(reservation.id, 'confirmed')}
-          >
-            <Check size={18} color={colors.white} strokeWidth={2.5} />
-            <Text style={styles.confirmButtonText}>Confirm</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.actionButton, styles.rejectButton]}
-            onPress={() => handleStatusUpdate(reservation.id, 'cancelled')}
-          >
-            <X size={18} color={colors.white} strokeWidth={2.5} />
-            <Text style={styles.rejectButtonText}>Decline</Text>
-          </TouchableOpacity>
-        </View>
-      )}
-
-      {reservation.status === 'confirmed' && (
-        <View style={styles.actionButtons}>
+        {reservation.status === 'confirmed' && (
           <TouchableOpacity
             style={[styles.actionButton, styles.seatButton]}
             onPress={() => handleStatusUpdate(reservation.id, 'seated')}
           >
-            <Users size={18} color={colors.white} strokeWidth={2.5} />
-            <Text style={styles.seatButtonText}>Seat Guests</Text>
+            <Users size={14} color={colors.white} strokeWidth={2} />
+            <Text style={styles.actionButtonText}>Seat Guests</Text>
           </TouchableOpacity>
-        </View>
-      )}
-
-      {reservation.status === 'seated' && (
-        <View style={styles.actionButtons}>
+        )}
+        {reservation.status === 'seated' && (
           <TouchableOpacity
             style={[styles.actionButton, styles.completeButton]}
             onPress={() => handleStatusUpdate(reservation.id, 'completed')}
           >
-            <Check size={18} color={colors.white} strokeWidth={2.5} />
-            <Text style={styles.completeButtonText}>Complete</Text>
+            <Check size={14} color={colors.white} strokeWidth={2} />
+            <Text style={styles.actionButtonText}>Complete</Text>
           </TouchableOpacity>
-        </View>
-      )}
+        )}
+        <TouchableOpacity style={styles.contactButton}>
+          <Phone size={14} color={colors.primary} strokeWidth={2} />
+        </TouchableOpacity>
+      </View>
     </TouchableOpacity>
   );
 
@@ -294,34 +266,34 @@ export default function ReservationsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8fafc',
+    backgroundColor: colors.backgroundLight,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 28,
-    paddingVertical: 32,
+    paddingHorizontal: 16,
+    paddingVertical: 16,
     backgroundColor: colors.white,
-    borderBottomLeftRadius: 40,
-    borderBottomRightRadius: 40,
-    ...shadows.large,
-    elevation: 12,
+    ...shadows.small,
+    elevation: 4,
   },
   headerContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     flex: 1,
   },
   title: {
-    fontSize: 40,
-    fontWeight: '900',
+    fontSize: 24,
+    fontWeight: '700',
     color: colors.text,
-    letterSpacing: -1.5,
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: 14,
     color: colors.textLight,
-    marginTop: 6,
-    fontWeight: '600',
+    marginTop: 2,
+    fontWeight: '500',
   },
   headerActions: {
     flexDirection: 'row',
@@ -329,325 +301,235 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   headerButton: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
-    backgroundColor: colors.secondary + '15',
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: colors.backgroundLight,
     alignItems: 'center',
     justifyContent: 'center',
-    ...shadows.small,
-    elevation: 4,
   },
   addButton: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.primary,
-    paddingHorizontal: 24,
-    paddingVertical: 16,
-    borderRadius: 20,
-    gap: 10,
-    ...shadows.card,
-    elevation: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 16,
+    gap: 6,
   },
   addButtonText: {
     color: colors.white,
-    fontWeight: '800',
-    fontSize: 16,
+    fontWeight: '600',
+    fontSize: 14,
   },
   dateSelector: {
-    paddingHorizontal: 28,
-    paddingVertical: 24,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
   },
   selectedDate: {
-    fontSize: 24,
-    fontWeight: '900',
+    fontSize: 18,
+    fontWeight: '600',
     color: colors.text,
-    marginBottom: 20,
-    letterSpacing: -0.5,
+    marginBottom: 12,
   },
   statsRow: {
     flexDirection: 'row',
     backgroundColor: colors.white,
-    borderRadius: 32,
-    padding: 28,
-    ...shadows.large,
-    elevation: 18,
-    borderLeftWidth: 6,
-    borderLeftColor: colors.primary,
-    borderWidth: 0,
-    transform: [{ scale: 1 }],
+    borderRadius: 12,
+    padding: 16,
+    ...shadows.small,
+    elevation: 2,
   },
   statItem: {
     flex: 1,
     alignItems: 'center',
   },
   statNumber: {
-    fontSize: 28,
-    fontWeight: '900',
+    fontSize: 20,
+    fontWeight: '700',
     color: colors.primary,
-    letterSpacing: -1,
   },
   statLabel: {
-    fontSize: 13,
+    fontSize: 12,
     color: colors.textLight,
-    marginTop: 6,
-    fontWeight: '700',
-    letterSpacing: -0.2,
+    marginTop: 4,
+    fontWeight: '500',
   },
   filterContainer: {
-    paddingLeft: 28,
-    marginBottom: 24,
+    paddingLeft: 16,
+    marginBottom: 16,
   },
   filterContent: {
     paddingRight: 20,
     gap: 8,
   },
   filterButton: {
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 30,
-    backgroundColor: colors.white,
-    ...shadows.card,
-    elevation: 6,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: colors.backgroundLight,
   },
   filterButtonActive: {
     backgroundColor: colors.primary,
-    ...shadows.large,
-    elevation: 8,
   },
   filterButtonText: {
-    fontSize: 15,
-    fontWeight: '700',
+    fontSize: 13,
+    fontWeight: '600',
     color: colors.textLight,
   },
   filterButtonTextActive: {
     color: colors.white,
-    fontWeight: '800',
+    fontWeight: '600',
   },
   scrollView: {
     flex: 1,
   },
   reservationsList: {
-    paddingHorizontal: 28,
-    paddingBottom: 32,
+    paddingHorizontal: 16,
+    paddingBottom: 20,
   },
   reservationCard: {
     backgroundColor: colors.white,
-    borderRadius: 36,
-    padding: 32,
-    marginBottom: 32,
-    ...shadows.large,
-    elevation: 20,
-    borderWidth: 0,
-    transform: [{ scale: 1 }],
-    position: 'relative',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 12,
+    ...shadows.small,
+    elevation: 2,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   cardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 16,
+    alignItems: 'flex-start',
+    marginBottom: 12,
   },
   statusBadge: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 12,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+    marginBottom: 4,
   },
   statusText: {
-    fontSize: 12,
+    fontSize: 10,
     fontWeight: '600',
   },
-  moreButton: {
-    padding: 6,
-    borderRadius: 8,
-    backgroundColor: colors.backgroundLight,
-  },
-  reservationHeader: {
-    marginBottom: 16,
+  cardRight: {
+    alignItems: 'flex-end',
   },
   customerInfo: {
     flexDirection: 'row',
     alignItems: 'center',
+    flex: 1,
   },
   avatarContainer: {
-    marginRight: 20,
+    marginRight: 12,
   },
   customerAvatar: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    borderWidth: 4,
-    borderColor: colors.white,
-    ...shadows.medium,
-    elevation: 8,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
   },
   avatarPlaceholder: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
-    ...shadows.medium,
-    elevation: 8,
   },
   customerDetails: {
     flex: 1,
   },
   customerName: {
-    fontSize: 24,
-    fontWeight: '900',
+    fontSize: 16,
+    fontWeight: '600',
     color: colors.text,
-    marginBottom: 12,
-    letterSpacing: -0.5,
+    marginBottom: 4,
   },
   reservationMeta: {
-    gap: 8,
+    flexDirection: 'row',
+    gap: 12,
   },
   metaItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    marginBottom: 2,
+    gap: 4,
   },
   reservationTime: {
-    fontSize: 14,
+    fontSize: 12,
     color: colors.primary,
-    fontWeight: '600',
+    fontWeight: '500',
   },
   partySize: {
-    fontSize: 14,
+    fontSize: 12,
     color: colors.secondary,
-    fontWeight: '600',
+    fontWeight: '500',
   },
   specialRequestsCard: {
     backgroundColor: colors.backgroundLight,
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 16,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  specialRequestsHeader: {
+    padding: 8,
+    borderRadius: 8,
+    marginBottom: 12,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    marginBottom: 6,
-  },
-  specialRequestsLabel: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: colors.primary,
   },
   specialRequestsText: {
-    fontSize: 13,
+    fontSize: 12,
     color: colors.text,
-    lineHeight: 18,
     fontWeight: '500',
-  },
-  contactSection: {
-    marginBottom: 24,
-    backgroundColor: colors.backgroundLight,
-    padding: 24,
-    borderRadius: 24,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  contactGrid: {
-    gap: 16,
-    marginBottom: 16,
-  },
-  contactItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  contactIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: colors.white,
-    alignItems: 'center',
-    justifyContent: 'center',
-    ...shadows.small,
-    elevation: 4,
-  },
-  contactText: {
-    fontSize: 16,
-    color: colors.text,
-    fontWeight: '600',
     flex: 1,
   },
-  tableInfo: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: colors.backgroundLight,
-    padding: 12,
-    borderRadius: 12,
-  },
-  tableLabel: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: colors.text,
-  },
   tableNumberBadge: {
-    backgroundColor: colors.primary,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 8,
+    backgroundColor: colors.secondary,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 6,
   },
   tableNumber: {
-    fontSize: 12,
+    fontSize: 10,
     fontWeight: '600',
     color: colors.white,
   },
   actionButtons: {
     flexDirection: 'row',
     gap: 8,
+    marginTop: 8,
   },
   actionButton: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 16,
-    borderRadius: 20,
-    gap: 8,
-    ...shadows.large,
-    elevation: 10,
+    paddingVertical: 8,
+    borderRadius: 8,
+    gap: 4,
+  },
+  actionButtonText: {
+    color: colors.white,
+    fontSize: 12,
+    fontWeight: '600',
   },
   confirmButton: {
     backgroundColor: colors.success,
   },
-  confirmButtonText: {
-    color: colors.white,
-    fontSize: 16,
-    fontWeight: '800',
-  },
   rejectButton: {
     backgroundColor: colors.error,
-  },
-  rejectButtonText: {
-    color: colors.white,
-    fontSize: 16,
-    fontWeight: '800',
   },
   seatButton: {
     backgroundColor: colors.primary,
   },
-  seatButtonText: {
-    color: colors.white,
-    fontSize: 16,
-    fontWeight: '800',
-  },
   completeButton: {
     backgroundColor: colors.success,
   },
-  completeButtonText: {
-    color: colors.white,
-    fontSize: 16,
-    fontWeight: '800',
+  contactButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 8,
+    backgroundColor: colors.backgroundLight,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   emptyState: {
     alignItems: 'center',

@@ -222,88 +222,74 @@ export default function OrdersScreen() {
 
     return (
       <TouchableOpacity 
-        style={[
-          styles.orderCard,
-          { borderLeftColor: statusColor }
-        ]} 
-        activeOpacity={0.95}
+        style={styles.orderCard} 
+        activeOpacity={0.9}
         testID={`order-${order.id}`}
       >
         <View style={styles.orderHeader}>
           <View style={styles.orderLeft}>
             <View style={[styles.statusIcon, { backgroundColor: statusColor + '15' }]}>
-              <StatusIcon size={20} color={statusColor} strokeWidth={2.5} />
+              <StatusIcon size={16} color={statusColor} strokeWidth={2} />
             </View>
             <View style={styles.orderInfo}>
               <View style={styles.orderTitleRow}>
-                <Text style={styles.tableNumber}>Table {order.tableNumber}</Text>
+                <Text style={styles.tableNumber}>{order.tableNumber}</Text>
                 <View style={[styles.priorityDot, { backgroundColor: priorityColor }]} />
               </View>
               {order.customerName && (
                 <Text style={styles.customerName}>{order.customerName}</Text>
               )}
-              <Text style={styles.orderTime}>
-                Ordered at {order.orderTime} • {order.waiterName}
-              </Text>
+              <Text style={styles.orderTime}>{order.orderTime}</Text>
             </View>
           </View>
           <View style={styles.orderActions}>
-            <TouchableOpacity style={styles.viewButton}>
-              <Eye size={16} color={colors.primary} strokeWidth={2.5} />
-            </TouchableOpacity>
-            <View style={styles.totalAmount}>
-              <DollarSign size={16} color={colors.success} strokeWidth={2.5} />
-              <Text style={styles.totalText}>{order.totalAmount}</Text>
+            <View style={[styles.statusBadge, { backgroundColor: statusColor + '15' }]}>
+              <Text style={[styles.statusText, { color: statusColor }]}>
+                {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+              </Text>
             </View>
+            <Text style={styles.totalText}>${order.totalAmount}</Text>
           </View>
         </View>
 
         <View style={styles.orderItems}>
-          {order.items.slice(0, 3).map((item, index) => (
-            <View key={item.id} style={styles.orderItem}>
-              <Text style={styles.itemQuantity}>{item.quantity}x</Text>
-              <Text style={styles.itemName} numberOfLines={1}>{item.name}</Text>
-              <Text style={styles.itemPrice}>${item.price}</Text>
-            </View>
-          ))}
-          {order.items.length > 3 && (
-            <Text style={styles.moreItems}>+{order.items.length - 3} more items</Text>
-          )}
+          <Text style={styles.itemsSummary}>
+            {order.items.length} item{order.items.length > 1 ? 's' : ''} • 
+            {order.items.slice(0, 2).map(item => `${item.quantity}x ${item.name}`).join(', ')}
+            {order.items.length > 2 && ` +${order.items.length - 2} more`}
+          </Text>
         </View>
 
         {order.notes && (
           <View style={styles.notesSection}>
-            <Text style={styles.notesLabel}>Notes:</Text>
             <Text style={styles.notesText}>{order.notes}</Text>
           </View>
         )}
 
         <View style={styles.orderFooter}>
-          <View style={[styles.statusBadge, { backgroundColor: statusColor + '15' }]}>
-            <Text style={[styles.statusText, { color: statusColor }]}>
-              {order.status.toUpperCase()}
-            </Text>
-          </View>
-          
           {order.status !== 'served' && order.status !== 'cancelled' && (
             <TouchableOpacity
               style={[styles.actionButton, { backgroundColor: statusColor }]}
               onPress={() => handleStatusUpdate(order)}
             >
               <Text style={styles.actionButtonText}>
-                {order.status === 'pending' ? 'Start Preparing' :
-                 order.status === 'preparing' ? 'Mark Ready' :
-                 order.status === 'ready' ? 'Mark Served' : 'Update'}
+                {order.status === 'pending' ? 'Start' :
+                 order.status === 'preparing' ? 'Ready' :
+                 order.status === 'ready' ? 'Serve' : 'Update'}
               </Text>
             </TouchableOpacity>
           )}
           
           {order.estimatedTime > 0 && (
             <View style={styles.timeEstimate}>
-              <Clock size={14} color={colors.textLight} strokeWidth={2} />
+              <Clock size={12} color={colors.textLight} strokeWidth={2} />
               <Text style={styles.timeText}>{order.estimatedTime}min</Text>
             </View>
           )}
+          
+          <TouchableOpacity style={styles.viewButton}>
+            <Eye size={14} color={colors.primary} strokeWidth={2} />
+          </TouchableOpacity>
         </View>
       </TouchableOpacity>
     );
@@ -404,31 +390,28 @@ export default function OrdersScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8fafc',
+    backgroundColor: colors.backgroundLight,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 28,
-    paddingVertical: 32,
+    paddingHorizontal: 16,
+    paddingVertical: 16,
     backgroundColor: colors.white,
-    borderBottomLeftRadius: 40,
-    borderBottomRightRadius: 40,
-    ...shadows.large,
-    elevation: 12,
+    ...shadows.small,
+    elevation: 4,
   },
   title: {
-    fontSize: 40,
-    fontWeight: '900',
+    fontSize: 24,
+    fontWeight: '700',
     color: colors.text,
-    letterSpacing: -1.5,
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: 14,
     color: colors.textLight,
-    marginTop: 6,
-    fontWeight: '600',
+    marginTop: 2,
+    fontWeight: '500',
   },
   headerActions: {
     flexDirection: 'row',
@@ -436,96 +419,75 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   filterIcon: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: colors.secondary + '12',
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: colors.backgroundLight,
     alignItems: 'center',
     justifyContent: 'center',
-    ...shadows.card,
-    elevation: 6,
-    borderWidth: 1,
-    borderColor: colors.secondary + '20',
   },
   addButton: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.primary,
-    paddingHorizontal: 20,
-    paddingVertical: 14,
-    borderRadius: 20,
-    gap: 8,
-    ...shadows.large,
-    elevation: 10,
-    borderWidth: 1,
-    borderColor: colors.primaryDark,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 16,
+    gap: 6,
   },
   addButtonText: {
     color: colors.white,
-    fontWeight: '900',
-    fontSize: 15,
-    letterSpacing: 0.3,
+    fontWeight: '600',
+    fontSize: 14,
   },
   statsSection: {
-    paddingHorizontal: 28,
-    paddingVertical: 24,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
   },
   statsRow: {
     flexDirection: 'row',
     backgroundColor: colors.white,
-    borderRadius: 32,
-    padding: 28,
-    ...shadows.large,
-    elevation: 18,
-    borderLeftWidth: 6,
-    borderLeftColor: colors.primary,
-    overflow: 'hidden',
-    borderWidth: 0,
-    transform: [{ scale: 1 }],
+    borderRadius: 12,
+    padding: 16,
+    ...shadows.small,
+    elevation: 2,
   },
   statItem: {
     flex: 1,
     alignItems: 'center',
   },
   statNumber: {
-    fontSize: 28,
-    fontWeight: '900',
+    fontSize: 20,
+    fontWeight: '700',
     color: colors.primary,
-    letterSpacing: -1,
   },
   statLabel: {
     fontSize: 12,
     color: colors.textLight,
-    marginTop: 6,
-    fontWeight: '700',
-    letterSpacing: -0.2,
+    marginTop: 4,
+    fontWeight: '500',
   },
   filterContainer: {
-    paddingLeft: 28,
-    marginBottom: 24,
+    paddingLeft: 16,
+    marginBottom: 16,
   },
   filterContent: {
     paddingRight: 20,
   },
   filterButton: {
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 30,
-    backgroundColor: colors.white,
-    marginRight: 12,
-    borderWidth: 0,
-    ...shadows.card,
-    elevation: 6,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: colors.backgroundLight,
+    marginRight: 8,
   },
   filterButtonActive: {
     backgroundColor: colors.primary,
-    ...shadows.large,
-    elevation: 8,
   },
   filterButtonText: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: colors.text,
+    fontSize: 13,
+    fontWeight: '600',
+    color: colors.textLight,
   },
   filterButtonTextActive: {
     color: colors.white,
@@ -534,43 +496,36 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   ordersList: {
-    paddingHorizontal: 28,
-    paddingBottom: 32,
+    paddingHorizontal: 16,
+    paddingBottom: 20,
   },
   orderCard: {
     backgroundColor: colors.white,
-    borderRadius: 36,
-    padding: 36,
-    marginBottom: 32,
-    ...shadows.large,
-    elevation: 24,
-    borderWidth: 0,
-    borderLeftWidth: 8,
-    overflow: 'hidden',
-    transform: [{ scale: 1 }],
-    position: 'relative',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 12,
+    ...shadows.small,
+    elevation: 2,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   orderHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: 16,
+    marginBottom: 12,
   },
   orderLeft: {
     flexDirection: 'row',
     flex: 1,
   },
   statusIcon: {
-    width: 64,
-    height: 64,
-    borderRadius: 22,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 20,
-    ...shadows.small,
-    elevation: 4,
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.3)',
+    marginRight: 12,
   },
   orderInfo: {
     flex: 1,
@@ -578,163 +533,104 @@ const styles = StyleSheet.create({
   orderTitleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 4,
+    marginBottom: 2,
   },
   tableNumber: {
-    fontSize: 26,
-    fontWeight: '900',
-    color: colors.text,
-    marginRight: 12,
-    letterSpacing: -0.5,
-    lineHeight: 30,
-  },
-  priorityDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    ...shadows.small,
-    elevation: 2,
-  },
-  customerName: {
     fontSize: 16,
     fontWeight: '600',
+    color: colors.text,
+    marginRight: 8,
+  },
+  priorityDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+  },
+  customerName: {
+    fontSize: 14,
+    fontWeight: '500',
     color: colors.textLight,
-    marginBottom: 4,
+    marginBottom: 2,
   },
   orderTime: {
-    fontSize: 14,
-    color: colors.textExtraLight,
+    fontSize: 12,
+    color: colors.textLight,
     fontWeight: '500',
   },
   orderActions: {
     alignItems: 'flex-end',
-    gap: 8,
-  },
-  viewButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: colors.primary + '15',
-    alignItems: 'center',
-    justifyContent: 'center',
-    ...shadows.small,
-    elevation: 4,
-    borderWidth: 1,
-    borderColor: colors.primary + '25',
-  },
-  totalAmount: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.success + '15',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 16,
-    gap: 6,
-    ...shadows.small,
-    elevation: 4,
-    borderWidth: 1,
-    borderColor: colors.success + '25',
+    gap: 4,
   },
   totalText: {
-    fontSize: 18,
-    fontWeight: '900',
-    color: colors.success,
-    letterSpacing: -0.2,
-  },
-  orderItems: {
-    marginBottom: 16,
-  },
-  orderItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 6,
-    gap: 12,
-  },
-  itemQuantity: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: colors.primary,
-    width: 24,
-  },
-  itemName: {
-    flex: 1,
-    fontSize: 14,
-    color: colors.text,
-    fontWeight: '500',
-  },
-  itemPrice: {
     fontSize: 14,
     fontWeight: '600',
-    color: colors.textLight,
+    color: colors.success,
   },
-  moreItems: {
+  orderItems: {
+    marginBottom: 8,
+  },
+  itemsSummary: {
     fontSize: 12,
     color: colors.textLight,
-    fontStyle: 'italic',
-    marginTop: 4,
+    fontWeight: '500',
+    lineHeight: 16,
   },
   notesSection: {
-    backgroundColor: colors.warning + '12',
-    padding: 20,
-    borderRadius: 20,
-    marginBottom: 20,
-    borderLeftWidth: 6,
-    borderLeftColor: colors.warning,
-    borderWidth: 1,
-    borderColor: colors.warning + '20',
-    ...shadows.small,
-    elevation: 4,
-  },
-  notesLabel: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: colors.warning,
-    marginBottom: 4,
+    backgroundColor: colors.backgroundLight,
+    padding: 8,
+    borderRadius: 8,
+    marginBottom: 8,
   },
   notesText: {
-    fontSize: 14,
+    fontSize: 12,
     color: colors.text,
     fontWeight: '500',
+    fontStyle: 'italic',
   },
   orderFooter: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    gap: 8,
   },
   statusBadge: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 12,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
   },
   statusText: {
-    fontSize: 11,
-    fontWeight: '800',
-    letterSpacing: 0.5,
+    fontSize: 10,
+    fontWeight: '600',
   },
   actionButton: {
-    paddingHorizontal: 24,
-    paddingVertical: 14,
-    borderRadius: 20,
-    ...shadows.large,
-    elevation: 10,
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.2)',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+    flex: 1,
+    alignItems: 'center',
   },
   actionButtonText: {
-    fontSize: 15,
-    fontWeight: '900',
+    fontSize: 12,
+    fontWeight: '600',
     color: colors.white,
-    letterSpacing: 0.3,
   },
   timeEstimate: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: 2,
   },
   timeText: {
-    fontSize: 12,
+    fontSize: 10,
     color: colors.textLight,
-    fontWeight: '600',
+    fontWeight: '500',
+  },
+  viewButton: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: colors.backgroundLight,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   emptyState: {
     alignItems: 'center',

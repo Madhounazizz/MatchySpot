@@ -76,17 +76,15 @@ export default function MenuManagement() {
   };
 
   const MenuItemCard = ({ item }: { item: MenuItem }) => (
-    <TouchableOpacity style={styles.menuItemCard} activeOpacity={0.95} testID={`menu-item-${item.id}`}>
+    <TouchableOpacity style={styles.menuItemCard} activeOpacity={0.9} testID={`menu-item-${item.id}`}>
       <View style={styles.cardImageContainer}>
         <Image source={{ uri: item.image }} style={styles.itemImage} />
-        <View style={styles.imageOverlay}>
-          <View style={[styles.availabilityBadge, { 
-            backgroundColor: item.isAvailable !== false ? colors.success : colors.error 
-          }]}>
-            <Text style={styles.availabilityText}>
-              {item.isAvailable !== false ? 'Available' : 'Unavailable'}
-            </Text>
-          </View>
+        <View style={[styles.availabilityBadge, { 
+          backgroundColor: item.isAvailable !== false ? colors.success : colors.error 
+        }]}>
+          <Text style={styles.availabilityText}>
+            {item.isAvailable !== false ? 'Available' : 'Out'}
+          </Text>
         </View>
       </View>
       
@@ -96,12 +94,10 @@ export default function MenuManagement() {
             <Text style={styles.itemName}>{item.name}</Text>
             <View style={styles.ratingPriceRow}>
               <View style={styles.ratingContainer}>
-                <Star size={16} color={colors.warning} fill={colors.warning} />
+                <Star size={12} color={colors.warning} fill={colors.warning} />
                 <Text style={styles.itemRating}>{item.rating}</Text>
               </View>
-              <View style={styles.priceContainer}>
-                <Text style={styles.itemPrice}>${item.price}</Text>
-              </View>
+              <Text style={styles.itemPrice}>${item.price}</Text>
             </View>
           </View>
           
@@ -113,9 +109,9 @@ export default function MenuManagement() {
               onPress={() => toggleItemVisibility(item.id)}
             >
               {item.isAvailable !== false ? (
-                <Eye size={18} color={colors.success} strokeWidth={2.5} />
+                <Eye size={14} color={colors.success} strokeWidth={2} />
               ) : (
-                <EyeOff size={18} color={colors.textLight} strokeWidth={2.5} />
+                <EyeOff size={14} color={colors.textLight} strokeWidth={2} />
               )}
             </TouchableOpacity>
             <TouchableOpacity
@@ -125,23 +121,23 @@ export default function MenuManagement() {
                 setShowAddModal(true);
               }}
             >
-              <Edit3 size={18} color={colors.primary} strokeWidth={2.5} />
+              <Edit3 size={14} color={colors.primary} strokeWidth={2} />
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.actionButton, { backgroundColor: colors.error + '15' }]}
               onPress={() => deleteItem(item.id)}
             >
-              <Trash2 size={18} color={colors.error} strokeWidth={2.5} />
+              <Trash2 size={14} color={colors.error} strokeWidth={2} />
             </TouchableOpacity>
           </View>
         </View>
         
-        <Text style={styles.itemDescription} numberOfLines={2}>
+        <Text style={styles.itemDescription} numberOfLines={1}>
           {item.description}
         </Text>
         
         <View style={styles.itemFooter}>
-          <View style={[styles.categoryBadge, { backgroundColor: getCategoryColor(item.category) + '12' }]}>
+          <View style={[styles.categoryBadge, { backgroundColor: getCategoryColor(item.category) + '15' }]}>
             <Text style={[styles.categoryText, { color: getCategoryColor(item.category) }]}>
               {item.category}
             </Text>
@@ -150,17 +146,17 @@ export default function MenuManagement() {
           {(item.isVegetarian || item.isVegan || item.isGlutenFree) && (
             <View style={styles.dietaryTags}>
               {item.isVegetarian && (
-                <View style={[styles.dietaryTag, { backgroundColor: colors.success + '12' }]}>
+                <View style={[styles.dietaryTag, { backgroundColor: colors.success + '15' }]}>
                   <Text style={[styles.dietaryTagText, { color: colors.success }]}>V</Text>
                 </View>
               )}
               {item.isVegan && (
-                <View style={[styles.dietaryTag, { backgroundColor: colors.primary + '12' }]}>
+                <View style={[styles.dietaryTag, { backgroundColor: colors.primary + '15' }]}>
                   <Text style={[styles.dietaryTagText, { color: colors.primary }]}>VG</Text>
                 </View>
               )}
               {item.isGlutenFree && (
-                <View style={[styles.dietaryTag, { backgroundColor: colors.warning + '12' }]}>
+                <View style={[styles.dietaryTag, { backgroundColor: colors.warning + '15' }]}>
                   <Text style={[styles.dietaryTagText, { color: colors.warning }]}>GF</Text>
                 </View>
               )}
@@ -278,178 +274,166 @@ function getCategoryColor(category: string): string {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8fafc',
+    backgroundColor: colors.backgroundLight,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 28,
-    paddingVertical: 32,
+    paddingHorizontal: 16,
+    paddingVertical: 16,
     backgroundColor: colors.white,
-    borderBottomLeftRadius: 40,
-    borderBottomRightRadius: 40,
-    ...shadows.large,
-    elevation: 12,
+    ...shadows.small,
+    elevation: 4,
   },
   title: {
-    fontSize: 40,
-    fontWeight: '900',
+    fontSize: 24,
+    fontWeight: '700',
     color: colors.text,
-    letterSpacing: -1.5,
   },
   addButton: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.primary,
-    paddingHorizontal: 24,
-    paddingVertical: 16,
-    borderRadius: 20,
-    gap: 10,
-    ...shadows.card,
-    elevation: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 16,
+    gap: 6,
   },
   addButtonText: {
     color: colors.white,
-    fontWeight: '800',
-    fontSize: 16,
+    fontWeight: '600',
+    fontSize: 14,
   },
   searchContainer: {
-    paddingHorizontal: 28,
-    paddingVertical: 24,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
     backgroundColor: colors.white,
   },
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.backgroundLight,
-    borderRadius: 20,
-    paddingHorizontal: 24,
-    paddingVertical: 18,
-    gap: 16,
-    ...shadows.card,
-    elevation: 6,
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    gap: 8,
   },
   searchInput: {
     flex: 1,
-    fontSize: 18,
+    fontSize: 14,
     color: colors.text,
-    fontWeight: '600',
+    fontWeight: '500',
   },
   categoriesContainer: {
     backgroundColor: colors.white,
-    paddingBottom: 8,
+    paddingBottom: 4,
   },
   categoriesContent: {
-    paddingHorizontal: 28,
-    paddingVertical: 20,
-    gap: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    gap: 8,
   },
   categoryPill: {
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 30,
-    backgroundColor: colors.white,
-    borderWidth: 0,
-    ...shadows.card,
-    elevation: 6,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: colors.backgroundLight,
   },
   categoryPillActive: {
     backgroundColor: colors.primary,
-    ...shadows.large,
-    elevation: 8,
   },
   categoryPillText: {
-    fontSize: 15,
-    fontWeight: '700',
+    fontSize: 13,
+    fontWeight: '600',
     color: colors.textLight,
   },
   categoryPillTextActive: {
     color: colors.white,
-    fontWeight: '800',
+    fontWeight: '600',
   },
   menuList: {
     flex: 1,
   },
   statsRow: {
     flexDirection: 'row',
-    paddingHorizontal: 28,
-    paddingVertical: 24,
-    gap: 32,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: colors.white,
+    marginHorizontal: 16,
+    marginBottom: 16,
+    borderRadius: 12,
+    ...shadows.small,
+    elevation: 2,
   },
   statItem: {
+    flex: 1,
     alignItems: 'center',
   },
   statNumber: {
-    fontSize: 28,
-    fontWeight: '900',
+    fontSize: 20,
+    fontWeight: '700',
     color: colors.primary,
-    letterSpacing: -0.8,
   },
   statLabel: {
-    fontSize: 14,
+    fontSize: 12,
     color: colors.textLight,
     marginTop: 4,
-    fontWeight: '700',
+    fontWeight: '500',
   },
   menuItemCard: {
     backgroundColor: colors.white,
-    marginHorizontal: 28,
-    marginBottom: 32,
-    borderRadius: 36,
-    ...shadows.large,
-    elevation: 20,
+    marginHorizontal: 16,
+    marginBottom: 12,
+    borderRadius: 12,
+    ...shadows.small,
+    elevation: 2,
     overflow: 'hidden',
-    borderWidth: 0,
-    transform: [{ scale: 1 }],
-    position: 'relative',
+    borderWidth: 1,
+    borderColor: colors.border,
+    flexDirection: 'row',
   },
   cardImageContainer: {
     position: 'relative',
-    height: 220,
+    width: 80,
+    height: 80,
   },
   itemImage: {
     width: '100%',
     height: '100%',
     backgroundColor: colors.backgroundLight,
   },
-  imageOverlay: {
-    position: 'absolute',
-    top: 16,
-    right: 16,
-  },
   availabilityBadge: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 24,
-    ...shadows.medium,
-    elevation: 6,
-    borderWidth: 2,
-    borderColor: 'rgba(255,255,255,0.3)',
+    position: 'absolute',
+    top: 4,
+    right: 4,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 8,
   },
   availabilityText: {
-    fontSize: 12,
-    fontWeight: '700',
+    fontSize: 8,
+    fontWeight: '600',
     color: colors.white,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
   },
   itemContent: {
-    padding: 32,
+    flex: 1,
+    padding: 12,
   },
   itemHeader: {
-    marginBottom: 16,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 8,
   },
   itemTitleSection: {
-    marginBottom: 16,
+    flex: 1,
   },
   itemName: {
-    fontSize: 28,
-    fontWeight: '900',
+    fontSize: 16,
+    fontWeight: '600',
     color: colors.text,
-    marginBottom: 16,
-    letterSpacing: -0.7,
-    lineHeight: 32,
+    marginBottom: 4,
   },
   ratingPriceRow: {
     flexDirection: 'row',
@@ -458,26 +442,20 @@ const styles = StyleSheet.create({
   },
   itemActions: {
     flexDirection: 'row',
-    gap: 12,
-    justifyContent: 'flex-end',
+    gap: 4,
   },
   actionButton: {
-    width: 60,
-    height: 60,
-    borderRadius: 20,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
     alignItems: 'center',
     justifyContent: 'center',
-    ...shadows.large,
-    elevation: 12,
-    transform: [{ scale: 1 }],
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.3)',
   },
   itemDescription: {
-    fontSize: 16,
+    fontSize: 12,
     color: colors.textLight,
-    lineHeight: 24,
-    marginBottom: 20,
+    lineHeight: 16,
+    marginBottom: 8,
     fontWeight: '500',
   },
   itemFooter: {
@@ -485,74 +463,45 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  priceContainer: {
-    backgroundColor: colors.success + '15',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 24,
-    borderWidth: 1,
-    borderColor: colors.success + '25',
-    ...shadows.small,
-    elevation: 4,
-  },
   itemPrice: {
-    fontSize: 22,
-    fontWeight: '900',
+    fontSize: 14,
+    fontWeight: '600',
     color: colors.success,
-    letterSpacing: -0.5,
   },
   ratingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    backgroundColor: colors.warning + '15',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: colors.warning + '25',
-    ...shadows.small,
-    elevation: 4,
+    gap: 4,
   },
   itemRating: {
-    fontSize: 14,
-    fontWeight: '800',
+    fontSize: 12,
+    fontWeight: '500',
     color: colors.warning,
   },
   categoryBadge: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 24,
-    borderWidth: 1,
-    borderColor: 'transparent',
-    ...shadows.small,
-    elevation: 3,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
   },
   categoryText: {
-    fontSize: 13,
-    fontWeight: '800',
+    fontSize: 10,
+    fontWeight: '600',
     textTransform: 'capitalize',
-    letterSpacing: 0.3,
   },
   dietaryTags: {
     flexDirection: 'row',
-    gap: 8,
+    gap: 4,
   },
   dietaryTag: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: 20,
+    height: 20,
+    borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: 'transparent',
-    ...shadows.small,
-    elevation: 3,
   },
   dietaryTagText: {
-    fontSize: 11,
-    fontWeight: '900',
-    letterSpacing: 0.2,
+    fontSize: 8,
+    fontWeight: '600',
   },
   emptyState: {
     alignItems: 'center',
