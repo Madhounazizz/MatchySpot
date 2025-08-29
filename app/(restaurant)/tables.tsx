@@ -303,212 +303,258 @@ function DraggableReservation({ res, onDragStart }: { res: Reservation; onDragSt
 const styles = StyleSheet.create({
   container: { 
     flex: 1, 
-    backgroundColor: colors.white 
+    backgroundColor: '#f8fafc' 
   },
   header: {
-    paddingHorizontal: 16,
-    paddingTop: 20,
-    paddingBottom: 16,
-    backgroundColor: colors.white,
-  },
-  headerContent: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    alignItems: 'center',
+    paddingHorizontal: 28,
+    paddingVertical: 32,
+    backgroundColor: colors.white,
+    borderBottomLeftRadius: 40,
+    borderBottomRightRadius: 40,
+    ...shadows.large,
+    elevation: 12,
+  },
+  headerContent: {
+    flex: 1,
   },
   title: { 
-    fontSize: 28, 
-    fontWeight: '700', 
-    color: colors.text 
+    fontSize: 40, 
+    fontWeight: '900', 
+    color: colors.text,
+    letterSpacing: -1.5,
   },
   subtitle: { 
-    fontSize: 14, 
+    fontSize: 16, 
     color: colors.textLight, 
-    marginTop: 4, 
-    fontWeight: '500' 
+    marginTop: 6, 
+    fontWeight: '600' 
   },
   legend: { 
     flexDirection: 'column', 
     alignItems: 'flex-end', 
-    gap: 4 
+    gap: 8,
+    backgroundColor: colors.backgroundLight,
+    padding: 16,
+    borderRadius: 20,
+    ...shadows.small,
+    elevation: 4,
   },
   legendItem: { 
     flexDirection: 'row', 
     alignItems: 'center', 
-    gap: 6 
+    gap: 8 
   },
   legendDot: { 
-    width: 8, 
-    height: 8, 
-    borderRadius: 4 
+    width: 12, 
+    height: 12, 
+    borderRadius: 6,
+    ...shadows.small,
+    elevation: 2,
   },
   legendText: { 
-    fontSize: 11, 
-    color: colors.textLight, 
-    fontWeight: '500' 
+    fontSize: 13, 
+    color: colors.text, 
+    fontWeight: '600' 
   },
   filterContainer: { 
-    paddingLeft: 16, 
-    marginBottom: 16, 
-    marginTop: 8 
+    paddingLeft: 28, 
+    marginTop: 28,
+    marginBottom: 24, 
   },
   filterContent: { 
-    paddingRight: 16 
+    paddingRight: 20,
+    gap: 8,
   },
   filterButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 16,
-    backgroundColor: colors.backgroundLight,
-    marginRight: 8,
-    borderWidth: 1,
-    borderColor: colors.border,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 30,
+    backgroundColor: colors.white,
+    ...shadows.card,
+    elevation: 6,
   },
   filterButtonActive: { 
     backgroundColor: colors.primary, 
-    borderColor: colors.primary 
+    ...shadows.large,
+    elevation: 8,
   },
   filterButtonText: { 
-    fontSize: 13, 
-    fontWeight: '600', 
-    color: colors.text 
+    fontSize: 15, 
+    fontWeight: '700', 
+    color: colors.textLight 
   },
   filterButtonTextActive: { 
-    color: colors.white 
+    color: colors.white,
+    fontWeight: '800',
   },
   floorWrapper: { 
-    paddingHorizontal: 16, 
-    alignItems: 'center' 
+    paddingHorizontal: 28, 
+    alignItems: 'center',
+    marginBottom: 32,
   },
   floor: {
-    backgroundColor: colors.backgroundLight,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: colors.border,
-    ...shadows.small,
+    backgroundColor: colors.white,
+    borderRadius: 32,
+    borderWidth: 0,
+    ...shadows.large,
+    elevation: 16,
     position: 'relative',
     overflow: 'hidden',
+    borderLeftWidth: 6,
+    borderLeftColor: colors.primary,
   },
   tableNode: {
     position: 'absolute',
-    width: 64,
-    height: 64,
-    borderRadius: 16,
+    width: 80,
+    height: 80,
+    borderRadius: 24,
     backgroundColor: colors.white,
-    borderWidth: 2,
+    borderWidth: 3,
     alignItems: 'center',
     justifyContent: 'center',
-    ...shadows.small,
+    ...shadows.large,
+    elevation: 12,
+    transform: [{ scale: 1 }],
   },
   nodeIconContainer: { 
     position: 'absolute', 
-    top: 4, 
-    left: 4, 
-    width: 20, 
-    height: 20, 
-    borderRadius: 10, 
+    top: 6, 
+    left: 6, 
+    width: 28, 
+    height: 28, 
+    borderRadius: 14, 
     alignItems: 'center', 
-    justifyContent: 'center' 
+    justifyContent: 'center',
+    ...shadows.small,
+    elevation: 4,
   },
   nodeLabel: { 
-    fontSize: 12, 
-    fontWeight: '600', 
-    color: colors.text 
+    fontSize: 16, 
+    fontWeight: '800', 
+    color: colors.text,
+    letterSpacing: -0.3,
   },
   nodeFooter: { 
     position: 'absolute', 
-    bottom: 4, 
+    bottom: 6, 
     flexDirection: 'row', 
     alignItems: 'center', 
-    gap: 2 
+    gap: 4,
+    backgroundColor: colors.backgroundLight,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
   },
   nodeCap: { 
-    fontSize: 10, 
+    fontSize: 12, 
     color: colors.textLight, 
-    fontWeight: '500' 
+    fontWeight: '600' 
   },
   nodeBadge: { 
     position: 'absolute', 
-    right: 4, 
-    bottom: 4, 
+    right: 6, 
+    bottom: 6, 
     backgroundColor: colors.primary, 
-    borderRadius: 8, 
-    paddingHorizontal: 4, 
-    paddingVertical: 2, 
+    borderRadius: 12, 
+    paddingHorizontal: 8, 
+    paddingVertical: 4, 
     flexDirection: 'row', 
     alignItems: 'center', 
-    gap: 2 
+    gap: 4,
+    ...shadows.medium,
+    elevation: 6,
   },
   nodeBadgeText: { 
     color: colors.white, 
-    fontSize: 8, 
-    fontWeight: '600' 
+    fontSize: 10, 
+    fontWeight: '700' 
   },
   resTray: { 
-    marginTop: 16 
+    backgroundColor: colors.white,
+    borderTopLeftRadius: 32,
+    borderTopRightRadius: 32,
+    paddingTop: 24,
+    ...shadows.large,
+    elevation: 16,
+    borderTopWidth: 4,
+    borderTopColor: colors.secondary,
   },
   trayHeader: { 
-    paddingHorizontal: 16, 
+    paddingHorizontal: 28, 
     flexDirection: 'row', 
     justifyContent: 'space-between', 
     alignItems: 'center', 
-    marginBottom: 8 
+    marginBottom: 20 
   },
   trayTitle: { 
-    fontSize: 18, 
-    fontWeight: '600', 
-    color: colors.text 
+    fontSize: 24, 
+    fontWeight: '900', 
+    color: colors.text,
+    letterSpacing: -0.5,
   },
   traySubtitle: { 
-    fontSize: 12, 
+    fontSize: 14, 
     color: colors.textLight, 
-    fontWeight: '500' 
+    fontWeight: '600' 
   },
   trayContent: { 
-    paddingHorizontal: 16, 
-    paddingVertical: 8 
+    paddingHorizontal: 28, 
+    paddingVertical: 16,
+    paddingBottom: 32,
   },
   trayChip: { 
     flexDirection: 'row', 
     alignItems: 'center', 
-    backgroundColor: colors.white, 
-    borderRadius: 16, 
-    paddingHorizontal: 12, 
-    paddingVertical: 8, 
-    marginRight: 8, 
-    borderWidth: 1, 
-    borderColor: colors.border, 
-    ...shadows.small 
+    backgroundColor: colors.backgroundLight, 
+    borderRadius: 24, 
+    paddingHorizontal: 20, 
+    paddingVertical: 12, 
+    marginRight: 12, 
+    borderWidth: 2, 
+    borderColor: colors.primary + '20', 
+    ...shadows.card,
+    elevation: 8,
   },
   trayChipText: { 
-    fontSize: 12, 
-    fontWeight: '600', 
+    fontSize: 16, 
+    fontWeight: '800', 
     color: colors.primary, 
-    marginLeft: 4 
+    marginLeft: 8,
+    letterSpacing: -0.2,
   },
   trayChipTextSmall: { 
-    fontSize: 11, 
-    fontWeight: '600', 
+    fontSize: 14, 
+    fontWeight: '700', 
     color: colors.textLight 
   },
   trayChipDot: { 
     color: colors.textLight, 
-    marginHorizontal: 4 
+    marginHorizontal: 8,
+    fontSize: 16,
+    fontWeight: '900',
   },
   dragChip: { 
     position: 'absolute', 
     backgroundColor: colors.primary, 
-    borderRadius: 12, 
-    paddingHorizontal: 8, 
-    paddingVertical: 6, 
+    borderRadius: 20, 
+    paddingHorizontal: 16, 
+    paddingVertical: 12, 
     flexDirection: 'row', 
     alignItems: 'center', 
-    gap: 4, 
-    zIndex: 20 
+    gap: 8, 
+    zIndex: 20,
+    ...shadows.large,
+    elevation: 20,
+    borderWidth: 2,
+    borderColor: colors.white,
   },
   dragChipText: { 
     color: colors.white, 
-    fontSize: 11, 
-    fontWeight: '600' 
+    fontSize: 14, 
+    fontWeight: '800',
+    letterSpacing: 0.3,
   },
 });
