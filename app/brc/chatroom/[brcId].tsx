@@ -5,7 +5,7 @@ import { useLocalSearchParams, Stack, useRouter } from 'expo-router';
 import { Send, LogOut, Users, MessageCircle, Menu, Plus, Minus, ShoppingCart, X, Star } from 'lucide-react-native';
 import { colors, shadows } from '@/constants/colors';
 import { brcs } from '@/mocks/brcs';
-import { useBRCChat } from '@/store/useBRCChatStore';
+import { useBRCChatStore } from '@/store/useBRCChatStore';
 import { BRCChatMessage } from '@/types';
 import { menuItems, MenuItem } from '@/mocks/menu';
 
@@ -17,7 +17,7 @@ type OrderItem = {
 export default function BRCChatroomScreen() {
   const { brcId } = useLocalSearchParams<{ brcId: string }>();
   const router = useRouter();
-  const { currentSession, sendMessage, leaveRoom, getCurrentChatroom } = useBRCChat();
+  const { currentSession, sendMessage, leaveRoom, getCurrentChatroom } = useBRCChatStore();
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<BRCChatMessage[]>([]);
   const [showMenu, setShowMenu] = useState(false);

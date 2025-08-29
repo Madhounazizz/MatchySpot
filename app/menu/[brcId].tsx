@@ -13,7 +13,7 @@ import {
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ArrowLeft, Plus, Minus, ShoppingCart, X } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useBRCChat } from '@/store/useBRCChatStore';
+import { useBRCChatStore } from '@/store/useBRCChatStore';
 import { menuItems } from '@/mocks/menu';
 import { brcs } from '@/mocks/brcs';
 
@@ -28,7 +28,7 @@ interface CartItem {
 export default function MenuScreen() {
   const { brcId } = useLocalSearchParams<{ brcId: string }>();
   const router = useRouter();
-  const { createSession } = useBRCChat();
+  const { createSession } = useBRCChatStore();
   
   const [cart, setCart] = useState<CartItem[]>([]);
   const [selectedCategory, setSelectedCategory] = useState('All');
