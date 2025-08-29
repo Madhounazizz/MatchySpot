@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
 import { colors } from "@/constants/colors";
 import { useUserStore } from "@/store/useUserStore";
+import { BRCChatProvider } from "@/store/useBRCChatStore";
 
 
 export const unstable_settings = {
@@ -44,7 +45,7 @@ function RootLayoutNav() {
   const { isLoggedIn } = useUserStore();
 
   return (
-    <>
+    <BRCChatProvider>
       <StatusBar style="dark" />
       <Stack
         screenOptions={{
@@ -164,6 +165,6 @@ function RootLayoutNav() {
           </>
         )}
       </Stack>
-    </>
+    </BRCChatProvider>
   );
 }
