@@ -22,16 +22,29 @@ export const [BRCChatProvider, useBRCChatStore] = createContextHook(() => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    loadChatData();
+    // Add a small delay to prevent blocking the main thread during startup
+    const timer = setTimeout(() => {
+      loadChatData();
+    }, 500);
+    return () => clearTimeout(timer);
   }, []);
 
   const loadChatData = async () => {
     try {
       console.log('Loading BRC chat data...');
-      const stored = await AsyncStorage.getItem('brc-chat-storage');
+      // Add a timeout to prevent hanging indefinitely
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('AsyncStorage timeout')), 2000)
+      );
+      
+      const dataPromise = AsyncStorage.getItem('brc-chat-storage');
+      
+      // Race between the actual operation and the timeout
+      const stored = await Promise.race([dataPromise, timeoutPromise]) as string | null;
+      
       if (stored) {
         const data = JSON.parse(stored);
-        console.log('Loaded chat data:', data);
+        console.log('Loaded chat data successfully');
         setChatrooms(data.chatrooms || {});
         setCurrentSession(data.currentSession || null);
       } else {
@@ -39,6 +52,9 @@ export const [BRCChatProvider, useBRCChatStore] = createContextHook(() => {
       }
     } catch (error) {
       console.error('Failed to load chat data:', error);
+      // Continue with empty state on error
+      setChatrooms({});
+      setCurrentSession(null);
     } finally {
       setIsLoading(false);
       console.log('BRC chat store initialized');
@@ -51,7 +67,9 @@ export const [BRCChatProvider, useBRCChatStore] = createContextHook(() => {
         chatrooms: newChatrooms,
         currentSession: newSession,
       };
-      await AsyncStorage.setItem('brc-chat-storage', JSON.stringify(data));
+      // Don't await this operation to prevent blocking
+      AsyncStorage.setItem('brc-chat-storage', JSON.stringify(data))
+        .catch(error => console.error('Failed to save chat data:', error));
     } catch (error) {
       console.error('Failed to save chat data:', error);
     }

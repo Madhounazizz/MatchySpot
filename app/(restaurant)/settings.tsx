@@ -26,7 +26,10 @@ import {
   Shield,
   CreditCard,
   Settings as SettingsIcon,
+  BarChart3,
+  TrendingUp,
 } from 'lucide-react-native';
+import { router } from 'expo-router';
 import { colors } from '@/constants/colors';
 
 
@@ -177,9 +180,9 @@ export default function RestaurantSettings() {
           id: 'analytics',
           title: 'Analytics & Reports',
           subtitle: 'View detailed business insights',
-          icon: SettingsIcon,
+          icon: BarChart3,
           type: 'navigation',
-          onPress: () => Alert.alert('Coming Soon', 'Analytics dashboard will be available soon.'),
+          onPress: () => router.push('/(restaurant)/analytics'),
         },
       ],
     },
@@ -288,7 +291,7 @@ export default function RestaurantSettings() {
                 styles.actionButtonText,
                 item.type === 'action' && item.id === 'logout' && { color: colors.error }
               ]}>
-                {item.type === 'navigation' ? 'Configure' : 'Action'}
+                {item.id === 'analytics' ? 'View' : item.type === 'navigation' ? 'Configure' : 'Action'}
               </Text>
             </TouchableOpacity>
           )}

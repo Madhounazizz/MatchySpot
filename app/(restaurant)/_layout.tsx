@@ -2,8 +2,12 @@ import React from "react";
 import { Tabs } from "expo-router";
 import { BarChart3, Calendar, Users, Settings, ClipboardList, Menu, TrendingUp, ChefHat, Package } from "lucide-react-native";
 import { colors } from "@/constants/colors";
+import { Platform } from "react-native";
 
 export default function RestaurantTabLayout() {
+  // Reduce the number of tabs on web to prevent performance issues
+  const isWeb = Platform.OS === 'web';
+  
   return (
     <Tabs
       screenOptions={{
@@ -32,6 +36,8 @@ export default function RestaurantTabLayout() {
           marginTop: 4,
         },
         headerShown: false,
+        // Lazy load tabs to improve performance
+        lazy: true,
       }}
     >
       <Tabs.Screen
@@ -84,18 +90,20 @@ export default function RestaurantTabLayout() {
           ),
         }}
       />
-      <Tabs.Screen
-        name="inventory"
-        options={{
-          title: "Inventory",
-          tabBarIcon: ({ color, focused }) => (
-            <Package 
-              size={focused ? 26 : 24} 
-              color={color}
-            />
-          ),
-        }}
-      />
+      {!isWeb && (
+        <Tabs.Screen
+          name="inventory"
+          options={{
+            title: "Inventory",
+            tabBarIcon: ({ color, focused }) => (
+              <Package 
+                size={focused ? 26 : 24} 
+                color={color}
+              />
+            ),
+          }}
+        />
+      )}
       <Tabs.Screen
         name="staff"
         options={{
@@ -121,22 +129,9 @@ export default function RestaurantTabLayout() {
         }}
       />
       <Tabs.Screen
-        name="analytics"
-        options={{
-          title: "Analytics",
-          tabBarIcon: ({ color, focused }) => (
-            <TrendingUp 
-              size={focused ? 26 : 24} 
-              color={color}
-              fill={focused ? color : 'transparent'}
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
         name="settings"
         options={{
-          title: "Settings",
+          title: "More",
           tabBarIcon: ({ color, focused }) => (
             <Settings 
               size={focused ? 26 : 24} 

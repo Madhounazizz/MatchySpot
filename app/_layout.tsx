@@ -2,8 +2,9 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
+import { View, Text, ActivityIndicator } from "react-native";
 import { colors } from "@/constants/colors";
 import { useUserStore } from "@/store/useUserStore";
 import { BRCChatProvider } from "@/store/useBRCChatStore";
@@ -20,22 +21,41 @@ export default function RootLayout() {
   const [loaded, error] = useFonts({
     ...FontAwesome.font,
   });
+  const [timeoutError, setTimeoutError] = useState(false);
+
+  // Set a timeout to prevent infinite loading
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!loaded && !error) {
+        console.log('Font loading timeout - proceeding anyway');
+        setTimeoutError(true);
+      }
+    }, 3000); // 3 second timeout
+
+    return () => clearTimeout(timer);
+  }, [loaded, error]);
 
   useEffect(() => {
     if (error) {
-      console.error(error);
-      throw error;
+      console.error('Font loading error:', error);
+      // Continue anyway instead of throwing
+      SplashScreen.hideAsync().catch(e => console.log('Error hiding splash:', e));
     }
   }, [error]);
 
   useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
+    if (loaded || timeoutError) {
+      SplashScreen.hideAsync().catch(e => console.log('Error hiding splash:', e));
     }
-  }, [loaded]);
+  }, [loaded, timeoutError]);
 
-  if (!loaded) {
-    return null;
+  if (!loaded && !timeoutError) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.white }}>
+        <ActivityIndicator size="large" color={colors.primary} />
+        <Text style={{ marginTop: 10, color: colors.text }}>Loading...</Text>
+      </View>
+    );
   }
 
   return <RootLayoutNav />;
