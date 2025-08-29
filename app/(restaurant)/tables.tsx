@@ -478,7 +478,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 32,
     paddingTop: 24,
     ...shadows.large,
-    elevation: 16,
+    elevation: 20,
     borderTopWidth: 4,
     borderTopColor: colors.secondary,
   },
