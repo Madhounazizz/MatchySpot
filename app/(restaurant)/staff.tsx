@@ -131,7 +131,7 @@ export default function StaffScreen() {
           !staff.isActive && styles.inactiveCard,
         ]}
         onPress={() => handleStaffAction(staff)}
-        activeOpacity={0.95}
+        activeOpacity={0.9}
         testID={`staff-${staff.id}`}
       >
         <View style={styles.staffHeader}>
@@ -145,8 +145,8 @@ export default function StaffScreen() {
             </View>
             <View style={styles.staffDetails}>
               <Text style={styles.staffName}>{staff.name}</Text>
-              <View style={[styles.roleBadge, { backgroundColor: roleColor + '12' }]}>
-                <RoleIcon size={14} color={roleColor} strokeWidth={2.5} />
+              <View style={[styles.roleBadge, { backgroundColor: roleColor + '15' }]}>
+                <RoleIcon size={12} color={roleColor} strokeWidth={2} />
                 <Text style={[styles.roleText, { color: roleColor }]}>
                   {staff.role.charAt(0).toUpperCase() + staff.role.slice(1)}
                 </Text>
@@ -154,7 +154,7 @@ export default function StaffScreen() {
             </View>
           </View>
           <TouchableOpacity style={styles.moreButton}>
-            <MoreVertical size={20} color={colors.textLight} strokeWidth={2} />
+            <MoreVertical size={16} color={colors.textLight} strokeWidth={2} />
           </TouchableOpacity>
         </View>
 
@@ -162,13 +162,13 @@ export default function StaffScreen() {
           <View style={styles.contactInfo}>
             <View style={styles.contactItem}>
               <View style={styles.contactIcon}>
-                <Phone size={16} color={colors.primary} strokeWidth={2.5} />
+                <Phone size={14} color={colors.primary} strokeWidth={2} />
               </View>
               <Text style={styles.contactText}>{staff.phone}</Text>
             </View>
             <View style={styles.contactItem}>
               <View style={styles.contactIcon}>
-                <Mail size={16} color={colors.secondary} strokeWidth={2.5} />
+                <Mail size={14} color={colors.secondary} strokeWidth={2} />
               </View>
               <Text style={styles.contactText}>{staff.email}</Text>
             </View>
@@ -178,7 +178,7 @@ export default function StaffScreen() {
         <View style={styles.scheduleCard}>
           <View style={styles.scheduleHeader}>
             <View style={styles.scheduleIcon}>
-              <Clock size={16} color={colors.white} strokeWidth={2.5} />
+              <Clock size={14} color={colors.primary} strokeWidth={2} />
             </View>
             <Text style={styles.scheduleLabel}>Work Schedule</Text>
           </View>
@@ -194,7 +194,7 @@ export default function StaffScreen() {
 
         <View style={styles.staffFooter}>
           <View style={styles.joinedInfo}>
-            <Calendar size={14} color={colors.textLight} strokeWidth={2} />
+            <Calendar size={12} color={colors.textLight} strokeWidth={2} />
             <Text style={styles.joinedText}>
               Joined {new Date(staff.joinedDate).toLocaleDateString('en-US', { 
                 month: 'short', 
@@ -205,9 +205,9 @@ export default function StaffScreen() {
           </View>
           <View style={[
             styles.statusBadge,
-            { backgroundColor: staff.isActive ? colors.success : colors.error }
+            { backgroundColor: staff.isActive ? colors.success + '15' : colors.error + '15' }
           ]}>
-            <Text style={styles.statusText}>
+            <Text style={[styles.statusText, { color: staff.isActive ? colors.success : colors.error }]}>
               {staff.isActive ? 'Active' : 'Inactive'}
             </Text>
           </View>
@@ -233,23 +233,23 @@ export default function StaffScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <LinearGradient
-        colors={[colors.white, colors.backgroundLight]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.header}
-      >
-        <Text style={styles.title}>Staff Management</Text>
-        <View style={styles.headerActions}>
-          <TouchableOpacity style={styles.filterIcon} activeOpacity={0.8}>
-            <Filter size={20} color={colors.primary} />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.addButton} activeOpacity={0.9}>
-            <Plus size={20} color={colors.white} />
-            <Text style={styles.addButtonText}>Add Staff</Text>
-          </TouchableOpacity>
+      <View style={styles.header}>
+        <View style={styles.headerContent}>
+          <View>
+            <Text style={styles.title}>Staff Management</Text>
+            <Text style={styles.subtitle}>{filteredStaff.length} staff members</Text>
+          </View>
+          <View style={styles.headerActions}>
+            <TouchableOpacity style={styles.headerButton} activeOpacity={0.8}>
+              <Filter size={18} color={colors.primary} />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.addButton} activeOpacity={0.9}>
+              <Plus size={16} color={colors.white} />
+              <Text style={styles.addButtonText}>Add Staff</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </LinearGradient>
+      </View>
 
       <ScrollView
         horizontal
@@ -293,81 +293,77 @@ export default function StaffScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8fafc',
+    backgroundColor: colors.white,
   },
   header: {
+    paddingHorizontal: 16,
+    paddingTop: 20,
+    paddingBottom: 16,
+    backgroundColor: colors.white,
+  },
+  headerContent: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 28,
-    paddingVertical: 32,
-    backgroundColor: colors.white,
-    borderBottomLeftRadius: 40,
-    borderBottomRightRadius: 40,
-    ...shadows.large,
-    elevation: 12,
+    alignItems: 'flex-start',
   },
   title: {
-    fontSize: 40,
-    fontWeight: '900',
+    fontSize: 28,
+    fontWeight: '700',
     color: colors.text,
-    letterSpacing: -1.5,
+  },
+  subtitle: {
+    fontSize: 14,
+    color: colors.textLight,
+    marginTop: 4,
+    fontWeight: '500',
   },
   headerActions: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: 8,
   },
-  filterIcon: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: colors.secondary + '12',
+  headerButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: colors.backgroundLight,
     alignItems: 'center',
     justifyContent: 'center',
-    ...shadows.card,
-    elevation: 6,
-    borderWidth: 1,
-    borderColor: colors.secondary + '20',
+    ...shadows.small,
   },
   addButton: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.primary,
-    paddingHorizontal: 20,
-    paddingVertical: 14,
-    borderRadius: 20,
-    gap: 8,
-    ...shadows.large,
-    elevation: 10,
-    borderWidth: 1,
-    borderColor: colors.primaryDark,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 16,
+    gap: 6,
+    ...shadows.medium,
   },
   filterContainer: {
-    paddingLeft: 28,
-    marginBottom: 24,
+    paddingLeft: 16,
+    marginBottom: 16,
   },
   filterContent: {
-    paddingRight: 20,
+    paddingRight: 16,
   },
   filterButton: {
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 30,
-    backgroundColor: colors.white,
-    marginRight: 12,
-    borderWidth: 0,
-    ...shadows.card,
-    elevation: 6,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 16,
+    backgroundColor: colors.backgroundLight,
+    marginRight: 8,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   filterButtonActive: {
     backgroundColor: colors.primary,
-    ...shadows.large,
-    elevation: 8,
+    borderColor: colors.primary,
   },
   filterButtonText: {
-    fontSize: 15,
-    fontWeight: '700',
+    fontSize: 13,
+    fontWeight: '600',
     color: colors.text,
   },
   filterButtonTextActive: {
@@ -377,29 +373,26 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   staffList: {
-    paddingHorizontal: 28,
+    paddingHorizontal: 16,
     paddingBottom: 32,
   },
   staffCard: {
     backgroundColor: colors.white,
-    borderRadius: 32,
-    padding: 32,
-    marginBottom: 28,
-    ...shadows.large,
-    elevation: 16,
-    borderWidth: 0.5,
-    borderColor: colors.border + '40',
-    overflow: 'hidden',
-    transform: [{ scale: 1 }],
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 16,
+    ...shadows.medium,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   inactiveCard: {
-    opacity: 0.75,
+    opacity: 0.7,
   },
   staffHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: 20,
+    marginBottom: 16,
   },
   staffInfo: {
     flexDirection: 'row',
@@ -408,126 +401,117 @@ const styles = StyleSheet.create({
   },
   avatarContainer: {
     position: 'relative',
-    marginRight: 20,
+    marginRight: 12,
   },
   staffAvatar: {
-    width: 76,
-    height: 76,
-    borderRadius: 38,
-    borderWidth: 3,
-    borderColor: colors.white,
-    ...shadows.large,
-    elevation: 10,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    borderWidth: 2,
+    borderColor: colors.border,
   },
   statusIndicator: {
     position: 'absolute',
-    bottom: 2,
-    right: 2,
-    width: 22,
-    height: 22,
-    borderRadius: 11,
-    borderWidth: 3,
+    bottom: 0,
+    right: 0,
+    width: 14,
+    height: 14,
+    borderRadius: 7,
+    borderWidth: 2,
     borderColor: colors.white,
-    ...shadows.card,
-    elevation: 6,
   },
   staffDetails: {
     flex: 1,
   },
   staffName: {
-    fontSize: 24,
-    fontWeight: '900',
+    fontSize: 18,
+    fontWeight: '600',
     color: colors.text,
-    marginBottom: 10,
-    letterSpacing: -0.5,
+    marginBottom: 8,
   },
   roleBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 20,
-    gap: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 12,
+    gap: 6,
     alignSelf: 'flex-start',
   },
   roleText: {
-    fontSize: 13,
-    fontWeight: '800',
-    letterSpacing: 0.3,
+    fontSize: 12,
+    fontWeight: '600',
   },
   moreButton: {
-    padding: 8,
-    borderRadius: 12,
+    padding: 6,
+    borderRadius: 8,
     backgroundColor: colors.backgroundLight,
   },
   contactSection: {
-    marginBottom: 20,
+    marginBottom: 16,
   },
   contactInfo: {
-    gap: 12,
+    gap: 8,
   },
   contactItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: 8,
   },
   contactIcon: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
     backgroundColor: colors.backgroundLight,
     alignItems: 'center',
     justifyContent: 'center',
   },
   contactText: {
-    fontSize: 15,
+    fontSize: 13,
     color: colors.textLight,
-    fontWeight: '600',
+    fontWeight: '500',
     flex: 1,
   },
   scheduleCard: {
-    backgroundColor: colors.primary,
-    padding: 24,
-    borderRadius: 24,
-    marginBottom: 24,
-    ...shadows.large,
-    elevation: 12,
-    overflow: 'hidden',
+    backgroundColor: colors.backgroundLight,
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   scheduleHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
-    marginBottom: 12,
+    gap: 8,
+    marginBottom: 8,
   },
   scheduleIcon: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: colors.primary + '15',
     alignItems: 'center',
     justifyContent: 'center',
   },
   scheduleLabel: {
-    fontSize: 16,
-    fontWeight: '800',
-    color: colors.white,
-    letterSpacing: -0.2,
+    fontSize: 14,
+    fontWeight: '600',
+    color: colors.text,
   },
   scheduleDetails: {
-    paddingLeft: 42,
+    paddingLeft: 32,
   },
   scheduleTime: {
-    fontSize: 18,
-    fontWeight: '900',
-    color: colors.white,
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.text,
     marginBottom: 4,
-    letterSpacing: -0.3,
   },
   scheduleDays: {
-    fontSize: 14,
-    color: 'rgba(255, 255, 255, 0.8)',
-    fontWeight: '600',
+    fontSize: 13,
+    color: colors.textLight,
+    fontWeight: '500',
   },
   staffFooter: {
     flexDirection: 'row',
@@ -537,26 +521,21 @@ const styles = StyleSheet.create({
   joinedInfo: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 6,
   },
   joinedText: {
-    fontSize: 13,
+    fontSize: 12,
     color: colors.textLight,
-    fontWeight: '600',
+    fontWeight: '500',
   },
   statusBadge: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    ...shadows.small,
-    elevation: 4,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 12,
   },
   statusText: {
     fontSize: 12,
-    fontWeight: '800',
-    color: colors.white,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
+    fontWeight: '600',
   },
   emptyState: {
     alignItems: 'center',
@@ -564,7 +543,7 @@ const styles = StyleSheet.create({
     paddingVertical: 60,
   },
   emptyStateText: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '600',
     color: colors.text,
     marginTop: 16,
@@ -577,8 +556,7 @@ const styles = StyleSheet.create({
   },
   addButtonText: {
     color: colors.white,
-    fontWeight: '900',
-    fontSize: 15,
-    letterSpacing: 0.3,
+    fontWeight: '600',
+    fontSize: 14,
   },
 });

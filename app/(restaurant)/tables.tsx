@@ -224,31 +224,28 @@ export default function TablesScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <LinearGradient
-        colors={[colors.white, colors.backgroundLight]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.header}
-      >
-        <View>
-          <Text style={styles.title}>Tables</Text>
-          <Text style={styles.subtitle}>{Math.round(((filterCounts.occupied + filterCounts.reserved) / filterCounts.all) * 100)}% occupied</Text>
-        </View>
-        <View style={styles.legend}>
-          <View style={styles.legendItem}>
-            <View style={[styles.legendDot, { backgroundColor: getStatusColor('available') }]} />
-            <Text style={styles.legendText}>Free</Text>
+      <View style={styles.header}>
+        <View style={styles.headerContent}>
+          <View>
+            <Text style={styles.title}>Tables</Text>
+            <Text style={styles.subtitle}>{Math.round(((filterCounts.occupied + filterCounts.reserved) / filterCounts.all) * 100)}% occupied</Text>
           </View>
-          <View style={styles.legendItem}>
-            <View style={[styles.legendDot, { backgroundColor: getStatusColor('reserved') }]} />
-            <Text style={styles.legendText}>Reserved</Text>
-          </View>
-          <View style={styles.legendItem}>
-            <View style={[styles.legendDot, { backgroundColor: getStatusColor('occupied') }]} />
-            <Text style={styles.legendText}>Occupied</Text>
+          <View style={styles.legend}>
+            <View style={styles.legendItem}>
+              <View style={[styles.legendDot, { backgroundColor: getStatusColor('available') }]} />
+              <Text style={styles.legendText}>Free</Text>
+            </View>
+            <View style={styles.legendItem}>
+              <View style={[styles.legendDot, { backgroundColor: getStatusColor('reserved') }]} />
+              <Text style={styles.legendText}>Reserved</Text>
+            </View>
+            <View style={styles.legendItem}>
+              <View style={[styles.legendDot, { backgroundColor: getStatusColor('occupied') }]} />
+              <Text style={styles.legendText}>Occupied</Text>
+            </View>
           </View>
         </View>
-      </LinearGradient>
+      </View>
 
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterContainer} contentContainerStyle={styles.filterContent}>
         <FilterButton status={'all'} label={'All'} count={filterCounts.all} />
@@ -304,78 +301,214 @@ function DraggableReservation({ res, onDragStart }: { res: Reservation; onDragSt
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f8fafc' },
+  container: { 
+    flex: 1, 
+    backgroundColor: colors.white 
+  },
   header: {
+    paddingHorizontal: 16,
+    paddingTop: 20,
+    paddingBottom: 16,
+    backgroundColor: colors.white,
+  },
+  headerContent: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 28,
-    paddingVertical: 24,
-    backgroundColor: colors.white,
-    borderBottomLeftRadius: 40,
-    borderBottomRightRadius: 40,
-    ...shadows.large,
-    elevation: 12,
+    alignItems: 'flex-start',
   },
-  title: { fontSize: 32, fontWeight: '900', color: colors.text, letterSpacing: -0.8 },
-  subtitle: { fontSize: 14, color: colors.textLight, marginTop: 6, fontWeight: '700' },
-  legend: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  legendItem: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  legendDot: { width: 10, height: 10, borderRadius: 5 },
-  legendText: { fontSize: 12, color: colors.textLight, fontWeight: '700' },
-  filterContainer: { paddingLeft: 28, marginBottom: 12, marginTop: 8 },
-  filterContent: { paddingRight: 20 },
+  title: { 
+    fontSize: 28, 
+    fontWeight: '700', 
+    color: colors.text 
+  },
+  subtitle: { 
+    fontSize: 14, 
+    color: colors.textLight, 
+    marginTop: 4, 
+    fontWeight: '500' 
+  },
+  legend: { 
+    flexDirection: 'column', 
+    alignItems: 'flex-end', 
+    gap: 4 
+  },
+  legendItem: { 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    gap: 6 
+  },
+  legendDot: { 
+    width: 8, 
+    height: 8, 
+    borderRadius: 4 
+  },
+  legendText: { 
+    fontSize: 11, 
+    color: colors.textLight, 
+    fontWeight: '500' 
+  },
+  filterContainer: { 
+    paddingLeft: 16, 
+    marginBottom: 16, 
+    marginTop: 8 
+  },
+  filterContent: { 
+    paddingRight: 16 
+  },
   filterButton: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 24,
-    backgroundColor: colors.white,
-    marginRight: 10,
-    borderWidth: 0,
-    ...shadows.card,
-    elevation: 6,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 16,
+    backgroundColor: colors.backgroundLight,
+    marginRight: 8,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
-  filterButtonActive: { backgroundColor: colors.primary, ...shadows.large, elevation: 8 },
-  filterButtonText: { fontSize: 14, fontWeight: '700', color: colors.text },
-  filterButtonTextActive: { color: colors.white },
-  floorWrapper: { paddingHorizontal: 16, alignItems: 'center' },
+  filterButtonActive: { 
+    backgroundColor: colors.primary, 
+    borderColor: colors.primary 
+  },
+  filterButtonText: { 
+    fontSize: 13, 
+    fontWeight: '600', 
+    color: colors.text 
+  },
+  filterButtonTextActive: { 
+    color: colors.white 
+  },
+  floorWrapper: { 
+    paddingHorizontal: 16, 
+    alignItems: 'center' 
+  },
   floor: {
-    backgroundColor: colors.white,
-    borderRadius: 28,
-    borderWidth: 0.5,
-    borderColor: colors.border + '40',
-    ...shadows.large,
-    elevation: 12,
+    backgroundColor: colors.backgroundLight,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: colors.border,
+    ...shadows.small,
     position: 'relative',
     overflow: 'hidden',
   },
   tableNode: {
     position: 'absolute',
-    width: 76,
-    height: 76,
-    borderRadius: 20,
-    backgroundColor: colors.backgroundLight,
-    borderWidth: 2.5,
+    width: 64,
+    height: 64,
+    borderRadius: 16,
+    backgroundColor: colors.white,
+    borderWidth: 2,
     alignItems: 'center',
     justifyContent: 'center',
-    ...shadows.card,
-    elevation: 6,
+    ...shadows.small,
   },
-  nodeIconContainer: { position: 'absolute', top: 6, left: 6, width: 28, height: 28, borderRadius: 8, alignItems: 'center', justifyContent: 'center' },
-  nodeLabel: { fontSize: 14, fontWeight: '900', color: colors.text },
-  nodeFooter: { position: 'absolute', bottom: 6, flexDirection: 'row', alignItems: 'center', gap: 4 },
-  nodeCap: { fontSize: 12, color: colors.textLight, fontWeight: '700' },
-  nodeBadge: { position: 'absolute', right: 6, bottom: 6, backgroundColor: colors.primary, borderRadius: 10, paddingHorizontal: 6, paddingVertical: 4, flexDirection: 'row', alignItems: 'center', gap: 4 },
-  nodeBadgeText: { color: colors.white, fontSize: 10, fontWeight: '800' },
-  resTray: { marginTop: 14 },
-  trayHeader: { paddingHorizontal: 28, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 },
-  trayTitle: { fontSize: 18, fontWeight: '900', color: colors.text },
-  traySubtitle: { fontSize: 12, color: colors.textLight, fontWeight: '700' },
-  trayContent: { paddingHorizontal: 20, paddingVertical: 10 },
-  trayChip: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.white, borderRadius: 18, paddingHorizontal: 12, paddingVertical: 10, marginRight: 10, borderWidth: 1, borderColor: colors.border, ...shadows.card },
-  trayChipText: { fontSize: 13, fontWeight: '800', color: colors.primary, marginLeft: 6 },
-  trayChipTextSmall: { fontSize: 12, fontWeight: '800', color: colors.textLight },
-  trayChipDot: { color: colors.textLight, marginHorizontal: 6 },
-  dragChip: { position: 'absolute', backgroundColor: colors.primary, borderRadius: 16, paddingHorizontal: 10, paddingVertical: 8, flexDirection: 'row', alignItems: 'center', gap: 6, zIndex: 20 },
-  dragChipText: { color: colors.white, fontSize: 12, fontWeight: '800' },
+  nodeIconContainer: { 
+    position: 'absolute', 
+    top: 4, 
+    left: 4, 
+    width: 20, 
+    height: 20, 
+    borderRadius: 10, 
+    alignItems: 'center', 
+    justifyContent: 'center' 
+  },
+  nodeLabel: { 
+    fontSize: 12, 
+    fontWeight: '600', 
+    color: colors.text 
+  },
+  nodeFooter: { 
+    position: 'absolute', 
+    bottom: 4, 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    gap: 2 
+  },
+  nodeCap: { 
+    fontSize: 10, 
+    color: colors.textLight, 
+    fontWeight: '500' 
+  },
+  nodeBadge: { 
+    position: 'absolute', 
+    right: 4, 
+    bottom: 4, 
+    backgroundColor: colors.primary, 
+    borderRadius: 8, 
+    paddingHorizontal: 4, 
+    paddingVertical: 2, 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    gap: 2 
+  },
+  nodeBadgeText: { 
+    color: colors.white, 
+    fontSize: 8, 
+    fontWeight: '600' 
+  },
+  resTray: { 
+    marginTop: 16 
+  },
+  trayHeader: { 
+    paddingHorizontal: 16, 
+    flexDirection: 'row', 
+    justifyContent: 'space-between', 
+    alignItems: 'center', 
+    marginBottom: 8 
+  },
+  trayTitle: { 
+    fontSize: 18, 
+    fontWeight: '600', 
+    color: colors.text 
+  },
+  traySubtitle: { 
+    fontSize: 12, 
+    color: colors.textLight, 
+    fontWeight: '500' 
+  },
+  trayContent: { 
+    paddingHorizontal: 16, 
+    paddingVertical: 8 
+  },
+  trayChip: { 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    backgroundColor: colors.white, 
+    borderRadius: 16, 
+    paddingHorizontal: 12, 
+    paddingVertical: 8, 
+    marginRight: 8, 
+    borderWidth: 1, 
+    borderColor: colors.border, 
+    ...shadows.small 
+  },
+  trayChipText: { 
+    fontSize: 12, 
+    fontWeight: '600', 
+    color: colors.primary, 
+    marginLeft: 4 
+  },
+  trayChipTextSmall: { 
+    fontSize: 11, 
+    fontWeight: '600', 
+    color: colors.textLight 
+  },
+  trayChipDot: { 
+    color: colors.textLight, 
+    marginHorizontal: 4 
+  },
+  dragChip: { 
+    position: 'absolute', 
+    backgroundColor: colors.primary, 
+    borderRadius: 12, 
+    paddingHorizontal: 8, 
+    paddingVertical: 6, 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    gap: 4, 
+    zIndex: 20 
+  },
+  dragChipText: { 
+    color: colors.white, 
+    fontSize: 11, 
+    fontWeight: '600' 
+  },
 });
