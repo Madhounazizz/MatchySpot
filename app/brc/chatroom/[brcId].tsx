@@ -437,7 +437,7 @@ export default function BRCChatroomScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: '#f5f7fa',
   },
   headerActions: {
     flexDirection: 'row',
@@ -483,11 +483,11 @@ const styles = StyleSheet.create({
     padding: 4,
   },
   sessionInfo: {
-    backgroundColor: colors.white,
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#e9ecef',
+    borderBottomColor: 'rgba(0, 0, 0, 0.05)',
     ...shadows.small,
   },
   sessionText: {
@@ -512,19 +512,21 @@ const styles = StyleSheet.create({
   messageContainer: {
     maxWidth: '85%',
     marginBottom: 16,
-    borderRadius: 20,
+    borderRadius: 24,
     padding: 16,
     ...shadows.medium,
   },
   currentUserMessage: {
     alignSelf: 'flex-end',
     backgroundColor: colors.primary,
-    borderBottomRightRadius: 6,
+    borderBottomRightRadius: 8,
   },
   otherUserMessage: {
     alignSelf: 'flex-start',
     backgroundColor: colors.white,
-    borderBottomLeftRadius: 6,
+    borderBottomLeftRadius: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.05)',
   },
   messageHeader: {
     flexDirection: 'row',
@@ -588,7 +590,7 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: colors.white,
     borderRadius: 24,
     paddingHorizontal: 16,
     paddingVertical: 12,
@@ -597,7 +599,8 @@ const styles = StyleSheet.create({
     color: colors.text,
     marginRight: 12,
     borderWidth: 1,
-    borderColor: '#e9ecef',
+    borderColor: 'rgba(0, 0, 0, 0.08)',
+    ...shadows.small,
   },
   sendButton: {
     backgroundColor: colors.primary,
@@ -655,16 +658,17 @@ const styles = StyleSheet.create({
   },
   menuModal: {
     flex: 1,
-    backgroundColor: colors.white,
+    backgroundColor: '#f8f9fa',
   },
   menuHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 20,
+    backgroundColor: colors.white,
     borderBottomWidth: 1,
-    borderBottomColor: '#e9ecef',
-    ...shadows.small,
+    borderBottomColor: 'rgba(0, 0, 0, 0.05)',
+    ...shadows.medium,
   },
   menuTitle: {
     fontSize: 24,
@@ -683,16 +687,18 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   categoryPill: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    backgroundColor: '#f8f9fa',
+    paddingHorizontal: 18,
+    paddingVertical: 10,
+    borderRadius: 25,
+    backgroundColor: colors.white,
     borderWidth: 1,
-    borderColor: '#e9ecef',
+    borderColor: 'rgba(0, 0, 0, 0.08)',
+    ...shadows.small,
   },
   selectedCategoryPill: {
     backgroundColor: colors.primary,
     borderColor: colors.primary,
+    ...shadows.medium,
   },
   categoryPillText: {
     fontSize: 14,
@@ -709,14 +715,16 @@ const styles = StyleSheet.create({
   menuItem: {
     flexDirection: 'row',
     backgroundColor: colors.white,
-    borderRadius: 16,
+    borderRadius: 20,
     marginBottom: 16,
     ...shadows.medium,
     overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.03)',
   },
   menuItemImage: {
-    width: 100,
-    height: 100,
+    width: 110,
+    height: 110,
   },
   menuItemContent: {
     flex: 1,
@@ -789,7 +797,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     padding: 20,
     borderTopWidth: 1,
-    borderTopColor: '#e9ecef',
+    borderTopColor: 'rgba(0, 0, 0, 0.05)',
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
     ...shadows.large,
   },
   cartInfo: {
@@ -813,12 +823,13 @@ const styles = StyleSheet.create({
   },
   clearCartButton: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: colors.backgroundLight,
     paddingVertical: 16,
-    borderRadius: 12,
+    borderRadius: 16,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#e9ecef',
+    borderColor: 'rgba(0, 0, 0, 0.08)',
+    ...shadows.small,
   },
   clearCartText: {
     fontSize: 16,
@@ -829,12 +840,12 @@ const styles = StyleSheet.create({
     flex: 2,
     backgroundColor: colors.primary,
     paddingVertical: 16,
-    borderRadius: 12,
+    borderRadius: 16,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
-    ...shadows.medium,
+    ...shadows.large,
   },
   orderButtonText: {
     fontSize: 16,
