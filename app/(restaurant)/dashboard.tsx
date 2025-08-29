@@ -261,31 +261,54 @@ export default function RestaurantDashboard() {
           </View>
           <View style={styles.actionsGrid}>
             <QuickActionCard
-              icon={AlertCircle}
-              title={"Pending Reservations"}
-              description={`${pendingReservations.length} need confirmation`}
-              color={colors.error}
-              badge={pendingReservations.length}
-            />
-            <QuickActionCard
-              icon={Users}
-              title={"Staff Management"}
-              description={`${activeStaff.length} staff on duty`}
+              icon={Calendar}
+              title={"Reservations"}
+              description={`${pendingReservations.length} pending confirmations`}
               color={colors.primary}
-              onPress={() => setShowScheduling(true)}
+              badge={pendingReservations.length}
+              onPress={() => router.push('/(restaurant)/reservations')}
             />
             <QuickActionCard
               icon={ChefHat}
-              title={"Menu Management"}
-              description={'Update dishes & pricing'}
-              color={colors.secondary}
+              title={"Order"}
+              description={'Manage incoming orders'}
+              color={colors.success}
+              onPress={() => router.push('/(restaurant)/orders')}
             />
             <QuickActionCard
-              icon={BarChart3}
-              title={"Analytics"}
-              description={'View detailed reports'}
-              color={colors.success}
-              onPress={() => router.push('/(restaurant)/analytics')}
+              icon={MapPin}
+              title={"Table"}
+              description={'View table layout & status'}
+              color={colors.secondary}
+              onPress={() => router.push('/(restaurant)/tables')}
+            />
+            <QuickActionCard
+              icon={ChefHat}
+              title={"Menu"}
+              description={'Update dishes & pricing'}
+              color={colors.warning}
+              onPress={() => router.push('/(restaurant)/menu')}
+            />
+            <QuickActionCard
+              icon={Users}
+              title={"Management"}
+              description={`${activeStaff.length} staff on duty`}
+              color={colors.accent}
+              onPress={() => router.push('/(restaurant)/staff')}
+            />
+            <QuickActionCard
+              icon={SettingsIcon}
+              title={"Settings"}
+              description={'Restaurant configuration'}
+              color={colors.textLight}
+              onPress={() => router.push('/(restaurant)/settings')}
+            />
+            <QuickActionCard
+              icon={Activity}
+              title={"Inventory"}
+              description={'Stock & supply management'}
+              color={colors.error}
+              onPress={() => router.push('/(restaurant)/inventory')}
             />
           </View>
         </View>
