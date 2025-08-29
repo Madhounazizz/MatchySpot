@@ -311,19 +311,10 @@ export default function MenuScreen() {
                 <Text style={styles.paymentNote}>💵 Cash payment only</Text>
               </View>
 
-              <TouchableOpacity
-                style={styles.placeOrderButton}
-                onPress={handleCheckout}
-              >
-                <LinearGradient
-                  colors={['#FF6B6B', '#4ECDC4']}
-                  style={styles.gradientButton}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 0 }}
-                >
-                  <Text style={styles.placeOrderText}>Place Order & Get Chatroom Code</Text>
-                </LinearGradient>
-              </TouchableOpacity>
+              <View style={styles.orderDisabledContainer}>
+                <Text style={styles.orderDisabledText}>Order placement temporarily disabled</Text>
+                <Text style={styles.orderDisabledSubtext}>Please contact staff to place your order</Text>
+              </View>
             </View>
           </View>
         </View>
@@ -645,17 +636,24 @@ const styles = StyleSheet.create({
     marginTop: 12,
     fontStyle: 'italic',
   },
-  placeOrderButton: {
+  orderDisabledContainer: {
+    backgroundColor: '#F0F0F0',
+    paddingVertical: 20,
+    paddingHorizontal: 16,
     borderRadius: 12,
-    overflow: 'hidden',
-  },
-  gradientButton: {
-    paddingVertical: 16,
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
   },
-  placeOrderText: {
+  orderDisabledText: {
     fontSize: 16,
     fontWeight: '600' as const,
-    color: '#FFF',
+    color: '#999',
+    marginBottom: 4,
+  },
+  orderDisabledSubtext: {
+    fontSize: 14,
+    color: '#666',
+    textAlign: 'center',
   },
 });
