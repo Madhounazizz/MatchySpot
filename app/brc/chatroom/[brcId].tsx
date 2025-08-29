@@ -1,12 +1,18 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableOpacity, FlatList, KeyboardAvoidingView, Platform, Alert } from 'react-native';
+import { StyleSheet, View, Text, TextInput, TouchableOpacity, FlatList, KeyboardAvoidingView, Platform, Alert, Modal, ScrollView } from 'react-native';
 import { Image } from 'expo-image';
 import { useLocalSearchParams, Stack, useRouter } from 'expo-router';
-import { Send, LogOut, Users, MessageCircle } from 'lucide-react-native';
+import { Send, LogOut, Users, MessageCircle, Menu, Plus, Minus, ShoppingCart, X, Star } from 'lucide-react-native';
 import { colors, shadows } from '@/constants/colors';
 import { brcs } from '@/mocks/brcs';
 import { useBRCChat } from '@/store/useBRCChatStore';
 import { BRCChatMessage } from '@/types';
+import { menuItems, MenuItem } from '@/mocks/menu';
+
+type OrderItem = {
+  menuItem: MenuItem;
+  quantity: number;
+};
 
 export default function BRCChatroomScreen() {
   const { brcId } = useLocalSearchParams<{ brcId: string }>();
@@ -14,10 +20,18 @@ export default function BRCChatroomScreen() {
   const { currentSession, sendMessage, leaveRoom, getCurrentChatroom } = useBRCChat();
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<BRCChatMessage[]>([]);
+  const [showMenu, setShowMenu] = useState(false);
+  const [cart, setCart] = useState<OrderItem[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const flatListRef = useRef<FlatList>(null);
   
   const brc = brcs.find((b) => b.id === brcId);
   const chatroom = getCurrentChatroom();
+  const brcMenu = menuItems.filter(item => item.brcId === brcId);
+  const categories = ['all', ...Array.from(new Set(brcMenu.map(item => item.category)))];
+  const filteredMenu = selectedCategory === 'all' ? brcMenu : brcMenu.filter(item => item.category === selectedCategory);
+  const cartTotal = cart.reduce((sum, item) => sum + (item.menuItem.price * item.quantity), 0);
+  const cartItemsCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   useEffect(() => {
     if (!currentSession || currentSession.brcId !== brcId) {
@@ -149,6 +163,126 @@ export default function BRCChatroomScreen() {
     );
   };
 
+  const addToCart = (menuItem: MenuItem) => {
+    setCart(prev => {
+      const existingItem = prev.find(item => item.menuItem.id === menuItem.id);
+      if (existingItem) {
+        return prev.map(item => 
+          item.menuItem.id === menuItem.id 
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
+        );
+      }
+      return [...prev, { menuItem, quantity: 1 }];
+    });
+  };
+
+  const removeFromCart = (menuItemId: string) => {
+    setCart(prev => {
+      const existingItem = prev.find(item => item.menuItem.id === menuItemId);
+      if (existingItem && existingItem.quantity > 1) {
+        return prev.map(item => 
+          item.menuItem.id === menuItemId 
+            ? { ...item, quantity: item.quantity - 1 }
+            : item
+        );
+      }
+      return prev.filter(item => item.menuItem.id !== menuItemId);
+    });
+  };
+
+  const clearCart = () => {
+    setCart([]);
+  };
+
+  const placeOrder = () => {
+    if (cart.length === 0) return;
+    
+    const orderMessage = `🍽️ Order placed:\n${cart.map(item => 
+      `${item.quantity}x ${item.menuItem.name} - ${(item.menuItem.price * item.quantity).toFixed(2)}`
+    ).join('\n')}\n\nTotal: ${cartTotal.toFixed(2)}`;
+    
+    sendMessage(brcId!, orderMessage);
+    clearCart();
+    setShowMenu(false);
+    
+    Alert.alert(
+      'Order Placed!',
+      'Your order has been sent to the kitchen. You can track it in the chat.',
+      [{ text: 'OK' }]
+    );
+  };
+
+  const renderMenuItem = ({ item }: { item: MenuItem }) => {
+    const cartItem = cart.find(cartItem => cartItem.menuItem.id === item.id);
+    const quantity = cartItem?.quantity || 0;
+
+    return (
+      <View style={styles.menuItem}>
+        <Image
+          source={{ uri: item.image }}
+          style={styles.menuItemImage}
+          contentFit="cover"
+        />
+        <View style={styles.menuItemContent}>
+          <View style={styles.menuItemHeader}>
+            <Text style={styles.menuItemName}>{item.name}</Text>
+            <View style={styles.ratingContainer}>
+              <Star size={12} color={colors.warning} fill={colors.warning} />
+              <Text style={styles.rating}>{item.rating}</Text>
+            </View>
+          </View>
+          <Text style={styles.menuItemDescription} numberOfLines={2}>
+            {item.description}
+          </Text>
+          <View style={styles.menuItemFooter}>
+            <Text style={styles.menuItemPrice}>${item.price}</Text>
+            <View style={styles.quantityControls}>
+              {quantity > 0 && (
+                <TouchableOpacity
+                  style={styles.quantityButton}
+                  onPress={() => removeFromCart(item.id)}
+                >
+                  <Minus size={16} color={colors.white} />
+                </TouchableOpacity>
+              )}
+              {quantity > 0 && (
+                <Text style={styles.quantityText}>{quantity}</Text>
+              )}
+              <TouchableOpacity
+                style={styles.quantityButton}
+                onPress={() => addToCart(item)}
+              >
+                <Plus size={16} color={colors.white} />
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </View>
+    );
+  };
+
+  const renderCategoryPill = (category: string) => {
+    const isSelected = selectedCategory === category;
+    return (
+      <TouchableOpacity
+        key={category}
+        style={[
+          styles.categoryPill,
+          isSelected && styles.selectedCategoryPill
+        ]}
+        onPress={() => setSelectedCategory(category)}
+      >
+        <Text style={[
+          styles.categoryPillText,
+          isSelected && styles.selectedCategoryPillText
+        ]}>
+          {category.charAt(0).toUpperCase() + category.slice(1)}
+        </Text>
+      </TouchableOpacity>
+    );
+  };
+
   const formatTime = (timestamp: string) => {
     const date = new Date(timestamp);
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -167,6 +301,17 @@ export default function BRCChatroomScreen() {
           title: `${brc.name} Chat`,
           headerRight: () => (
             <View style={styles.headerActions}>
+              <TouchableOpacity 
+                style={styles.menuButton} 
+                onPress={() => setShowMenu(true)}
+              >
+                <Menu size={20} color={colors.primary} />
+                {cartItemsCount > 0 && (
+                  <View style={styles.cartBadge}>
+                    <Text style={styles.cartBadgeText}>{cartItemsCount}</Text>
+                  </View>
+                )}
+              </TouchableOpacity>
               <View style={styles.activeUsersContainer}>
                 <Users size={16} color={colors.primary} />
                 <Text style={styles.activeUsersText}>{activeSessions.length}</Text>
@@ -226,6 +371,65 @@ export default function BRCChatroomScreen() {
           <Send size={20} color={colors.white} />
         </TouchableOpacity>
       </View>
+
+      <Modal
+        visible={showMenu}
+        animationType="slide"
+        presentationStyle="pageSheet"
+      >
+        <View style={styles.menuModal}>
+          <View style={styles.menuHeader}>
+            <Text style={styles.menuTitle}>{brc.name} Menu</Text>
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => setShowMenu(false)}
+            >
+              <X size={24} color={colors.text} />
+            </TouchableOpacity>
+          </View>
+
+          <ScrollView 
+            horizontal 
+            showsHorizontalScrollIndicator={false}
+            style={styles.categoriesContainer}
+            contentContainerStyle={styles.categoriesContent}
+          >
+            {categories.map(renderCategoryPill)}
+          </ScrollView>
+
+          <FlatList
+            data={filteredMenu}
+            keyExtractor={(item) => item.id}
+            renderItem={renderMenuItem}
+            contentContainerStyle={styles.menuList}
+            showsVerticalScrollIndicator={false}
+          />
+
+          {cart.length > 0 && (
+            <View style={styles.cartSummary}>
+              <View style={styles.cartInfo}>
+                <Text style={styles.cartTotal}>${cartTotal.toFixed(2)}</Text>
+                <Text style={styles.cartItems}>{cartItemsCount} items</Text>
+              </View>
+              <View style={styles.cartActions}>
+                <TouchableOpacity
+                  style={styles.clearCartButton}
+                  onPress={clearCart}
+                >
+                  <Text style={styles.clearCartText}>Clear</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.orderButton}
+                  onPress={placeOrder}
+                >
+                  <ShoppingCart size={20} color={colors.white} />
+                  <Text style={styles.orderButtonText}>Order Now</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          )}
+        </View>
+      </Modal>
     </KeyboardAvoidingView>
   );
 }
@@ -233,12 +437,33 @@ export default function BRCChatroomScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.backgroundLight,
+    backgroundColor: '#f8f9fa',
   },
   headerActions: {
     flexDirection: 'row',
     alignItems: 'center',
     marginRight: 10,
+    gap: 12,
+  },
+  menuButton: {
+    position: 'relative',
+    padding: 4,
+  },
+  cartBadge: {
+    position: 'absolute',
+    top: -2,
+    right: -2,
+    backgroundColor: colors.error,
+    borderRadius: 10,
+    minWidth: 20,
+    height: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  cartBadgeText: {
+    color: colors.white,
+    fontSize: 12,
+    fontWeight: '600',
   },
   activeUsersContainer: {
     flexDirection: 'row',
@@ -247,7 +472,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
-    marginRight: 12,
   },
   activeUsersText: {
     fontSize: 12,
@@ -261,9 +485,10 @@ const styles = StyleSheet.create({
   sessionInfo: {
     backgroundColor: colors.white,
     paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: colors.backgroundLight,
+    borderBottomColor: '#e9ecef',
+    ...shadows.small,
   },
   sessionText: {
     fontSize: 14,
@@ -287,19 +512,19 @@ const styles = StyleSheet.create({
   messageContainer: {
     maxWidth: '85%',
     marginBottom: 16,
-    borderRadius: 16,
-    padding: 12,
-    ...shadows.small,
+    borderRadius: 20,
+    padding: 16,
+    ...shadows.medium,
   },
   currentUserMessage: {
     alignSelf: 'flex-end',
     backgroundColor: colors.primary,
-    borderBottomRightRadius: 4,
+    borderBottomRightRadius: 6,
   },
   otherUserMessage: {
     alignSelf: 'flex-start',
     backgroundColor: colors.white,
-    borderBottomLeftRadius: 4,
+    borderBottomLeftRadius: 6,
   },
   messageHeader: {
     flexDirection: 'row',
@@ -307,15 +532,15 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   messageAvatar: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
     marginRight: 8,
   },
   anonymousAvatar: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
     backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
@@ -358,26 +583,30 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: colors.white,
     borderTopWidth: 1,
-    borderTopColor: colors.backgroundLight,
+    borderTopColor: '#e9ecef',
+    ...shadows.small,
   },
   input: {
     flex: 1,
-    backgroundColor: colors.backgroundLight,
-    borderRadius: 20,
+    backgroundColor: '#f8f9fa',
+    borderRadius: 24,
     paddingHorizontal: 16,
     paddingVertical: 12,
     maxHeight: 100,
     fontSize: 16,
     color: colors.text,
     marginRight: 12,
+    borderWidth: 1,
+    borderColor: '#e9ecef',
   },
   sendButton: {
     backgroundColor: colors.primary,
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     justifyContent: 'center',
     alignItems: 'center',
+    ...shadows.small,
   },
   disabledSendButton: {
     backgroundColor: colors.backgroundDark,
@@ -423,5 +652,193 @@ const styles = StyleSheet.create({
     color: colors.textLight,
     textAlign: 'center',
     lineHeight: 24,
+  },
+  menuModal: {
+    flex: 1,
+    backgroundColor: colors.white,
+  },
+  menuHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e9ecef',
+    ...shadows.small,
+  },
+  menuTitle: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: colors.text,
+  },
+  closeButton: {
+    padding: 4,
+  },
+  categoriesContainer: {
+    maxHeight: 60,
+  },
+  categoriesContent: {
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    gap: 12,
+  },
+  categoryPill: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: '#f8f9fa',
+    borderWidth: 1,
+    borderColor: '#e9ecef',
+  },
+  selectedCategoryPill: {
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
+  },
+  categoryPillText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: colors.text,
+  },
+  selectedCategoryPillText: {
+    color: colors.white,
+  },
+  menuList: {
+    padding: 20,
+    paddingBottom: 100,
+  },
+  menuItem: {
+    flexDirection: 'row',
+    backgroundColor: colors.white,
+    borderRadius: 16,
+    marginBottom: 16,
+    ...shadows.medium,
+    overflow: 'hidden',
+  },
+  menuItemImage: {
+    width: 100,
+    height: 100,
+  },
+  menuItemContent: {
+    flex: 1,
+    padding: 16,
+  },
+  menuItemHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 8,
+  },
+  menuItemName: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.text,
+    flex: 1,
+    marginRight: 8,
+  },
+  ratingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  rating: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: colors.text,
+  },
+  menuItemDescription: {
+    fontSize: 14,
+    color: colors.textLight,
+    lineHeight: 20,
+    marginBottom: 12,
+  },
+  menuItemFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  menuItemPrice: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: colors.primary,
+  },
+  quantityControls: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  quantityButton: {
+    backgroundColor: colors.primary,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  quantityText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.text,
+    minWidth: 20,
+    textAlign: 'center',
+  },
+  cartSummary: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: colors.white,
+    padding: 20,
+    borderTopWidth: 1,
+    borderTopColor: '#e9ecef',
+    ...shadows.large,
+  },
+  cartInfo: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  cartTotal: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: colors.text,
+  },
+  cartItems: {
+    fontSize: 14,
+    color: colors.textLight,
+  },
+  cartActions: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  clearCartButton: {
+    flex: 1,
+    backgroundColor: '#f8f9fa',
+    paddingVertical: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#e9ecef',
+  },
+  clearCartText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.text,
+  },
+  orderButton: {
+    flex: 2,
+    backgroundColor: colors.primary,
+    paddingVertical: 16,
+    borderRadius: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    ...shadows.medium,
+  },
+  orderButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.white,
   },
 });
