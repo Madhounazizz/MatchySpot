@@ -97,12 +97,14 @@ export default function MenuScreen() {
       return;
     }
 
-    // Ensure user is logged in before creating session
-    if (!isLoggedIn) {
-      login('customer');
-    }
-
     try {
+      // Ensure user is logged in before creating session
+      if (!isLoggedIn) {
+        login('customer');
+        // Wait a bit for the login to complete
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+
       // Generate access code for chatroom
       const code = await createSession(brcId || '', false);
     

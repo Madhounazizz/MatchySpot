@@ -19,7 +19,6 @@ const generateAnonymousName = (): string => {
 };
 
 export const [BRCChatProvider, useBRCChat] = createContextHook(() => {
-  const { currentUser } = useUserStore();
   const [chatrooms, setChatrooms] = useState<Record<string, BRCChatroom>>({});
   const [currentSession, setCurrentSession] = useState<BRCSession | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -56,23 +55,24 @@ export const [BRCChatProvider, useBRCChat] = createContextHook(() => {
   };
 
   const createSession = useCallback(async (brcId: string, isAnonymous: boolean, customNickname?: string): Promise<string> => {
-    if (!currentUser) throw new Error('User not logged in');
+    const { currentUser: user } = useUserStore.getState();
+    if (!user) throw new Error('User not logged in');
 
     const accessCode = generateAccessCode();
     const displayName = isAnonymous 
       ? (customNickname || generateAnonymousName())
-      : currentUser.name;
+      : user.name;
     
     const session: BRCSession = {
       id: `session_${Date.now()}`,
       brcId,
-      userId: currentUser.id,
+      userId: user.id,
       accessCode,
       joinedAt: new Date().toISOString(),
       isActive: true,
       displayName,
       isAnonymous,
-      avatar: isAnonymous ? undefined : currentUser.avatar,
+      avatar: isAnonymous ? undefined : user.avatar,
     };
 
     const chatroomId = `chatroom_${brcId}`;
@@ -89,7 +89,7 @@ export const [BRCChatProvider, useBRCChat] = createContextHook(() => {
     }
 
     updatedChatrooms[chatroomId].activeSessions = [
-      ...updatedChatrooms[chatroomId].activeSessions.filter(s => s.userId !== currentUser.id),
+      ...updatedChatrooms[chatroomId].activeSessions.filter(s => s.userId !== user.id),
       session,
     ];
 
@@ -98,7 +98,7 @@ export const [BRCChatProvider, useBRCChat] = createContextHook(() => {
     await saveChatData(updatedChatrooms, session);
 
     return accessCode;
-  }, [currentUser, chatrooms]);
+  }, [chatrooms]);
 
   const joinChatroom = useCallback((brcId: string) => {
     const chatroomId = `chatroom_${brcId}`;
