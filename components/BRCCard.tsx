@@ -19,20 +19,8 @@ export default function BRCCard({ brc, size = 'medium' }: BRCCardProps) {
   const favorite = isFavorite(brc.id);
 
   const handlePress = () => {
-    // Route to different interfaces based on BRC type
-    switch (brc.type) {
-      case 'restaurant':
-        router.push('/(restaurant)/dashboard');
-        break;
-      case 'cafe':
-        router.push('/(restaurant)/dashboard'); // Using same interface for now
-        break;
-      case 'bar':
-        router.push('/(restaurant)/dashboard'); // Using same interface for now
-        break;
-      default:
-        router.push(`/brc/${brc.id}`);
-    }
+    // Navigate directly to BRC detail page which shows menu and booking options
+    router.push(`/brc/${brc.id}`);
   };
 
   const handleFavoritePress = (e: any) => {
