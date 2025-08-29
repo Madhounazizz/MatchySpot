@@ -304,7 +304,7 @@ function DraggableReservation({ res, onDragStart }: { res: Reservation; onDragSt
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f1f5f9' },
+  container: { flex: 1, backgroundColor: '#f8fafc' },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -341,23 +341,25 @@ const styles = StyleSheet.create({
   floorWrapper: { paddingHorizontal: 16, alignItems: 'center' },
   floor: {
     backgroundColor: colors.white,
-    borderRadius: 24,
-    borderWidth: 1,
-    borderColor: colors.border,
+    borderRadius: 28,
+    borderWidth: 0.5,
+    borderColor: colors.border + '40',
     ...shadows.large,
-    elevation: 10,
+    elevation: 12,
     position: 'relative',
     overflow: 'hidden',
   },
   tableNode: {
     position: 'absolute',
-    width: 72,
-    height: 72,
-    borderRadius: 16,
+    width: 76,
+    height: 76,
+    borderRadius: 20,
     backgroundColor: colors.backgroundLight,
-    borderWidth: 2,
+    borderWidth: 2.5,
     alignItems: 'center',
     justifyContent: 'center',
+    ...shadows.card,
+    elevation: 6,
   },
   nodeIconContainer: { position: 'absolute', top: 6, left: 6, width: 28, height: 28, borderRadius: 8, alignItems: 'center', justifyContent: 'center' },
   nodeLabel: { fontSize: 14, fontWeight: '900', color: colors.text },

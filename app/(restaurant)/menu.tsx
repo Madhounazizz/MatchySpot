@@ -278,7 +278,7 @@ function getCategoryColor(category: string): string {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f1f5f9',
+    backgroundColor: '#f8fafc',
   },
   header: {
     flexDirection: 'row',
@@ -395,13 +395,14 @@ const styles = StyleSheet.create({
   menuItemCard: {
     backgroundColor: colors.white,
     marginHorizontal: 28,
-    marginBottom: 24,
-    borderRadius: 28,
+    marginBottom: 28,
+    borderRadius: 32,
     ...shadows.large,
-    elevation: 12,
+    elevation: 14,
     overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: colors.border,
+    borderWidth: 0.5,
+    borderColor: colors.border + '40',
+    transform: [{ scale: 1 }],
   },
   cardImageContainer: {
     position: 'relative',
@@ -459,13 +460,14 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   actionButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 16,
+    width: 52,
+    height: 52,
+    borderRadius: 18,
     alignItems: 'center',
     justifyContent: 'center',
     ...shadows.card,
-    elevation: 6,
+    elevation: 8,
+    transform: [{ scale: 1 }],
   },
   itemDescription: {
     fontSize: 16,

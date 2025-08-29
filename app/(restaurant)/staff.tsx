@@ -293,7 +293,7 @@ export default function StaffScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f1f5f9',
+    backgroundColor: '#f8fafc',
   },
   header: {
     flexDirection: 'row',
@@ -384,12 +384,13 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderRadius: 32,
     padding: 32,
-    marginBottom: 24,
+    marginBottom: 28,
     ...shadows.large,
-    elevation: 15,
-    borderWidth: 1,
-    borderColor: colors.border,
+    elevation: 16,
+    borderWidth: 0.5,
+    borderColor: colors.border + '40',
     overflow: 'hidden',
+    transform: [{ scale: 1 }],
   },
   inactiveCard: {
     opacity: 0.75,
@@ -490,7 +491,8 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     marginBottom: 24,
     ...shadows.large,
-    elevation: 10,
+    elevation: 12,
+    overflow: 'hidden',
   },
   scheduleHeader: {
     flexDirection: 'row',
