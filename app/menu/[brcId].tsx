@@ -311,10 +311,12 @@ export default function MenuScreen() {
                 <Text style={styles.paymentNote}>💵 Cash payment only</Text>
               </View>
 
-              <View style={styles.orderDisabledContainer}>
-                <Text style={styles.orderDisabledText}>Order placement temporarily disabled</Text>
-                <Text style={styles.orderDisabledSubtext}>Please contact staff to place your order</Text>
-              </View>
+              <TouchableOpacity
+                style={styles.placeOrderButton}
+                onPress={handleCheckout}
+              >
+                <Text style={styles.placeOrderButtonText}>Place Order & Get Chatroom Code</Text>
+              </TouchableOpacity>
             </View>
           </View>
         </View>
@@ -636,24 +638,20 @@ const styles = StyleSheet.create({
     marginTop: 12,
     fontStyle: 'italic',
   },
-  orderDisabledContainer: {
-    backgroundColor: '#F0F0F0',
-    paddingVertical: 20,
-    paddingHorizontal: 16,
+  placeOrderButton: {
+    backgroundColor: '#4ECDC4',
+    paddingVertical: 16,
     borderRadius: 12,
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
+    shadowColor: '#4ECDC4',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
   },
-  orderDisabledText: {
+  placeOrderButtonText: {
     fontSize: 16,
-    fontWeight: '600' as const,
-    color: '#999',
-    marginBottom: 4,
-  },
-  orderDisabledSubtext: {
-    fontSize: 14,
-    color: '#666',
-    textAlign: 'center',
+    fontWeight: '700' as const,
+    color: '#FFF',
   },
 });
