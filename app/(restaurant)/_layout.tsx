@@ -1,13 +1,9 @@
 import React from "react";
 import { Tabs } from "expo-router";
-import { BarChart3, Calendar, Users, Settings, ClipboardList, Menu, TrendingUp, ChefHat, Package } from "lucide-react-native";
+import { Calendar, ChefHat, ClipboardList, Menu, Settings, Package } from "lucide-react-native";
 import { colors } from "@/constants/colors";
-import { Platform } from "react-native";
 
 export default function RestaurantTabLayout() {
-  // Reduce the number of tabs on web to prevent performance issues
-  const isWeb = Platform.OS === 'web';
-  
   return (
     <Tabs
       screenOptions={{
@@ -36,23 +32,9 @@ export default function RestaurantTabLayout() {
           marginTop: 4,
         },
         headerShown: false,
-        // Lazy load tabs to improve performance
         lazy: true,
       }}
     >
-      <Tabs.Screen
-        name="dashboard"
-        options={{
-          title: "Dashboard",
-          tabBarIcon: ({ color, focused }) => (
-            <BarChart3 
-              size={focused ? 26 : 24} 
-              color={color} 
-              fill={focused ? color : 'transparent'}
-            />
-          ),
-        }}
-      />
       <Tabs.Screen
         name="reservations"
         options={{
@@ -90,32 +72,6 @@ export default function RestaurantTabLayout() {
           ),
         }}
       />
-      {!isWeb && (
-        <Tabs.Screen
-          name="inventory"
-          options={{
-            title: "Inventory",
-            tabBarIcon: ({ color, focused }) => (
-              <Package 
-                size={focused ? 26 : 24} 
-                color={color}
-              />
-            ),
-          }}
-        />
-      )}
-      <Tabs.Screen
-        name="staff"
-        options={{
-          title: "Staff",
-          tabBarIcon: ({ color, focused }) => (
-            <Users 
-              size={focused ? 26 : 24} 
-              color={color}
-            />
-          ),
-        }}
-      />
       <Tabs.Screen
         name="menu"
         options={{
@@ -131,9 +87,21 @@ export default function RestaurantTabLayout() {
       <Tabs.Screen
         name="settings"
         options={{
-          title: "More",
+          title: "Settings",
           tabBarIcon: ({ color, focused }) => (
             <Settings 
+              size={focused ? 26 : 24} 
+              color={color}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="inventory"
+        options={{
+          title: "Inventory",
+          tabBarIcon: ({ color, focused }) => (
+            <Package 
               size={focused ? 26 : 24} 
               color={color}
             />
