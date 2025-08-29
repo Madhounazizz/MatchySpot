@@ -9,6 +9,7 @@ import {
   Dimensions,
   Platform,
 } from 'react-native';
+import { router } from 'expo-router';
 import {
   Calendar,
   Users,
@@ -284,6 +285,7 @@ export default function RestaurantDashboard() {
               title={"Analytics"}
               description={'View detailed reports'}
               color={colors.success}
+              onPress={() => router.push('/(restaurant)/analytics')}
             />
           </View>
         </View>
