@@ -174,3 +174,34 @@ export type RestaurantProfile = {
   features: string[];
   images: string[];
 };
+
+export type BRCSession = {
+  id: string;
+  brcId: string;
+  userId: string;
+  accessCode: string;
+  joinedAt: string;
+  isActive: boolean;
+  displayName: string;
+  isAnonymous: boolean;
+  avatar?: string;
+};
+
+export type BRCChatMessage = {
+  id: string;
+  sessionId: string;
+  brcId: string;
+  text: string;
+  timestamp: string;
+  displayName: string;
+  isAnonymous: boolean;
+  avatar?: string;
+};
+
+export type BRCChatroom = {
+  id: string;
+  brcId: string;
+  name: string;
+  activeSessions: BRCSession[];
+  messages: BRCChatMessage[];
+};
