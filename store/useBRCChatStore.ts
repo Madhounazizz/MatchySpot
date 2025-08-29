@@ -20,7 +20,6 @@ export const [BRCChatProvider, useBRCChatStore] = createContextHook(() => {
   const [chatrooms, setChatrooms] = useState<Record<string, BRCChatroom>>({});
   const [currentSession, setCurrentSession] = useState<BRCSession | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const { currentUser, login } = useUserStore();
 
   useEffect(() => {
     loadChatData();
@@ -28,16 +27,21 @@ export const [BRCChatProvider, useBRCChatStore] = createContextHook(() => {
 
   const loadChatData = async () => {
     try {
+      console.log('Loading BRC chat data...');
       const stored = await AsyncStorage.getItem('brc-chat-storage');
       if (stored) {
         const data = JSON.parse(stored);
+        console.log('Loaded chat data:', data);
         setChatrooms(data.chatrooms || {});
         setCurrentSession(data.currentSession || null);
+      } else {
+        console.log('No stored chat data found');
       }
     } catch (error) {
       console.error('Failed to load chat data:', error);
     } finally {
       setIsLoading(false);
+      console.log('BRC chat store initialized');
     }
   };
 
@@ -55,19 +59,24 @@ export const [BRCChatProvider, useBRCChatStore] = createContextHook(() => {
 
   const createSession = useCallback(async (brcId: string, isAnonymous: boolean, customNickname?: string): Promise<string> => {
     try {
+      console.log('Creating session for brcId:', brcId, 'isAnonymous:', isAnonymous);
+      
       // Get current user from store
-      let user = currentUser;
+      let user = useUserStore.getState().currentUser;
+      console.log('Current user:', user);
       
       // If no user, auto-login as customer
       if (!user) {
         console.log('No user found, auto-logging in as customer...');
-        login('customer');
+        useUserStore.getState().login('customer');
         // Wait a bit for the login to complete
         await new Promise(resolve => setTimeout(resolve, 200));
         user = useUserStore.getState().currentUser;
+        console.log('User after auto-login:', user);
       }
       
       if (!user) {
+        console.error('Failed to get user after auto-login');
         throw new Error('User not logged in');
       }
 
@@ -114,13 +123,19 @@ export const [BRCChatProvider, useBRCChatStore] = createContextHook(() => {
       
       setCurrentSession(session);
       
-      console.log('Session created successfully:', { accessCode, brcId, displayName });
+      console.log('Session created successfully:', { 
+        accessCode, 
+        brcId, 
+        displayName, 
+        sessionId: session.id,
+        userId: user.id 
+      });
       return accessCode;
     } catch (error) {
       console.error('Error creating session:', error);
       throw error;
     }
-  }, [currentUser, login]);
+  }, []);
 
   const joinChatroom = useCallback((brcId: string) => {
     const chatroomId = `chatroom_${brcId}`;
