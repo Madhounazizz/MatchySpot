@@ -3,7 +3,7 @@ import { StyleSheet, View, Text, ScrollView, TouchableOpacity } from 'react-nati
 import { Image } from 'expo-image';
 import { useLocalSearchParams, Stack, useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Heart, Star, MapPin, Clock, Phone, Share, Calendar, MessageCircle, ThumbsUp, Utensils } from 'lucide-react-native';
+import { Heart, Star, MapPin, Clock, Phone, Share, Calendar, MessageCircle, ThumbsUp } from 'lucide-react-native';
 import { colors, shadows } from '@/constants/colors';
 import Button from '@/components/Button';
 import { brcs } from '@/mocks/brcs';
@@ -53,9 +53,7 @@ export default function BRCDetailScreen() {
     }
   };
   
-  const handleViewMenu = () => {
-    router.push(`/menu/${brc.id}`);
-  };
+
 
   const handleShare = () => {
     // Handle share functionality
@@ -328,13 +326,6 @@ export default function BRCDetailScreen() {
           )}
           
           <View style={styles.actionsContainer}>
-            <Button
-              title="View Full Menu"
-              variant="outline"
-              onPress={handleViewMenu}
-              style={styles.actionButton}
-              icon={<Utensils size={20} color={colors.primary} />}
-            />
             <Button
               title="View on Map"
               variant="outline"
