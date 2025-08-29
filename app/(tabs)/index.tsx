@@ -28,6 +28,15 @@ export default function HomeScreen() {
 
   const handleCategorySelect = (categoryId: string) => {
     setSelectedCategory(categoryId);
+    
+    // Navigate to specific category pages
+    if (categoryId === 'restaurant') {
+      router.push('/restaurants');
+    } else if (categoryId === 'cafe') {
+      router.push('/cafes');
+    } else if (categoryId === 'bar') {
+      router.push('/bars');
+    }
   };
 
   const handleSeeAllBRCs = () => {
