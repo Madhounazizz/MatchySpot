@@ -22,6 +22,7 @@ import {
 } from 'lucide-react-native';
 import { colors, shadows } from '@/constants/colors';
 import { menuItems } from '@/mocks/menu';
+import ReportsExport from '@/components/ReportsExport';
 
 const { width } = Dimensions.get('window');
 const cardWidth = (width - 60) / 2;
@@ -85,6 +86,7 @@ const categoryData = [
 export default function AnalyticsScreen() {
   const [selectedPeriod, setSelectedPeriod] = useState<TimePeriod>('today');
   const [selectedChart, setSelectedChart] = useState<'revenue' | 'reservations'>('revenue');
+  const [showReports, setShowReports] = useState<boolean>(false);
 
   const currentData = mockAnalytics[selectedPeriod];
 
@@ -267,7 +269,12 @@ export default function AnalyticsScreen() {
           </Text>
           <Text style={styles.subtitle}>Business insights & performance</Text>
         </View>
-        <TouchableOpacity style={styles.filterButton} accessibilityLabel="Open filters" testID="filter-btn">
+        <TouchableOpacity 
+          style={styles.filterButton} 
+          accessibilityLabel="Open reports" 
+          testID="reports-btn"
+          onPress={() => setShowReports(true)}
+        >
           <Filter size={20} color={colors.primary} />
         </TouchableOpacity>
       </View>
@@ -344,6 +351,11 @@ export default function AnalyticsScreen() {
 
         <View style={styles.bottomSpacing} />
       </ScrollView>
+      
+      <ReportsExport 
+        visible={showReports} 
+        onClose={() => setShowReports(false)} 
+      />
     </SafeAreaView>
   );
 }

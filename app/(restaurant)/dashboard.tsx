@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { memo, useState } from 'react';
 import {
   View,
   Text,
@@ -33,6 +33,8 @@ import { colors, shadows } from '@/constants/colors';
 import { mockReservations } from '@/mocks/reservations';
 import { mockStaff } from '@/mocks/staff';
 import { RestaurantStats } from '@/types';
+import NotificationCenter from '@/components/NotificationCenter';
+import StaffScheduling from '@/components/StaffScheduling';
 
 const { width } = Dimensions.get('window');
 const cardWidth = (width - 28 * 2 - 20) / 2;
@@ -62,6 +64,9 @@ const getTimeOfDayGreeting = () => {
 
 export default function RestaurantDashboard() {
   console.log('[Dashboard] Render');
+  const [showNotifications, setShowNotifications] = useState<boolean>(false);
+  const [showScheduling, setShowScheduling] = useState<boolean>(false);
+  
   const todayReservations = mockReservations.filter(
     (reservation) => reservation.date === '2025-01-20'
   );
@@ -205,7 +210,10 @@ export default function RestaurantDashboard() {
                 <TouchableOpacity style={styles.headerButton}>
                   <Activity size={20} color={colors.white} />
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.notificationButton}>
+                <TouchableOpacity 
+                  style={styles.notificationButton}
+                  onPress={() => setShowNotifications(true)}
+                >
                   <Bell size={20} color={colors.white} />
                   <View style={styles.notificationDot} />
                 </TouchableOpacity>
@@ -292,6 +300,7 @@ export default function RestaurantDashboard() {
               title={"Staff Management"}
               description={`${activeStaff.length} staff on duty`}
               color={colors.primary}
+              onPress={() => setShowScheduling(true)}
             />
             <QuickActionCard
               icon={ChefHat}
@@ -397,6 +406,16 @@ export default function RestaurantDashboard() {
 
         <View style={styles.bottomSpacing} />
       </ScrollView>
+      
+      <NotificationCenter 
+        visible={showNotifications} 
+        onClose={() => setShowNotifications(false)} 
+      />
+      
+      <StaffScheduling 
+        visible={showScheduling} 
+        onClose={() => setShowScheduling(false)} 
+      />
     </SafeAreaView>
   );
 }
