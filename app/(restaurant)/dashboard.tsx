@@ -99,29 +99,38 @@ export default function RestaurantDashboard() {
     const CardContent = (
       <>
         <View style={styles.statCardHeader}>
-          <View style={[styles.statIconContainer, { backgroundColor: gradient ? 'rgba(255,255,255,0.2)' : (color + '20') }]}>
-            <Icon size={24} color={gradient ? colors.white : color} strokeWidth={2.5} />
+          <View style={[styles.statIconContainer, { 
+            backgroundColor: gradient ? 'rgba(255,255,255,0.25)' : (color + '15'),
+            borderWidth: gradient ? 0 : 1,
+            borderColor: gradient ? 'transparent' : (color + '30')
+          }]}>
+            <Icon size={26} color={gradient ? colors.white : color} strokeWidth={2.5} />
           </View>
           {trend && (
             <View style={[styles.trendIndicator, { 
-              backgroundColor: trend === 'up' ? (gradient ? 'rgba(255,255,255,0.2)' : colors.success + '20') : 
-                             trend === 'down' ? (gradient ? 'rgba(255,255,255,0.2)' : colors.error + '20') : 
-                             (gradient ? 'rgba(255,255,255,0.2)' : colors.textLight + '20')
+              backgroundColor: trend === 'up' ? (gradient ? 'rgba(255,255,255,0.25)' : colors.success + '15') : 
+                             trend === 'down' ? (gradient ? 'rgba(255,255,255,0.25)' : colors.error + '15') : 
+                             (gradient ? 'rgba(255,255,255,0.25)' : colors.textLight + '15'),
+              borderWidth: gradient ? 0 : 1,
+              borderColor: trend === 'up' ? (gradient ? 'rgba(255,255,255,0.3)' : colors.success + '30') : 
+                          trend === 'down' ? (gradient ? 'rgba(255,255,255,0.3)' : colors.error + '30') : 
+                          (gradient ? 'rgba(255,255,255,0.3)' : colors.textLight + '30')
             }]}>
               <ArrowUpRight 
-                size={14} 
+                size={16} 
                 color={gradient ? colors.white : (trend === 'up' ? colors.success : 
                        trend === 'down' ? colors.error : colors.textLight)}
                 style={trend === 'down' ? { transform: [{ rotate: '90deg' }] } : {}}
+                strokeWidth={3}
               />
             </View>
           )}
         </View>
         <View style={styles.statContent}>
           <Text style={[styles.statValue, gradient ? { color: colors.white } : undefined]}>{value}</Text>
-          <Text style={[styles.statTitle, gradient ? { color: 'rgba(255,255,255,0.9)' } : undefined]}>{title}</Text>
+          <Text style={[styles.statTitle, gradient ? { color: 'rgba(255,255,255,0.95)' } : undefined]}>{title}</Text>
           {subtitle ? (
-            <Text style={[styles.statSubtitle, gradient ? { color: 'rgba(255,255,255,0.7)' } : undefined]}>{subtitle}</Text>
+            <Text style={[styles.statSubtitle, gradient ? { color: 'rgba(255,255,255,0.8)' } : undefined]}>{subtitle}</Text>
           ) : null}
         </View>
       </>
@@ -132,7 +141,7 @@ export default function RestaurantDashboard() {
         <TouchableOpacity 
           style={[styles.statCard, styles.gradientCard]} 
           onPress={onPress}
-          activeOpacity={onPress ? 0.8 : 1}
+          activeOpacity={onPress ? 0.85 : 1}
           testID={`stat-${title.toLowerCase().replace(/\s+/g, '-')}`}
         >
           <View style={[styles.gradientBackground, { backgroundColor: color }]}>
@@ -146,7 +155,7 @@ export default function RestaurantDashboard() {
       <TouchableOpacity 
         style={[styles.statCard]} 
         onPress={onPress}
-        activeOpacity={onPress ? 0.8 : 1}
+        activeOpacity={onPress ? 0.85 : 1}
         testID={`stat-${title.toLowerCase().replace(/\s+/g, '-')}`}
       >
         {CardContent}
@@ -170,17 +179,21 @@ export default function RestaurantDashboard() {
     onPress?: () => void;
   }) => (
     <TouchableOpacity 
-      style={styles.actionCard} 
+      style={[styles.actionCard, { borderLeftColor: color }]} 
       onPress={onPress}
-      activeOpacity={0.8}
+      activeOpacity={0.85}
       testID={`quick-action-${title.toLowerCase().replace(/\s+/g, '-')}`}
     >
       <View style={styles.actionHeader}>
-        <View style={[styles.actionIconContainer, { backgroundColor: color + '12' }]}>
-          <Icon size={18} color={color} strokeWidth={2.5} />
+        <View style={[styles.actionIconContainer, { 
+          backgroundColor: color + '15',
+          borderWidth: 1,
+          borderColor: color + '25'
+        }]}>
+          <Icon size={20} color={color} strokeWidth={2.5} />
         </View>
         {badge && badge > 0 ? (
-          <View style={styles.badge}>
+          <View style={[styles.badge, { backgroundColor: color }]}>
             <Text style={styles.badgeText}>{badge > 99 ? '99+' : badge}</Text>
           </View>
         ) : null}
@@ -189,6 +202,7 @@ export default function RestaurantDashboard() {
         <Text style={styles.actionTitle}>{title}</Text>
         <Text style={styles.actionDescription}>{description}</Text>
       </View>
+      <View style={[styles.actionIndicator, { backgroundColor: color + '20' }]} />
     </TouchableOpacity>
   ), (prev, next) => prev.description === next.description && prev.badge === next.badge && prev.color === next.color);
 
@@ -569,26 +583,28 @@ const styles = StyleSheet.create({
   },
   statCard: {
     backgroundColor: colors.white,
-    borderRadius: 28,
-    padding: 24,
+    borderRadius: 32,
+    padding: 28,
     width: cardWidth,
     ...shadows.large,
-    borderWidth: 0.5,
-    borderColor: colors.border + '40',
-    elevation: 12,
+    borderWidth: 0,
+    elevation: 16,
     margin: 10,
     overflow: 'hidden',
+    transform: [{ scale: 1 }],
   },
   gradientCard: {
     overflow: 'hidden',
     ...shadows.large,
-    elevation: 15,
+    elevation: 20,
     borderWidth: 0,
+    transform: [{ scale: 1.02 }],
   },
   gradientBackground: {
-    borderRadius: 24,
-    padding: 20,
+    borderRadius: 28,
+    padding: 24,
     backgroundColor: colors.success,
+    position: 'relative',
   },
   statCardHeader: {
     flexDirection: 'row',
@@ -597,40 +613,47 @@ const styles = StyleSheet.create({
     marginBottom: 14,
   },
   statIconContainer: {
-    width: 60,
-    height: 60,
-    borderRadius: 20,
+    width: 68,
+    height: 68,
+    borderRadius: 22,
     alignItems: 'center',
     justifyContent: 'center',
+    ...shadows.small,
+    elevation: 4,
   },
   trendIndicator: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 16,
+    ...shadows.small,
+    elevation: 3,
   },
   statContent: {
     flex: 1,
   },
   statValue: {
-    fontSize: 32,
+    fontSize: 36,
     fontWeight: '900',
     color: colors.text,
-    marginBottom: 8,
-    letterSpacing: -0.5,
+    marginBottom: 10,
+    letterSpacing: -1,
+    lineHeight: 40,
   },
   statTitle: {
-    fontSize: 14,
+    fontSize: 15,
     color: colors.textLight,
-    marginBottom: 6,
-    fontWeight: '700',
+    marginBottom: 8,
+    fontWeight: '800',
+    letterSpacing: -0.2,
   },
   statSubtitle: {
-    fontSize: 12,
+    fontSize: 13,
     color: colors.textExtraLight,
     fontWeight: '600',
     lineHeight: 18,
+    letterSpacing: -0.1,
   },
   section: {
     marginTop: 28,
@@ -665,63 +688,79 @@ const styles = StyleSheet.create({
   },
   actionCard: {
     backgroundColor: colors.white,
-    borderRadius: 28,
-    padding: 24,
+    borderRadius: 32,
+    padding: 28,
     width: cardWidth,
     ...shadows.large,
-    borderWidth: 0.5,
-    borderColor: colors.border + '40',
-    elevation: 10,
+    borderWidth: 0,
+    elevation: 14,
     margin: 8,
-    borderLeftWidth: 5,
+    borderLeftWidth: 6,
     borderLeftColor: colors.primary,
     overflow: 'hidden',
+    position: 'relative',
+    transform: [{ scale: 1 }],
   },
   actionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 16,
   },
   actionIconContainer: {
-    width: 52,
-    height: 52,
-    borderRadius: 16,
+    width: 60,
+    height: 60,
+    borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  badge: {
-    backgroundColor: colors.error,
-    borderRadius: 12,
-    minWidth: 24,
-    height: 24,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 8,
     ...shadows.small,
     elevation: 4,
   },
+  badge: {
+    backgroundColor: colors.error,
+    borderRadius: 14,
+    minWidth: 28,
+    height: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 10,
+    ...shadows.medium,
+    elevation: 6,
+    borderWidth: 2,
+    borderColor: colors.white,
+  },
   badgeText: {
-    fontSize: 12,
+    fontSize: 13,
     color: colors.white,
-    fontWeight: '800',
-    letterSpacing: 0.2,
+    fontWeight: '900',
+    letterSpacing: 0.3,
   },
   actionContent: {
     flex: 1,
   },
+  actionIndicator: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    width: 40,
+    height: 40,
+    borderBottomLeftRadius: 20,
+    opacity: 0.6,
+  },
   actionTitle: {
-    fontSize: 17,
+    fontSize: 18,
     fontWeight: '900',
     color: colors.text,
-    marginBottom: 6,
-    letterSpacing: -0.2,
+    marginBottom: 8,
+    letterSpacing: -0.3,
+    lineHeight: 22,
   },
   actionDescription: {
-    fontSize: 14,
+    fontSize: 15,
     color: colors.textLight,
     fontWeight: '600',
-    lineHeight: 20,
+    lineHeight: 22,
+    letterSpacing: -0.1,
   },
   activityList: {
     backgroundColor: colors.white,
