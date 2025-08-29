@@ -95,30 +95,32 @@ export default function MenuScreen() {
 
     try {
       console.log('Creating session for brcId:', brcId);
+      console.log('Customer name:', customerName);
+      console.log('Table number:', tableNumber);
+      
       // Generate access code for chatroom
       const code = await createSession(brcId || '', true, customerName);
       console.log('Session created with code:', code);
-    
-      Alert.alert(
-        '✅ Order Placed Successfully!',
-        `Your access code: ${code}\n\nTap OK to join the chatroom and track your order!`,
-        [
-          {
-            text: 'OK',
-            onPress: () => {
-              // Clear form and navigate
-              setShowCheckout(false);
-              setShowCart(false);
-              setCart([]);
-              setCustomerName('');
-              setTableNumber('');
-              
-              // Navigate to chatroom
-              router.push(`/brc/chatroom/${brcId}`);
-            },
-          },
-        ]
-      );
+      
+      // Clear form first
+      setShowCheckout(false);
+      setShowCart(false);
+      setCart([]);
+      setCustomerName('');
+      setTableNumber('');
+      
+      // Navigate to chatroom immediately
+      router.push(`/brc/chatroom/${brcId}`);
+      
+      // Show success message after navigation
+      setTimeout(() => {
+        Alert.alert(
+          '✅ Order Placed Successfully!',
+          `Your access code: ${code}\n\nWelcome to the chatroom! You can now chat with staff and track your order.`,
+          [{ text: 'Got it!' }]
+        );
+      }, 500);
+      
     } catch (error) {
       console.error('Failed to create session:', error);
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
