@@ -207,17 +207,18 @@ export default function RestaurantDashboard() {
                 </View>
               </View>
               <View style={styles.headerActions}>
-                <TouchableOpacity style={styles.headerButton}>
+                <TouchableOpacity style={styles.headerButton} activeOpacity={0.8}>
                   <Activity size={20} color={colors.white} />
                 </TouchableOpacity>
                 <TouchableOpacity 
                   style={styles.notificationButton}
                   onPress={() => setShowNotifications(true)}
+                  activeOpacity={0.8}
                 >
                   <Bell size={20} color={colors.white} />
                   <View style={styles.notificationDot} />
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.headerButton}>
+                <TouchableOpacity style={styles.headerButton} activeOpacity={0.8}>
                   <SettingsIcon size={20} color={colors.white} />
                 </TouchableOpacity>
               </View>
@@ -459,12 +460,13 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.3)',
+    borderColor: 'rgba(255, 255, 255, 0.25)',
     marginRight: 12,
+    ...shadows.small,
   },
   welcomeText: {
     fontSize: 18,
@@ -530,14 +532,17 @@ const styles = StyleSheet.create({
     marginLeft: 6,
   },
   notificationButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
     backgroundColor: 'rgba(255, 255, 255, 0.15)',
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
     marginRight: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.25)',
+    ...shadows.small,
   },
   notificationDot: {
     position: 'absolute',
@@ -561,22 +566,24 @@ const styles = StyleSheet.create({
   },
   statCard: {
     backgroundColor: colors.white,
-    borderRadius: 20,
-    padding: 18,
+    borderRadius: 24,
+    padding: 20,
     width: cardWidth,
     ...shadows.large,
-    borderWidth: 0,
-    elevation: 8,
+    borderWidth: 1,
+    borderColor: colors.border,
+    elevation: 10,
     margin: 10,
   },
   gradientCard: {
     overflow: 'hidden',
     ...shadows.large,
-    elevation: 12,
+    elevation: 15,
+    borderWidth: 0,
   },
   gradientBackground: {
-    borderRadius: 20,
-    padding: 18,
+    borderRadius: 24,
+    padding: 20,
     backgroundColor: colors.success,
   },
   statCardHeader: {
@@ -586,9 +593,9 @@ const styles = StyleSheet.create({
     marginBottom: 14,
   },
   statIconContainer: {
-    width: 56,
-    height: 56,
-    borderRadius: 18,
+    width: 60,
+    height: 60,
+    borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -654,14 +661,15 @@ const styles = StyleSheet.create({
   },
   actionCard: {
     backgroundColor: colors.white,
-    borderRadius: 18,
-    padding: 16,
+    borderRadius: 24,
+    padding: 20,
     width: cardWidth,
-    ...shadows.card,
-    borderWidth: 0,
-    elevation: 6,
+    ...shadows.large,
+    borderWidth: 1,
+    borderColor: colors.border,
+    elevation: 8,
     margin: 8,
-    borderTopWidth: 3,
+    borderTopWidth: 4,
     borderTopColor: colors.primary,
   },
   actionHeader: {
@@ -671,40 +679,44 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   actionIconContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: 14,
+    width: 52,
+    height: 52,
+    borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
   },
   badge: {
     backgroundColor: colors.error,
-    borderRadius: 10,
-    minWidth: 20,
-    height: 20,
+    borderRadius: 12,
+    minWidth: 24,
+    height: 24,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 6,
+    paddingHorizontal: 8,
+    ...shadows.small,
+    elevation: 4,
   },
   badgeText: {
-    fontSize: 11,
+    fontSize: 12,
     color: colors.white,
-    fontWeight: '700',
+    fontWeight: '800',
+    letterSpacing: 0.2,
   },
   actionContent: {
     flex: 1,
   },
   actionTitle: {
-    fontSize: 16,
-    fontWeight: '800',
+    fontSize: 17,
+    fontWeight: '900',
     color: colors.text,
-    marginBottom: 4,
+    marginBottom: 6,
+    letterSpacing: -0.2,
   },
   actionDescription: {
-    fontSize: 13,
+    fontSize: 14,
     color: colors.textLight,
     fontWeight: '600',
-    lineHeight: 18,
+    lineHeight: 20,
   },
   activityList: {
     backgroundColor: colors.white,

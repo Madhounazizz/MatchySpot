@@ -232,17 +232,17 @@ export default function ReservationsScreen() {
           <Text style={styles.subtitle}>{filteredReservations.length} reservations today</Text>
         </View>
         <View style={styles.headerActions}>
-          <TouchableOpacity style={styles.calendarButton} testID="reservations-calendar-btn">
+          <TouchableOpacity style={styles.calendarButton} testID="reservations-calendar-btn" activeOpacity={0.8}>
             <Calendar size={20} color={colors.primary} />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.filterIcon} testID="reservations-filter-btn">
+          <TouchableOpacity style={styles.filterIcon} testID="reservations-filter-btn" activeOpacity={0.8}>
             <Filter size={20} color={colors.primary} />
           </TouchableOpacity>
-        </View>
           <TouchableOpacity style={styles.addButton} testID="reservations-add-btn" activeOpacity={0.9}>
             <Plus size={20} color={colors.white} />
             <Text style={styles.addButtonText}>New</Text>
           </TouchableOpacity>
+        </View>
       </LinearGradient>
 
       <View style={styles.dateSelector}>
@@ -335,40 +335,47 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   calendarButton: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
-    backgroundColor: colors.primary + '15',
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: colors.primary + '12',
     alignItems: 'center',
     justifyContent: 'center',
-    ...shadows.small,
-    elevation: 4,
+    ...shadows.card,
+    elevation: 6,
+    borderWidth: 1,
+    borderColor: colors.primary + '20',
   },
   filterIcon: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
-    backgroundColor: colors.secondary + '15',
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: colors.secondary + '12',
     alignItems: 'center',
     justifyContent: 'center',
-    ...shadows.small,
-    elevation: 4,
+    ...shadows.card,
+    elevation: 6,
+    borderWidth: 1,
+    borderColor: colors.secondary + '20',
   },
   addButton: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.primary,
-    paddingHorizontal: 18,
-    paddingVertical: 12,
-    borderRadius: 16,
+    paddingHorizontal: 20,
+    paddingVertical: 14,
+    borderRadius: 20,
     gap: 8,
-    ...shadows.card,
-    elevation: 8,
+    ...shadows.large,
+    elevation: 10,
+    borderWidth: 1,
+    borderColor: colors.primaryDark,
   },
   addButtonText: {
     color: colors.white,
-    fontWeight: '800',
-    fontSize: 14,
+    fontWeight: '900',
+    fontSize: 15,
+    letterSpacing: 0.3,
   },
   dateSelector: {
     paddingHorizontal: 28,
@@ -448,11 +455,11 @@ const styles = StyleSheet.create({
   },
   reservationCard: {
     backgroundColor: colors.white,
-    borderRadius: 28,
-    padding: 24,
-    marginBottom: 20,
+    borderRadius: 32,
+    padding: 28,
+    marginBottom: 24,
     ...shadows.large,
-    elevation: 12,
+    elevation: 15,
     borderWidth: 1,
     borderColor: colors.border,
     overflow: 'hidden',
@@ -502,33 +509,35 @@ const styles = StyleSheet.create({
     marginRight: 16,
   },
   customerAvatar: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
+    width: 68,
+    height: 68,
+    borderRadius: 34,
     borderWidth: 3,
     borderColor: colors.white,
-    ...shadows.card,
-    elevation: 8,
+    ...shadows.large,
+    elevation: 10,
   },
   avatarPlaceholder: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
+    width: 68,
+    height: 68,
+    borderRadius: 34,
     backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
-    ...shadows.card,
-    elevation: 8,
+    ...shadows.large,
+    elevation: 10,
+    borderWidth: 3,
+    borderColor: colors.white,
   },
   customerDetails: {
     flex: 1,
   },
   customerName: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: '900',
     color: colors.text,
-    marginBottom: 8,
-    letterSpacing: -0.3,
+    marginBottom: 10,
+    letterSpacing: -0.4,
   },
   reservationMeta: {
     gap: 16,
@@ -636,43 +645,47 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 18,
-    borderRadius: 20,
-    gap: 10,
-    ...shadows.card,
-    elevation: 6,
+    paddingVertical: 20,
+    borderRadius: 24,
+    gap: 12,
+    ...shadows.large,
+    elevation: 8,
   },
   confirmButton: {
     backgroundColor: colors.success,
   },
   confirmButtonText: {
     color: colors.white,
-    fontSize: 16,
-    fontWeight: '800',
+    fontSize: 17,
+    fontWeight: '900',
+    letterSpacing: 0.2,
   },
   rejectButton: {
     backgroundColor: colors.error,
   },
   rejectButtonText: {
     color: colors.white,
-    fontSize: 16,
-    fontWeight: '800',
+    fontSize: 17,
+    fontWeight: '900',
+    letterSpacing: 0.2,
   },
   seatButton: {
     backgroundColor: colors.primary,
   },
   seatButtonText: {
     color: colors.white,
-    fontSize: 16,
-    fontWeight: '800',
+    fontSize: 17,
+    fontWeight: '900',
+    letterSpacing: 0.2,
   },
   completeButton: {
     backgroundColor: colors.success,
   },
   completeButtonText: {
     color: colors.white,
-    fontSize: 16,
-    fontWeight: '800',
+    fontSize: 17,
+    fontWeight: '900',
+    letterSpacing: 0.2,
   },
   emptyState: {
     alignItems: 'center',

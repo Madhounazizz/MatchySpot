@@ -334,7 +334,7 @@ export default function OrdersScreen() {
           <Text style={styles.subtitle}>{filteredOrders.length} active orders</Text>
         </View>
         <View style={styles.headerActions}>
-          <TouchableOpacity style={styles.filterIcon} testID="orders-filter-btn">
+          <TouchableOpacity style={styles.filterIcon} testID="orders-filter-btn" activeOpacity={0.8}>
             <Filter size={20} color={colors.primary} />
           </TouchableOpacity>
           <TouchableOpacity style={styles.addButton} testID="orders-add-btn" activeOpacity={0.9}>
@@ -436,30 +436,35 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   filterIcon: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
-    backgroundColor: colors.secondary + '15',
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: colors.secondary + '12',
     alignItems: 'center',
     justifyContent: 'center',
-    ...shadows.small,
-    elevation: 4,
+    ...shadows.card,
+    elevation: 6,
+    borderWidth: 1,
+    borderColor: colors.secondary + '20',
   },
   addButton: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.primary,
-    paddingHorizontal: 18,
-    paddingVertical: 12,
-    borderRadius: 16,
+    paddingHorizontal: 20,
+    paddingVertical: 14,
+    borderRadius: 20,
     gap: 8,
-    ...shadows.card,
-    elevation: 8,
+    ...shadows.large,
+    elevation: 10,
+    borderWidth: 1,
+    borderColor: colors.primaryDark,
   },
   addButtonText: {
     color: colors.white,
-    fontWeight: '800',
-    fontSize: 14,
+    fontWeight: '900',
+    fontSize: 15,
+    letterSpacing: 0.3,
   },
   statsSection: {
     paddingHorizontal: 28,
@@ -531,14 +536,14 @@ const styles = StyleSheet.create({
   },
   orderCard: {
     backgroundColor: colors.white,
-    borderRadius: 24,
-    padding: 24,
-    marginBottom: 20,
+    borderRadius: 28,
+    padding: 28,
+    marginBottom: 24,
     ...shadows.large,
-    elevation: 12,
+    elevation: 15,
     borderWidth: 1,
     borderColor: colors.border,
-    borderLeftWidth: 4,
+    borderLeftWidth: 5,
   },
   orderHeader: {
     flexDirection: 'row',
@@ -551,12 +556,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   statusIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 16,
+    width: 52,
+    height: 52,
+    borderRadius: 18,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 16,
+    marginRight: 18,
   },
   orderInfo: {
     flex: 1,
@@ -567,10 +572,11 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   tableNumber: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: '900',
     color: colors.text,
-    marginRight: 8,
+    marginRight: 10,
+    letterSpacing: -0.3,
   },
   priorityDot: {
     width: 8,
@@ -681,16 +687,17 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
   actionButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 12,
-    ...shadows.small,
-    elevation: 4,
+    paddingHorizontal: 18,
+    paddingVertical: 10,
+    borderRadius: 16,
+    ...shadows.card,
+    elevation: 6,
   },
   actionButtonText: {
-    fontSize: 12,
-    fontWeight: '700',
+    fontSize: 13,
+    fontWeight: '800',
     color: colors.white,
+    letterSpacing: 0.2,
   },
   timeEstimate: {
     flexDirection: 'row',

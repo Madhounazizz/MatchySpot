@@ -241,11 +241,12 @@ export default function StaffScreen() {
       >
         <Text style={styles.title}>Staff Management</Text>
         <View style={styles.headerActions}>
-          <TouchableOpacity style={styles.filterIcon}>
-            <Filter size={24} color={colors.primary} />
+          <TouchableOpacity style={styles.filterIcon} activeOpacity={0.8}>
+            <Filter size={20} color={colors.primary} />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.addButton}>
-            <Plus size={24} color={colors.white} />
+          <TouchableOpacity style={styles.addButton} activeOpacity={0.9}>
+            <Plus size={20} color={colors.white} />
+            <Text style={styles.addButtonText}>Add Staff</Text>
           </TouchableOpacity>
         </View>
       </LinearGradient>
@@ -318,17 +319,29 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   filterIcon: {
-    padding: 8,
-  },
-  addButton: {
-    backgroundColor: colors.primary,
     width: 56,
     height: 56,
     borderRadius: 28,
+    backgroundColor: colors.secondary + '12',
     alignItems: 'center',
     justifyContent: 'center',
     ...shadows.card,
-    elevation: 8,
+    elevation: 6,
+    borderWidth: 1,
+    borderColor: colors.secondary + '20',
+  },
+  addButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.primary,
+    paddingHorizontal: 20,
+    paddingVertical: 14,
+    borderRadius: 20,
+    gap: 8,
+    ...shadows.large,
+    elevation: 10,
+    borderWidth: 1,
+    borderColor: colors.primaryDark,
   },
   filterContainer: {
     paddingLeft: 28,
@@ -369,11 +382,11 @@ const styles = StyleSheet.create({
   },
   staffCard: {
     backgroundColor: colors.white,
-    borderRadius: 28,
-    padding: 28,
-    marginBottom: 20,
+    borderRadius: 32,
+    padding: 32,
+    marginBottom: 24,
     ...shadows.large,
-    elevation: 12,
+    elevation: 15,
     borderWidth: 1,
     borderColor: colors.border,
     overflow: 'hidden',
@@ -397,35 +410,35 @@ const styles = StyleSheet.create({
     marginRight: 20,
   },
   staffAvatar: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
+    width: 76,
+    height: 76,
+    borderRadius: 38,
     borderWidth: 3,
     borderColor: colors.white,
-    ...shadows.card,
-    elevation: 8,
+    ...shadows.large,
+    elevation: 10,
   },
   statusIndicator: {
     position: 'absolute',
     bottom: 2,
     right: 2,
-    width: 20,
-    height: 20,
-    borderRadius: 10,
+    width: 22,
+    height: 22,
+    borderRadius: 11,
     borderWidth: 3,
     borderColor: colors.white,
-    ...shadows.small,
-    elevation: 4,
+    ...shadows.card,
+    elevation: 6,
   },
   staffDetails: {
     flex: 1,
   },
   staffName: {
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: '900',
     color: colors.text,
-    marginBottom: 8,
-    letterSpacing: -0.4,
+    marginBottom: 10,
+    letterSpacing: -0.5,
   },
   roleBadge: {
     flexDirection: 'row',
@@ -473,11 +486,11 @@ const styles = StyleSheet.create({
   },
   scheduleCard: {
     backgroundColor: colors.primary,
-    padding: 20,
-    borderRadius: 20,
-    marginBottom: 20,
-    ...shadows.card,
-    elevation: 8,
+    padding: 24,
+    borderRadius: 24,
+    marginBottom: 24,
+    ...shadows.large,
+    elevation: 10,
   },
   scheduleHeader: {
     flexDirection: 'row',
@@ -559,5 +572,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: colors.textLight,
     textAlign: 'center',
+  },
+  addButtonText: {
+    color: colors.white,
+    fontWeight: '900',
+    fontSize: 15,
+    letterSpacing: 0.3,
   },
 });
