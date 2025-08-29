@@ -18,7 +18,7 @@ const generateAnonymousName = (): string => {
   return `${adj}${noun}${Math.floor(Math.random() * 99) + 1}`;
 };
 
-function useBRCChatLogic() {
+export const [BRCChatProvider, useBRCChat] = createContextHook(() => {
   const [chatrooms, setChatrooms] = useState<Record<string, BRCChatroom>>({});
   const [currentSession, setCurrentSession] = useState<BRCSession | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -56,9 +56,19 @@ function useBRCChatLogic() {
 
   const createSession = useCallback(async (brcId: string, isAnonymous: boolean, customNickname?: string): Promise<string> => {
     try {
-      const { currentUser: user } = useUserStore.getState();
+      // Get current user from store
+      const userStore = useUserStore.getState();
+      let user = userStore.currentUser;
+      
+      // If no user, auto-login as customer
       if (!user) {
-        throw new Error('User not logged in');
+        console.log('No user found, auto-logging in as customer...');
+        userStore.login('customer');
+        user = useUserStore.getState().currentUser;
+      }
+      
+      if (!user) {
+        throw new Error('Failed to create user session');
       }
 
       const accessCode = generateAccessCode();
@@ -79,33 +89,37 @@ function useBRCChatLogic() {
       };
 
       const chatroomId = `chatroom_${brcId}`;
-      const updatedChatrooms = { ...chatrooms };
       
-      if (!updatedChatrooms[chatroomId]) {
-        updatedChatrooms[chatroomId] = {
-          id: chatroomId,
-          brcId,
-          name: `Chatroom`,
-          activeSessions: [],
-          messages: [],
-        };
-      }
+      setChatrooms(prev => {
+        const updated = { ...prev };
+        
+        if (!updated[chatroomId]) {
+          updated[chatroomId] = {
+            id: chatroomId,
+            brcId,
+            name: `Chatroom`,
+            activeSessions: [],
+            messages: [],
+          };
+        }
 
-      updatedChatrooms[chatroomId].activeSessions = [
-        ...updatedChatrooms[chatroomId].activeSessions.filter(s => s.userId !== user.id),
-        session,
-      ];
-
-      setChatrooms(updatedChatrooms);
+        updated[chatroomId].activeSessions = [
+          ...updated[chatroomId].activeSessions.filter(s => s.userId !== user.id),
+          session,
+        ];
+        
+        saveChatData(updated, session);
+        return updated;
+      });
+      
       setCurrentSession(session);
-      await saveChatData(updatedChatrooms, session);
-
+      console.log('Session created successfully:', { accessCode, brcId, displayName });
       return accessCode;
     } catch (error) {
       console.error('Error creating session:', error);
       throw error;
     }
-  }, [chatrooms]);
+  }, []);
 
   const joinChatroom = useCallback((brcId: string) => {
     const chatroomId = `chatroom_${brcId}`;
@@ -129,29 +143,33 @@ function useBRCChatLogic() {
       avatar: currentSession.avatar,
     };
 
-    const updatedChatrooms = { ...chatrooms };
-    if (updatedChatrooms[chatroomId]) {
-      updatedChatrooms[chatroomId].messages.push(message);
-      setChatrooms(updatedChatrooms);
-      await saveChatData(updatedChatrooms, currentSession);
-    }
-  }, [currentSession, chatrooms]);
+    setChatrooms(prev => {
+      const updated = { ...prev };
+      if (updated[chatroomId]) {
+        updated[chatroomId].messages.push(message);
+        saveChatData(updated, currentSession);
+      }
+      return updated;
+    });
+  }, [currentSession]);
 
   const leaveRoom = useCallback(async () => {
     if (!currentSession) return;
 
     const chatroomId = `chatroom_${currentSession.brcId}`;
-    const updatedChatrooms = { ...chatrooms };
     
-    if (updatedChatrooms[chatroomId]) {
-      updatedChatrooms[chatroomId].activeSessions = 
-        updatedChatrooms[chatroomId].activeSessions.filter(s => s.id !== currentSession.id);
-    }
-
-    setChatrooms(updatedChatrooms);
+    setChatrooms(prev => {
+      const updated = { ...prev };
+      if (updated[chatroomId]) {
+        updated[chatroomId].activeSessions = 
+          updated[chatroomId].activeSessions.filter(s => s.id !== currentSession.id);
+      }
+      saveChatData(updated, null);
+      return updated;
+    });
+    
     setCurrentSession(null);
-    await saveChatData(updatedChatrooms, null);
-  }, [currentSession, chatrooms]);
+  }, [currentSession]);
 
   const hasActiveSession = useCallback((brcId: string): boolean => {
     return currentSession?.brcId === brcId && currentSession.isActive;
@@ -175,8 +193,4 @@ function useBRCChatLogic() {
     getCurrentChatroom,
     generateAnonymousName,
   }), [chatrooms, currentSession, isLoading, createSession, joinChatroom, sendMessage, leaveRoom, hasActiveSession, getCurrentChatroom]);
-}
-
-export const [BRCChatProvider, useBRCChat] = createContextHook(() => {
-  return useBRCChatLogic();
 });

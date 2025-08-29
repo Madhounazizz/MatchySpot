@@ -14,7 +14,6 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ArrowLeft, Plus, Minus, ShoppingCart, X } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useBRCChat } from '@/store/useBRCChatStore';
-import { useUserStore } from '@/store/useUserStore';
 import { menuItems } from '@/mocks/menu';
 import { brcs } from '@/mocks/brcs';
 
@@ -30,7 +29,6 @@ export default function MenuScreen() {
   const { brcId } = useLocalSearchParams<{ brcId: string }>();
   const router = useRouter();
   const { createSession } = useBRCChat();
-  const { isLoggedIn, login } = useUserStore();
   
   const [cart, setCart] = useState<CartItem[]>([]);
   const [selectedCategory, setSelectedCategory] = useState('All');
@@ -95,14 +93,6 @@ export default function MenuScreen() {
     }
 
     try {
-      // Ensure user is logged in before creating session
-      if (!isLoggedIn) {
-        console.log('User not logged in, logging in as customer...');
-        login('customer');
-        // Wait for the login to complete
-        await new Promise(resolve => setTimeout(resolve, 500));
-      }
-
       console.log('Creating session for brcId:', brcId);
       // Generate access code for chatroom
       const code = await createSession(brcId || '', false);
@@ -131,7 +121,7 @@ export default function MenuScreen() {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
       Alert.alert('Error', `Failed to place order: ${errorMessage}. Please try again.`);
     }
-  }, [brcId, createSession, router, customerName, tableNumber, isLoggedIn, login]);
+  }, [brcId, createSession, router, customerName, tableNumber]);
 
   return (
     <View style={styles.container}>
