@@ -46,12 +46,12 @@ export const useBRCChatStore = create<BRCChatState>()(
             console.log('No user found, auto-logging in as customer...');
             useUserStore.getState().login('customer');
             // Wait a bit for the login to complete
-            await new Promise(resolve => setTimeout(resolve, 100));
+            await new Promise(resolve => setTimeout(resolve, 200));
             user = useUserStore.getState().currentUser;
           }
           
           if (!user) {
-            throw new Error('Failed to create user session');
+            throw new Error('User not logged in');
           }
 
           const accessCode = generateAccessCode();
