@@ -58,36 +58,6 @@ export default function HomeScreen() {
         
         <SearchBar />
         
-        {/* QR Scanner Button with Fox Design */}
-        <TouchableOpacity
-          style={styles.qrScannerButton}
-          onPress={() => router.push('/qr-scanner')}
-        >
-          <LinearGradient
-            colors={['#FF6B35', '#F7931E']}
-            style={styles.qrGradient}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-          >
-            <View style={styles.foxContainer}>
-              <Text style={styles.foxEmoji}>🦊</Text>
-              <QrCode size={24} color="#FFF" />
-            </View>
-            <View style={styles.qrTextContainer}>
-              <Text style={styles.qrButtonText}>Scan QR Code</Text>
-              <Text style={styles.qrSubText}>Order & Join Chatroom</Text>
-            </View>
-          </LinearGradient>
-        </TouchableOpacity>
-        
-        {/* Test QR Codes Link */}
-        <TouchableOpacity
-          style={styles.testQRButton}
-          onPress={() => router.push('/test-qr')}
-        >
-          <Text style={styles.testQRText}>📱 View Test QR Codes</Text>
-        </TouchableOpacity>
-        
         <CategoryPills
           categories={categories}
           selectedCategory={selectedCategory}
@@ -143,6 +113,34 @@ export default function HomeScreen() {
             </View>
           ))}
         </ScrollView>
+        
+        {/* QR Scanner Section */}
+        <SectionHeader
+          title="Scan QR Code"
+        />
+        
+        <View style={styles.qrScannerSection}>
+          <TouchableOpacity
+            style={styles.qrScannerButton}
+            onPress={() => router.push('/qr-scanner')}
+          >
+            <View style={styles.qrIconContainer}>
+              <QrCode size={28} color={colors.primary} />
+            </View>
+            <View style={styles.qrTextContainer}>
+              <Text style={styles.qrButtonText}>Scan QR Code</Text>
+              <Text style={styles.qrSubText}>Order food & join chatroom</Text>
+            </View>
+          </TouchableOpacity>
+          
+          {/* Test QR Codes Link */}
+          <TouchableOpacity
+            style={styles.testQRButton}
+            onPress={() => router.push('/test-qr')}
+          >
+            <Text style={styles.testQRText}>📱 View Test QR Codes</Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
     </View>
   );
@@ -201,63 +199,59 @@ const styles = StyleSheet.create({
   nearbyCardWrapper: {
     marginRight: 12,
   },
-  qrScannerButton: {
-    marginHorizontal: 16,
-    marginBottom: 24,
-    borderRadius: 16,
-    overflow: 'hidden',
-    elevation: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
+  qrScannerSection: {
+    paddingHorizontal: 16,
+    paddingBottom: 24,
   },
-  qrGradient: {
+  qrScannerButton: {
+    backgroundColor: colors.white,
+    borderRadius: 16,
+    padding: 20,
     flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  qrIconContainer: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: colors.backgroundLight,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 20,
-    paddingHorizontal: 24,
-    gap: 16,
-  },
-  foxContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  foxEmoji: {
-    fontSize: 28,
+    marginRight: 16,
   },
   qrTextContainer: {
-    alignItems: 'center',
+    flex: 1,
   },
   qrButtonText: {
     fontSize: 18,
-    fontWeight: '700',
-    color: '#FFF',
+    fontWeight: '600',
+    color: colors.text,
+    marginBottom: 4,
   },
   qrSubText: {
     fontSize: 14,
-    fontWeight: '500',
-    color: '#FFF',
-    opacity: 0.9,
-    marginTop: 2,
+    color: colors.textLight,
   },
   testQRButton: {
-    marginHorizontal: 16,
-    marginBottom: 24,
-    backgroundColor: '#FFF',
+    backgroundColor: colors.backgroundLight,
     borderRadius: 12,
     paddingVertical: 12,
     paddingHorizontal: 20,
-    borderWidth: 2,
-    borderColor: '#4ECDC4',
-    borderStyle: 'dashed',
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   testQRText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#4ECDC4',
+    fontSize: 14,
+    fontWeight: '500',
+    color: colors.textLight,
     textAlign: 'center',
   },
 });
