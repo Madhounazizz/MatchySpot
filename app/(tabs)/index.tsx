@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, ScrollView, Text } from 'react-native';
+import { StyleSheet, View, ScrollView, Text, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Coffee, Utensils, Wine, Sparkles } from 'lucide-react-native';
+import { Coffee, Utensils, Wine, Sparkles, QrCode } from 'lucide-react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { colors } from '@/constants/colors';
 import SearchBar from '@/components/SearchBar';
 import CategoryPills from '@/components/CategoryPills';
@@ -63,6 +64,30 @@ export default function HomeScreen() {
         </View>
         
         <SearchBar />
+        
+        {/* QR Scanner Button */}
+        <TouchableOpacity
+          style={styles.qrScannerButton}
+          onPress={() => router.push('/qr-scanner')}
+        >
+          <LinearGradient
+            colors={['#FF6B6B', '#4ECDC4']}
+            style={styles.qrGradient}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+          >
+            <QrCode size={24} color="#FFF" />
+            <Text style={styles.qrButtonText}>Scan QR Code to Order</Text>
+          </LinearGradient>
+        </TouchableOpacity>
+        
+        {/* Test QR Codes Link */}
+        <TouchableOpacity
+          style={styles.testQRButton}
+          onPress={() => router.push('/test-qr')}
+        >
+          <Text style={styles.testQRText}>📱 View Test QR Codes</Text>
+        </TouchableOpacity>
         
         <CategoryPills
           categories={categories}
@@ -190,5 +215,46 @@ const styles = StyleSheet.create({
   },
   nearbyCardWrapper: {
     marginRight: 12,
+  },
+  qrScannerButton: {
+    marginHorizontal: 16,
+    marginBottom: 24,
+    borderRadius: 16,
+    overflow: 'hidden',
+    elevation: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+  },
+  qrGradient: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    gap: 12,
+  },
+  qrButtonText: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#FFF',
+  },
+  testQRButton: {
+    marginHorizontal: 16,
+    marginBottom: 24,
+    backgroundColor: '#FFF',
+    borderRadius: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderWidth: 2,
+    borderColor: '#4ECDC4',
+    borderStyle: 'dashed',
+  },
+  testQRText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#4ECDC4',
+    textAlign: 'center',
   },
 });
