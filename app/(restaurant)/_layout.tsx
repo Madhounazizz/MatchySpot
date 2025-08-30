@@ -17,17 +17,17 @@ export default function RestaurantTabLayout() {
           shadowOffset: { width: 0, height: -2 },
           shadowOpacity: 0.08,
           shadowRadius: 8,
-          height: 65,
-          paddingBottom: 8,
-          paddingTop: 6,
+          height: 70,
+          paddingBottom: 10,
+          paddingTop: 8,
         },
         tabBarLabelStyle: {
-          fontSize: 10,
-          fontWeight: '600',
-          marginTop: 2,
+          fontSize: 9,
+          fontWeight: '500',
+          marginTop: 4,
         },
         tabBarIconStyle: {
-          marginTop: 2,
+          marginTop: 4,
         },
         headerShown: false,
         lazy: true,
@@ -39,7 +39,7 @@ export default function RestaurantTabLayout() {
           title: "Reservations",
           tabBarIcon: ({ color, focused }) => (
             <Calendar 
-              size={focused ? 22 : 20} 
+              size={focused ? 24 : 22} 
               color={color}
             />
           ),
@@ -51,7 +51,7 @@ export default function RestaurantTabLayout() {
           title: "Orders",
           tabBarIcon: ({ color, focused }) => (
             <ChefHat 
-              size={focused ? 22 : 20} 
+              size={focused ? 24 : 22} 
               color={color}
             />
           ),
@@ -60,10 +60,10 @@ export default function RestaurantTabLayout() {
       <Tabs.Screen
         name="tables"
         options={{
-          title: "Tables",
+          title: "Table Mgmt",
           tabBarIcon: ({ color, focused }) => (
             <LayoutGrid 
-              size={focused ? 22 : 20} 
+              size={focused ? 24 : 22} 
               color={color}
             />
           ),
@@ -72,10 +72,10 @@ export default function RestaurantTabLayout() {
       <Tabs.Screen
         name="menu"
         options={{
-          title: "Menu",
+          title: "Menu Mgmt",
           tabBarIcon: ({ color, focused }) => (
             <Menu 
-              size={focused ? 22 : 20} 
+              size={focused ? 24 : 22} 
               color={color}
             />
           ),
@@ -87,7 +87,7 @@ export default function RestaurantTabLayout() {
           title: "Inventory",
           tabBarIcon: ({ color, focused }) => (
             <Package 
-              size={focused ? 22 : 20} 
+              size={focused ? 24 : 22} 
               color={color}
             />
           ),
@@ -99,7 +99,7 @@ export default function RestaurantTabLayout() {
           title: "Settings",
           tabBarIcon: ({ color, focused }) => (
             <Settings 
-              size={focused ? 22 : 20} 
+              size={focused ? 24 : 22} 
               color={color}
             />
           ),
