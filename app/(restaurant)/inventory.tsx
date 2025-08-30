@@ -240,8 +240,6 @@ export default function InventoryScreen() {
 
   const stats = getInventoryStats();
 
-
-
   const InventoryCard = ({ item }: { item: InventoryItem }) => {
     const StatusIcon = getStatusIcon(item.status);
     const statusColor = getStatusColor(item.status);
