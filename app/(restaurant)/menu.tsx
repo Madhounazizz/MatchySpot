@@ -384,8 +384,8 @@ const styles = StyleSheet.create({
   menuItemCard: {
     backgroundColor: colors.white,
     marginHorizontal: 16,
-    marginBottom: 10,
-    borderRadius: 16,
+    marginBottom: 8,
+    borderRadius: 12,
     ...shadows.small,
     elevation: 2,
     overflow: 'hidden',
@@ -395,8 +395,8 @@ const styles = StyleSheet.create({
   },
   cardImageContainer: {
     position: 'relative',
-    width: 72,
-    height: 72,
+    width: 64,
+    height: 64,
   },
   itemImage: {
     width: '100%',
@@ -418,22 +418,22 @@ const styles = StyleSheet.create({
   },
   itemContent: {
     flex: 1,
-    padding: 10,
+    padding: 12,
   },
   itemHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: 8,
+    marginBottom: 6,
   },
   itemTitleSection: {
     flex: 1,
   },
   itemName: {
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: '600',
     color: colors.text,
-    marginBottom: 3,
+    marginBottom: 2,
   },
   ratingPriceRow: {
     flexDirection: 'row',
@@ -442,20 +442,20 @@ const styles = StyleSheet.create({
   },
   itemActions: {
     flexDirection: 'row',
-    gap: 4,
+    gap: 3,
   },
   actionButton: {
-    width: 26,
-    height: 26,
-    borderRadius: 13,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
   },
   itemDescription: {
-    fontSize: 12,
+    fontSize: 11,
     color: colors.textLight,
-    lineHeight: 16,
-    marginBottom: 8,
+    lineHeight: 14,
+    marginBottom: 6,
     fontWeight: '500',
   },
   itemFooter: {
@@ -479,9 +479,9 @@ const styles = StyleSheet.create({
     color: colors.warning,
   },
   categoryBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 8,
+    paddingHorizontal: 6,
+    paddingVertical: 3,
+    borderRadius: 6,
   },
   categoryText: {
     fontSize: 10,
@@ -493,9 +493,9 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   dietaryTag: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
+    width: 18,
+    height: 18,
+    borderRadius: 9,
     alignItems: 'center',
     justifyContent: 'center',
   },

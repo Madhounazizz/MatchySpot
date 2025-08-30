@@ -377,7 +377,7 @@ const styles = StyleSheet.create({
   sectionContent: {
     backgroundColor: colors.white,
     marginHorizontal: 16,
-    borderRadius: 16,
+    borderRadius: 12,
     ...shadows.small,
     elevation: 2,
     borderWidth: 1,
@@ -387,28 +387,28 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 12,
-    paddingVertical: 10,
+    paddingVertical: 12,
   },
   settingIcon: {
-    width: 28,
-    height: 28,
-    borderRadius: 8,
+    width: 24,
+    height: 24,
+    borderRadius: 6,
     backgroundColor: colors.primary + '15',
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 10,
+    marginRight: 8,
   },
   settingContent: {
     flex: 1,
   },
   settingTitle: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '600',
     color: colors.text,
     marginBottom: 2,
   },
   settingSubtitle: {
-    fontSize: 11,
+    fontSize: 12,
     color: colors.textLight,
   },
   settingAction: {
@@ -437,9 +437,9 @@ const styles = StyleSheet.create({
   },
   editButton: {
     backgroundColor: colors.backgroundLight,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
+    paddingHorizontal: 6,
+    paddingVertical: 3,
+    borderRadius: 4,
   },
   editButtonText: {
     color: colors.primary,
@@ -448,9 +448,9 @@ const styles = StyleSheet.create({
   },
   actionButton: {
     backgroundColor: colors.backgroundLight,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
+    paddingHorizontal: 6,
+    paddingVertical: 3,
+    borderRadius: 4,
   },
   actionButtonText: {
     color: colors.primary,
