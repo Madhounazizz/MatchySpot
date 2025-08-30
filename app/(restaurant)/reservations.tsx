@@ -26,6 +26,7 @@ import { colors, shadows } from '@/constants/colors';
 import { LinearGradient } from 'expo-linear-gradient';
 import { mockReservations } from '@/mocks/reservations';
 import { Reservation } from '@/types';
+import { router } from 'expo-router';
 
 type FilterStatus = 'all' | 'pending' | 'confirmed' | 'seated' | 'completed' | 'cancelled';
 
@@ -183,7 +184,12 @@ export default function ReservationsScreen() {
             <TouchableOpacity style={styles.headerButton} testID="reservations-filter-btn" activeOpacity={0.8}>
               <Filter size={18} color={colors.primary} />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.addButton} testID="reservations-add-btn" activeOpacity={0.9}>
+            <TouchableOpacity 
+              style={styles.addButton} 
+              testID="reservations-add-btn" 
+              activeOpacity={0.9}
+              onPress={() => router.push('/(restaurant)/new-reservation')}
+            >
               <Plus size={16} color={colors.white} />
               <Text style={styles.addButtonText}>New</Text>
             </TouchableOpacity>

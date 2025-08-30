@@ -23,6 +23,7 @@ import {
 } from 'lucide-react-native';
 import { colors, shadows } from '@/constants/colors';
 import { LinearGradient } from 'expo-linear-gradient';
+import { router } from 'expo-router';
 
 type InventoryStatus = 'in-stock' | 'low-stock' | 'out-of-stock' | 'overstocked';
 type InventoryCategory = 'all' | 'proteins' | 'vegetables' | 'dairy' | 'grains' | 'beverages' | 'spices';
@@ -339,7 +340,12 @@ export default function InventoryScreen() {
           <TouchableOpacity style={styles.filterIcon} testID="inventory-filter-btn">
             <Filter size={20} color={colors.primary} />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.addButton} testID="inventory-add-btn" activeOpacity={0.9}>
+          <TouchableOpacity 
+            style={styles.addButton} 
+            testID="inventory-add-btn" 
+            activeOpacity={0.9}
+            onPress={() => router.push('/(restaurant)/add-inventory')}
+          >
             <Plus size={20} color={colors.white} />
             <Text style={styles.addButtonText}>Add Item</Text>
           </TouchableOpacity>

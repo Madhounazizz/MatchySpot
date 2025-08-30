@@ -24,6 +24,7 @@ import {
 } from 'lucide-react-native';
 import { colors, shadows } from '@/constants/colors';
 import { menuItems, MenuItem } from '@/mocks/menu';
+import { router } from 'expo-router';
 
 
 type MenuCategory = 'all' | 'appetizer' | 'main' | 'dessert' | 'drink';
@@ -173,10 +174,7 @@ export default function MenuManagement() {
         <Text style={styles.title}>Menu Management</Text>
         <TouchableOpacity
           style={styles.addButton}
-          onPress={() => {
-            setEditingItem(null);
-            setShowAddModal(true);
-          }}
+          onPress={() => router.push('/(restaurant)/add-menu-item')}
         >
           <Plus size={20} color={colors.white} />
           <Text style={styles.addButtonText}>Add Item</Text>
