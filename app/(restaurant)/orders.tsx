@@ -266,9 +266,7 @@ export default function OrdersScreen() {
 
         <View style={styles.orderItems}>
           <Text style={styles.itemsSummary}>
-            {order.items.length} item{order.items.length > 1 ? 's' : ''} • 
-            {order.items.slice(0, 2).map(item => `${item.quantity}x ${item.name}`).join(', ')}
-            {order.items.length > 2 && ` +${order.items.length - 2} more`}
+            {order.items.length} item{order.items.length > 1 ? 's' : ''} • {order.items.slice(0, 2).map(item => `${item.quantity}x ${item.name}`).join(', ')}{order.items.length > 2 && ` +${order.items.length - 2} more`}
           </Text>
         </View>
 
