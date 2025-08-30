@@ -195,25 +195,37 @@ export default function OrdersScreen() {
     filter: OrderFilter; 
     label: string; 
     count: number;
-  }) => (
-    <TouchableOpacity
-      style={[
-        styles.filterButton,
-        selectedFilter === filter && styles.filterButtonActive,
-      ]}
-      onPress={() => setSelectedFilter(filter)}
-      testID={`filter-${filter}`}
-    >
-      <Text
+  }) => {
+    const isActive = selectedFilter === filter;
+    return (
+      <TouchableOpacity
         style={[
-          styles.filterButtonText,
-          selectedFilter === filter && styles.filterButtonTextActive,
+          styles.tabButton,
+          isActive && styles.tabButtonActive,
         ]}
+        onPress={() => setSelectedFilter(filter)}
+        testID={`filter-${filter}`}
+        activeOpacity={0.7}
       >
-        {label} ({count})
-      </Text>
-    </TouchableOpacity>
-  );
+        <Text
+          style={[
+            styles.tabButtonText,
+            isActive && styles.tabButtonTextActive,
+          ]}
+        >
+          {label}
+        </Text>
+        {count > 0 && (
+          <View style={[styles.countBadge, isActive && styles.countBadgeActive]}>
+            <Text style={[styles.countText, isActive && styles.countTextActive]}>
+              {count}
+            </Text>
+          </View>
+        )}
+        {isActive && <View style={styles.activeIndicator} />}
+      </TouchableOpacity>
+    );
+  };
 
   const OrderCard = ({ order }: { order: Order }) => {
     const StatusIcon = getStatusIcon(order.status);
@@ -330,39 +342,19 @@ export default function OrdersScreen() {
         </View>
       </LinearGradient>
 
-      <View style={styles.statsSection}>
-        <View style={styles.statsRow}>
-          <View style={styles.statItem}>
-            <Text style={styles.statNumber}>{filterCounts.pending}</Text>
-            <Text style={styles.statLabel}>Pending</Text>
-          </View>
-          <View style={styles.statItem}>
-            <Text style={styles.statNumber}>{filterCounts.preparing}</Text>
-            <Text style={styles.statLabel}>Preparing</Text>
-          </View>
-          <View style={styles.statItem}>
-            <Text style={styles.statNumber}>{filterCounts.ready}</Text>
-            <Text style={styles.statLabel}>Ready</Text>
-          </View>
-          <View style={styles.statItem}>
-            <Text style={styles.statNumber}>{filterCounts.served}</Text>
-            <Text style={styles.statLabel}>Served</Text>
-          </View>
-        </View>
+      <View style={styles.tabBarContainer}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.tabBarContent}
+        >
+          <FilterButton filter="all" label="All" count={filterCounts.all} />
+          <FilterButton filter="pending" label="Pending" count={filterCounts.pending} />
+          <FilterButton filter="preparing" label="Preparing" count={filterCounts.preparing} />
+          <FilterButton filter="ready" label="Ready" count={filterCounts.ready} />
+          <FilterButton filter="served" label="Served" count={filterCounts.served} />
+        </ScrollView>
       </View>
-
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={styles.filterContainer}
-        contentContainerStyle={styles.filterContent}
-      >
-        <FilterButton filter="all" label="All" count={filterCounts.all} />
-        <FilterButton filter="pending" label="Pending" count={filterCounts.pending} />
-        <FilterButton filter="preparing" label="Preparing" count={filterCounts.preparing} />
-        <FilterButton filter="ready" label="Ready" count={filterCounts.ready} />
-        <FilterButton filter="served" label="Served" count={filterCounts.served} />
-      </ScrollView>
 
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         <View style={styles.ordersList}>
@@ -440,57 +432,67 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontSize: 14,
   },
-  statsSection: {
+  tabBarContainer: {
+    backgroundColor: '#F9FAFB',
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
+  },
+  tabBarContent: {
     paddingHorizontal: 16,
-    paddingVertical: 12,
-  },
-  statsRow: {
-    flexDirection: 'row',
-    backgroundColor: colors.white,
-    borderRadius: 14,
-    padding: 12,
-    ...shadows.small,
-    elevation: 2,
-  },
-  statItem: {
-    flex: 1,
     alignItems: 'center',
   },
-  statNumber: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: colors.primary,
-  },
-  statLabel: {
-    fontSize: 12,
-    color: colors.textLight,
-    marginTop: 4,
-    fontWeight: '500',
-  },
-  filterContainer: {
-    paddingLeft: 16,
-    marginBottom: 16,
-  },
-  filterContent: {
-    paddingRight: 20,
-  },
-  filterButton: {
+  tabButton: {
+    position: 'relative',
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingVertical: 10,
+    marginRight: 4,
     borderRadius: 20,
-    backgroundColor: colors.backgroundLight,
-    marginRight: 8,
+    backgroundColor: 'transparent',
+    minHeight: 36,
   },
-  filterButtonActive: {
-    backgroundColor: colors.primary,
+  tabButtonActive: {
+    backgroundColor: '#FF7060' + '10',
   },
-  filterButtonText: {
-    fontSize: 13,
+  tabButtonText: {
+    fontSize: 14,
     fontWeight: '600',
     color: colors.textLight,
   },
-  filterButtonTextActive: {
+  tabButtonTextActive: {
+    color: '#FF7060',
+  },
+  countBadge: {
+    backgroundColor: colors.backgroundLight,
+    borderRadius: 10,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    marginLeft: 6,
+    minWidth: 20,
+    alignItems: 'center',
+  },
+  countBadgeActive: {
+    backgroundColor: '#FF7060',
+  },
+  countText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: colors.textLight,
+  },
+  countTextActive: {
     color: colors.white,
+  },
+  activeIndicator: {
+    position: 'absolute',
+    bottom: -8,
+    left: '50%',
+    marginLeft: -12,
+    width: 24,
+    height: 2,
+    backgroundColor: '#FF7060',
+    borderRadius: 1,
   },
   scrollView: {
     flex: 1,
