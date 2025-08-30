@@ -68,24 +68,7 @@ export default function ReservationsScreen() {
     }
   };
 
-  const FilterButton = ({ status, label }: { status: FilterStatus; label: string }) => (
-    <TouchableOpacity
-      style={[
-        styles.filterButton,
-        selectedFilter === status && styles.filterButtonActive,
-      ]}
-      onPress={() => setSelectedFilter(status)}
-    >
-      <Text
-        style={[
-          styles.filterButtonText,
-          selectedFilter === status && styles.filterButtonTextActive,
-        ]}
-      >
-        {label}
-      </Text>
-    </TouchableOpacity>
-  );
+
 
   const ReservationCard = ({ reservation }: { reservation: Reservation }) => (
     <TouchableOpacity style={styles.reservationCard} activeOpacity={0.9} testID={`reservation-${reservation.id}`}>
@@ -226,19 +209,116 @@ export default function ReservationsScreen() {
         </View>
       </View>
 
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={styles.filterContainer}
-        contentContainerStyle={styles.filterContent}
-      >
-        <FilterButton status={"all"} label={`All (${mockReservations.filter(r => r.date === selectedDate).length})`} />
-        <FilterButton status={"pending"} label={`Pending (${mockReservations.filter(r => r.date === selectedDate && r.status === 'pending').length})`} />
-        <FilterButton status={"confirmed"} label={`Confirmed (${mockReservations.filter(r => r.date === selectedDate && r.status === 'confirmed').length})`} />
-        <FilterButton status={"seated"} label={`Seated (${mockReservations.filter(r => r.date === selectedDate && r.status === 'seated').length})`} />
-        <FilterButton status={"completed"} label={`Completed (${mockReservations.filter(r => r.date === selectedDate && r.status === 'completed').length})`} />
-        <FilterButton status={"cancelled"} label={`Cancelled (${mockReservations.filter(r => r.date === selectedDate && r.status === 'cancelled').length})`} />
-      </ScrollView>
+      <View style={styles.filterTabsContainer}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.filterTabsContent}
+        >
+          <TouchableOpacity
+            style={[
+              styles.filterTab,
+              selectedFilter === 'all' && styles.filterTabActive,
+            ]}
+            onPress={() => setSelectedFilter('all')}
+          >
+            <Text
+              style={[
+                styles.filterTabText,
+                selectedFilter === 'all' && styles.filterTabTextActive,
+              ]}
+            >
+              All ({mockReservations.filter(r => r.date === selectedDate).length})
+            </Text>
+            {selectedFilter === 'all' && <View style={styles.filterTabIndicator} />}
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.filterTab,
+              selectedFilter === 'pending' && styles.filterTabActive,
+            ]}
+            onPress={() => setSelectedFilter('pending')}
+          >
+            <Text
+              style={[
+                styles.filterTabText,
+                selectedFilter === 'pending' && styles.filterTabTextActive,
+              ]}
+            >
+              Pending ({mockReservations.filter(r => r.date === selectedDate && r.status === 'pending').length})
+            </Text>
+            {selectedFilter === 'pending' && <View style={styles.filterTabIndicator} />}
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.filterTab,
+              selectedFilter === 'confirmed' && styles.filterTabActive,
+            ]}
+            onPress={() => setSelectedFilter('confirmed')}
+          >
+            <Text
+              style={[
+                styles.filterTabText,
+                selectedFilter === 'confirmed' && styles.filterTabTextActive,
+              ]}
+            >
+              Confirmed ({mockReservations.filter(r => r.date === selectedDate && r.status === 'confirmed').length})
+            </Text>
+            {selectedFilter === 'confirmed' && <View style={styles.filterTabIndicator} />}
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.filterTab,
+              selectedFilter === 'seated' && styles.filterTabActive,
+            ]}
+            onPress={() => setSelectedFilter('seated')}
+          >
+            <Text
+              style={[
+                styles.filterTabText,
+                selectedFilter === 'seated' && styles.filterTabTextActive,
+              ]}
+            >
+              Seated ({mockReservations.filter(r => r.date === selectedDate && r.status === 'seated').length})
+            </Text>
+            {selectedFilter === 'seated' && <View style={styles.filterTabIndicator} />}
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.filterTab,
+              selectedFilter === 'completed' && styles.filterTabActive,
+            ]}
+            onPress={() => setSelectedFilter('completed')}
+          >
+            <Text
+              style={[
+                styles.filterTabText,
+                selectedFilter === 'completed' && styles.filterTabTextActive,
+              ]}
+            >
+              Completed ({mockReservations.filter(r => r.date === selectedDate && r.status === 'completed').length})
+            </Text>
+            {selectedFilter === 'completed' && <View style={styles.filterTabIndicator} />}
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.filterTab,
+              selectedFilter === 'cancelled' && styles.filterTabActive,
+            ]}
+            onPress={() => setSelectedFilter('cancelled')}
+          >
+            <Text
+              style={[
+                styles.filterTabText,
+                selectedFilter === 'cancelled' && styles.filterTabTextActive,
+              ]}
+            >
+              Cancelled ({mockReservations.filter(r => r.date === selectedDate && r.status === 'cancelled').length})
+            </Text>
+            {selectedFilter === 'cancelled' && <View style={styles.filterTabIndicator} />}
+          </TouchableOpacity>
+        </ScrollView>
+      </View>
 
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         <View style={styles.reservationsList}>
@@ -355,31 +435,41 @@ const styles = StyleSheet.create({
     marginTop: 4,
     fontWeight: '500',
   },
-  filterContainer: {
-    paddingLeft: 16,
+  filterTabsContainer: {
+    backgroundColor: '#F9FAFB',
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
     marginBottom: 16,
   },
-  filterContent: {
-    paddingRight: 20,
-    gap: 8,
-  },
-  filterButton: {
+  filterTabsContent: {
     paddingHorizontal: 16,
+    gap: 24,
+  },
+  filterTab: {
     paddingVertical: 8,
-    borderRadius: 20,
-    backgroundColor: colors.backgroundLight,
+    position: 'relative',
   },
-  filterButtonActive: {
-    backgroundColor: colors.primary,
+  filterTabActive: {
+    // Active state handled by indicator
   },
-  filterButtonText: {
+  filterTabText: {
     fontSize: 13,
-    fontWeight: '600',
+    fontWeight: '500',
     color: colors.textLight,
   },
-  filterButtonTextActive: {
-    color: colors.white,
+  filterTabTextActive: {
+    color: '#FF7060',
     fontWeight: '600',
+  },
+  filterTabIndicator: {
+    position: 'absolute',
+    bottom: -8,
+    left: 0,
+    right: 0,
+    height: 2,
+    backgroundColor: '#FF7060',
+    borderRadius: 1,
   },
   scrollView: {
     flex: 1,

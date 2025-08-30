@@ -196,32 +196,39 @@ export default function MenuManagement() {
         </View>
       </View>
 
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={styles.categoriesContainer}
-        contentContainerStyle={styles.categoriesContent}
-      >
-        {categories.map((category) => (
-          <TouchableOpacity
-            key={category.key}
-            style={[
-              styles.categoryPill,
-              selectedCategory === category.key && styles.categoryPillActive,
-            ]}
-            onPress={() => setSelectedCategory(category.key)}
-          >
-            <Text
-              style={[
-                styles.categoryPillText,
-                selectedCategory === category.key && styles.categoryPillTextActive,
-              ]}
-            >
-              {category.label}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
+      <View style={styles.filterTabsContainer}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.filterTabsContent}
+        >
+          {categories.map((category) => {
+            const count = category.key === 'all' 
+              ? menuData.length 
+              : menuData.filter(item => item.category === category.key).length;
+            return (
+              <TouchableOpacity
+                key={category.key}
+                style={[
+                  styles.filterTab,
+                  selectedCategory === category.key && styles.filterTabActive,
+                ]}
+                onPress={() => setSelectedCategory(category.key)}
+              >
+                <Text
+                  style={[
+                    styles.filterTabText,
+                    selectedCategory === category.key && styles.filterTabTextActive,
+                  ]}
+                >
+                  {category.label} ({count})
+                </Text>
+                {selectedCategory === category.key && <View style={styles.filterTabIndicator} />}
+              </TouchableOpacity>
+            );
+          })}
+        </ScrollView>
+      </View>
 
       <ScrollView style={styles.menuList} showsVerticalScrollIndicator={false}>
         <View style={styles.statsRow}>
@@ -325,32 +332,40 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontWeight: '500',
   },
-  categoriesContainer: {
-    backgroundColor: colors.white,
-    paddingBottom: 4,
-  },
-  categoriesContent: {
-    paddingHorizontal: 16,
+  filterTabsContainer: {
+    backgroundColor: '#F9FAFB',
     paddingVertical: 8,
-    gap: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
   },
-  categoryPill: {
+  filterTabsContent: {
     paddingHorizontal: 16,
+    gap: 24,
+  },
+  filterTab: {
     paddingVertical: 8,
-    borderRadius: 20,
-    backgroundColor: colors.backgroundLight,
+    position: 'relative',
   },
-  categoryPillActive: {
-    backgroundColor: colors.primary,
+  filterTabActive: {
+    // Active state handled by indicator
   },
-  categoryPillText: {
+  filterTabText: {
     fontSize: 13,
-    fontWeight: '600',
+    fontWeight: '500',
     color: colors.textLight,
   },
-  categoryPillTextActive: {
-    color: colors.white,
+  filterTabTextActive: {
+    color: '#FF7060',
     fontWeight: '600',
+  },
+  filterTabIndicator: {
+    position: 'absolute',
+    bottom: -8,
+    left: 0,
+    right: 0,
+    height: 2,
+    backgroundColor: '#FF7060',
+    borderRadius: 1,
   },
   menuList: {
     flex: 1,
