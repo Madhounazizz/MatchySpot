@@ -357,12 +357,12 @@ const styles = StyleSheet.create({
   },
   statsRow: {
     flexDirection: 'row',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
     backgroundColor: colors.white,
     marginHorizontal: 16,
     marginBottom: 16,
-    borderRadius: 12,
+    borderRadius: 14,
     ...shadows.small,
     elevation: 2,
   },
@@ -384,8 +384,8 @@ const styles = StyleSheet.create({
   menuItemCard: {
     backgroundColor: colors.white,
     marginHorizontal: 16,
-    marginBottom: 12,
-    borderRadius: 12,
+    marginBottom: 10,
+    borderRadius: 16,
     ...shadows.small,
     elevation: 2,
     overflow: 'hidden',
@@ -395,8 +395,8 @@ const styles = StyleSheet.create({
   },
   cardImageContainer: {
     position: 'relative',
-    width: 80,
-    height: 80,
+    width: 72,
+    height: 72,
   },
   itemImage: {
     width: '100%',
@@ -418,7 +418,7 @@ const styles = StyleSheet.create({
   },
   itemContent: {
     flex: 1,
-    padding: 12,
+    padding: 10,
   },
   itemHeader: {
     flexDirection: 'row',
@@ -430,10 +430,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   itemName: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '600',
     color: colors.text,
-    marginBottom: 4,
+    marginBottom: 3,
   },
   ratingPriceRow: {
     flexDirection: 'row',
@@ -445,9 +445,9 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   actionButton: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
+    width: 26,
+    height: 26,
+    borderRadius: 13,
     alignItems: 'center',
     justifyContent: 'center',
   },

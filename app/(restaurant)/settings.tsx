@@ -384,7 +384,7 @@ const styles = StyleSheet.create({
   sectionContent: {
     backgroundColor: colors.white,
     marginHorizontal: 16,
-    borderRadius: 12,
+    borderRadius: 16,
     ...shadows.small,
     elevation: 2,
     borderWidth: 1,
@@ -394,28 +394,28 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 12,
-    paddingVertical: 12,
+    paddingVertical: 10,
   },
   settingIcon: {
-    width: 32,
-    height: 32,
+    width: 28,
+    height: 28,
     borderRadius: 8,
     backgroundColor: colors.primary + '15',
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 12,
+    marginRight: 10,
   },
   settingContent: {
     flex: 1,
   },
   settingTitle: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '600',
     color: colors.text,
     marginBottom: 2,
   },
   settingSubtitle: {
-    fontSize: 12,
+    fontSize: 11,
     color: colors.textLight,
   },
   settingAction: {
