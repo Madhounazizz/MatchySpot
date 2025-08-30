@@ -176,14 +176,7 @@ export default function RestaurantSettings() {
           type: 'navigation',
           onPress: () => Alert.alert('Coming Soon', 'Payment settings will be available soon.'),
         },
-        {
-          id: 'analytics',
-          title: 'Analytics & Reports',
-          subtitle: 'View detailed business insights',
-          icon: BarChart3,
-          type: 'navigation',
-          onPress: () => router.push('/(restaurant)/analytics'),
-        },
+
       ],
     },
     {
