@@ -1,12 +1,13 @@
-import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Pressable } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, Pressable, ActivityIndicator } from 'react-native';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Heart, Star, MapPin, Clock } from 'lucide-react-native';
+import { Heart, Star, MapPin, Clock, Shield, ShieldCheck, ShieldX, ShieldAlert } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
-import { BRC } from '@/types';
+import { BRC, VerificationStatus } from '@/types';
 import { colors, shadows } from '@/constants/colors';
 import { useUserStore } from '@/store/useUserStore';
+import { useTranslation } from '@/store/useLanguageStore';
 
 type BRCCardProps = {
   brc: BRC;
@@ -16,7 +17,9 @@ type BRCCardProps = {
 export default function BRCCard({ brc, size = 'medium' }: BRCCardProps) {
   const router = useRouter();
   const { toggleFavorite, isFavorite } = useUserStore();
+  const { t } = useTranslation();
   const favorite = isFavorite(brc.id);
+  const [isVerifying, setIsVerifying] = useState(false);
 
   const handlePress = () => {
     // Navigate directly to BRC detail page which shows menu and booking options
@@ -26,6 +29,58 @@ export default function BRCCard({ brc, size = 'medium' }: BRCCardProps) {
   const handleFavoritePress = (e: any) => {
     e.stopPropagation();
     toggleFavorite(brc.id);
+  };
+
+  const handleVerifyPress = async (e: any) => {
+    e.stopPropagation();
+    if (brc.verificationStatus === 'none' || brc.verificationStatus === 'rejected') {
+      setIsVerifying(true);
+      // Simulate verification request
+      setTimeout(() => {
+        setIsVerifying(false);
+        // In a real app, this would update the BRC status via API
+        console.log(`Verification requested for ${brc.name}`);
+      }, 2000);
+    }
+  };
+
+  const getVerificationIcon = () => {
+    switch (brc.verificationStatus) {
+      case 'approved':
+        return <ShieldCheck size={16} color={colors.success} />;
+      case 'pending':
+        return <ShieldAlert size={16} color={colors.warning} />;
+      case 'rejected':
+        return <ShieldX size={16} color={colors.error} />;
+      default:
+        return <Shield size={16} color={colors.textLight} />;
+    }
+  };
+
+  const getVerificationText = () => {
+    switch (brc.verificationStatus) {
+      case 'approved':
+        return t('verified');
+      case 'pending':
+        return t('verificationPending');
+      case 'rejected':
+        return t('verificationRejected');
+      default:
+        return t('verify');
+    }
+  };
+
+  const getVerificationColor = () => {
+    switch (brc.verificationStatus) {
+      case 'approved':
+        return colors.success;
+      case 'pending':
+        return colors.warning;
+      case 'rejected':
+        return colors.error;
+      default:
+        return colors.primary;
+    }
   };
 
   const getCardStyle = () => {
@@ -99,8 +154,30 @@ export default function BRCCard({ brc, size = 'medium' }: BRCCardProps) {
         {/* Status indicator */}
         <View style={styles.statusContainer}>
           <View style={[styles.statusDot, { backgroundColor: colors.success }]} />
-          <Text style={styles.statusText}>Open</Text>
+          <Text style={styles.statusText}>{t('open')}</Text>
         </View>
+        
+        {/* Verification Badge */}
+        <TouchableOpacity 
+          style={[
+            styles.verificationBadge,
+            { backgroundColor: `${getVerificationColor()}20` }
+          ]}
+          onPress={handleVerifyPress}
+          disabled={brc.verificationStatus === 'approved' || brc.verificationStatus === 'pending' || isVerifying}
+        >
+          {isVerifying ? (
+            <ActivityIndicator size={14} color={getVerificationColor()} />
+          ) : (
+            getVerificationIcon()
+          )}
+          <Text style={[
+            styles.verificationText,
+            { color: getVerificationColor() }
+          ]}>
+            {isVerifying ? t('verificationInProgress') : getVerificationText()}
+          </Text>
+        </TouchableOpacity>
       </View>
       
       <View style={[styles.content, size === 'large' && styles.largeContent]}>
@@ -129,6 +206,15 @@ export default function BRCCard({ brc, size = 'medium' }: BRCCardProps) {
             {brc.openingHours.open} - {brc.openingHours.close}
           </Text>
         </View>
+        
+        {brc.verificationStatus === 'approved' && brc.verificationDate && (
+          <View style={styles.verifiedSinceContainer}>
+            <ShieldCheck size={12} color={colors.success} />
+            <Text style={styles.verifiedSinceText}>
+              {t('verified')} since {new Date(brc.verificationDate).toLocaleDateString()}
+            </Text>
+          </View>
+        )}
         
         <View style={styles.tagsContainer}>
           {brc.tags.slice(0, size === 'large' ? 3 : 2).map((tag, index) => (
@@ -276,6 +362,34 @@ const styles = StyleSheet.create({
   tagText: {
     fontSize: 11,
     color: colors.primaryDark,
+    fontWeight: '500',
+  },
+  verificationBadge: {
+    position: 'absolute',
+    top: 16,
+    right: 60,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+  },
+  verificationText: {
+    fontSize: 10,
+    fontWeight: '600',
+    marginLeft: 4,
+  },
+  verifiedSinceContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  verifiedSinceText: {
+    fontSize: 11,
+    color: colors.success,
+    marginLeft: 4,
     fontWeight: '500',
   },
 });

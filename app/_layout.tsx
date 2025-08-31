@@ -8,6 +8,7 @@ import { View, Text, ActivityIndicator } from "react-native";
 import { colors } from "@/constants/colors";
 import { useUserStore } from "@/store/useUserStore";
 import { BRCChatProvider } from "@/store/useBRCChatStore";
+import { LanguageProvider } from "@/store/useLanguageStore";
 
 
 export const unstable_settings = {
@@ -65,8 +66,9 @@ function RootLayoutNav() {
   const { isLoggedIn } = useUserStore();
 
   return (
-    <BRCChatProvider>
-      <StatusBar style="dark" />
+    <LanguageProvider>
+      <BRCChatProvider>
+        <StatusBar style="dark" />
       <Stack
         screenOptions={{
           headerStyle: {
@@ -185,6 +187,7 @@ function RootLayoutNav() {
           </>
         )}
       </Stack>
-    </BRCChatProvider>
+      </BRCChatProvider>
+    </LanguageProvider>
   );
 }

@@ -1,29 +1,33 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, View, Text, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { Image } from 'expo-image';
 import { useRouter, Stack } from 'expo-router';
-import { Settings, Heart, Wallet, Star, Calendar, LogOut, ChevronRight, Users, Edit, ChefHat } from 'lucide-react-native';
+import { Settings, Heart, Wallet, Star, Calendar, LogOut, ChevronRight, Users, Edit, ChefHat, Globe } from 'lucide-react-native';
 import { colors, shadows } from '@/constants/colors';
 import Button from '@/components/Button';
 import { useUserStore } from '@/store/useUserStore';
+import { useTranslation } from '@/store/useLanguageStore';
 import { brcs } from '@/mocks/brcs';
 import { walletSummary } from '@/mocks/wallet';
+import LanguageSelector from '@/components/LanguageSelector';
 
 export default function ProfileScreen() {
   const router = useRouter();
   const { currentUser, favorites, logout } = useUserStore();
+  const { t } = useTranslation();
+  const [showLanguageSelector, setShowLanguageSelector] = useState(false);
   
   const handleLogout = () => {
     Alert.alert(
-      'Log Out',
+      t('logout'),
       'Are you sure you want to log out?',
       [
         {
-          text: 'Cancel',
+          text: t('cancel'),
           style: 'cancel',
         },
         {
-          text: 'Log Out',
+          text: t('logout'),
           style: 'destructive',
           onPress: () => {
             logout();
@@ -52,15 +56,15 @@ export default function ProfileScreen() {
   const favoriteBRCs = brcs.filter(brc => favorites.includes(brc.id));
 
   const navigateToWallet = () => {
-    router.push('/wallet/index');
+    router.push('/wallet');
   };
 
   const navigateToReviews = () => {
-    router.push('/reviews/index');
+    router.push('/reviews');
   };
 
   const navigateToEvents = () => {
-    router.push('/events/index');
+    router.push('/events');
   };
 
 
@@ -80,7 +84,7 @@ export default function ProfileScreen() {
       >
         <View style={styles.header}>
           <View style={styles.headerTop}>
-            <Text style={styles.headerTitle}>Profile</Text>
+            <Text style={styles.headerTitle}>{t('profile')}</Text>
             <TouchableOpacity style={styles.settingsButton} hitSlop={10}>
               <Settings size={24} color={colors.text} />
             </TouchableOpacity>
@@ -160,7 +164,7 @@ export default function ProfileScreen() {
           <View style={styles.menuIconContainer}>
             <Wallet size={20} color={colors.white} />
           </View>
-          <Text style={styles.menuText}>My Wallet</Text>
+          <Text style={styles.menuText}>{t('myWallet')}</Text>
           <ChevronRight size={20} color={colors.textLight} />
         </TouchableOpacity>
         
@@ -168,7 +172,7 @@ export default function ProfileScreen() {
           <View style={[styles.menuIconContainer, { backgroundColor: colors.info }]}>
             <Star size={20} color={colors.white} />
           </View>
-          <Text style={styles.menuText}>My Reviews</Text>
+          <Text style={styles.menuText}>{t('myReviews')}</Text>
           <ChevronRight size={20} color={colors.textLight} />
         </TouchableOpacity>
         
@@ -176,18 +180,26 @@ export default function ProfileScreen() {
           <View style={[styles.menuIconContainer, { backgroundColor: colors.warning }]}>
             <Calendar size={20} color={colors.white} />
           </View>
-          <Text style={styles.menuText}>My Events</Text>
+          <Text style={styles.menuText}>{t('myEvents')}</Text>
           <ChevronRight size={20} color={colors.textLight} />
         </TouchableOpacity>
         
         <TouchableOpacity style={styles.menuItem} onPress={() => {
           // Removed Alert for direct navigation
-          router.push('/invite/index');
+          router.push('/invite');
         }} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
           <View style={[styles.menuIconContainer, { backgroundColor: colors.secondary }]}>
             <Users size={20} color={colors.white} />
           </View>
-          <Text style={styles.menuText}>Invite Friends</Text>
+          <Text style={styles.menuText}>{t('inviteFriends')}</Text>
+          <ChevronRight size={20} color={colors.textLight} />
+        </TouchableOpacity>
+        
+        <TouchableOpacity style={styles.menuItem} onPress={() => setShowLanguageSelector(true)}>
+          <View style={[styles.menuIconContainer, { backgroundColor: colors.accent }]}>
+            <Globe size={20} color={colors.primaryDark} />
+          </View>
+          <Text style={styles.menuText}>{t('language')}</Text>
           <ChevronRight size={20} color={colors.textLight} />
         </TouchableOpacity>
         
@@ -195,7 +207,7 @@ export default function ProfileScreen() {
           <View style={[styles.menuIconContainer, { backgroundColor: colors.success }]}>
             <ChefHat size={20} color={colors.white} />
           </View>
-          <Text style={styles.menuText}>Restaurant Dashboard</Text>
+          <Text style={styles.menuText}>{t('restaurantDashboard')}</Text>
           <ChevronRight size={20} color={colors.textLight} />
         </TouchableOpacity>
         
@@ -203,7 +215,7 @@ export default function ProfileScreen() {
           <View style={[styles.menuIconContainer, { backgroundColor: colors.error }]}>
             <LogOut size={20} color={colors.white} />
           </View>
-          <Text style={styles.menuText}>Log Out</Text>
+          <Text style={styles.menuText}>{t('logout')}</Text>
           <ChevronRight size={20} color={colors.textLight} />
         </TouchableOpacity>
       </View>
@@ -239,6 +251,11 @@ export default function ProfileScreen() {
         </View>
       )}
       </ScrollView>
+      
+      <LanguageSelector
+        visible={showLanguageSelector}
+        onClose={() => setShowLanguageSelector(false)}
+      />
     </View>
   );
 }

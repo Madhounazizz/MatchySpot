@@ -1,3 +1,5 @@
+export type VerificationStatus = 'none' | 'pending' | 'approved' | 'rejected';
+
 export type BRC = {
   id: string;
   name: string;
@@ -19,6 +21,8 @@ export type BRC = {
     close: string;
   };
   isFavorite?: boolean;
+  verificationStatus: VerificationStatus;
+  verificationDate?: string;
 };
 
 export type User = {

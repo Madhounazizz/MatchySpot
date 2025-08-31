@@ -22,6 +22,8 @@ export const brcs: BRC[] = [
       close: '23:00',
     },
     isFavorite: true,
+    verificationStatus: 'approved',
+    verificationDate: '2024-01-15',
   },
   {
     id: '2',
@@ -43,6 +45,7 @@ export const brcs: BRC[] = [
       open: '06:00',
       close: '20:00',
     },
+    verificationStatus: 'pending',
   },
   {
     id: '3',
@@ -64,6 +67,8 @@ export const brcs: BRC[] = [
       open: '16:00',
       close: '02:00',
     },
+    verificationStatus: 'approved',
+    verificationDate: '2024-02-10',
   },
   {
     id: '4',
@@ -85,6 +90,7 @@ export const brcs: BRC[] = [
       open: '10:00',
       close: '22:00',
     },
+    verificationStatus: 'none',
   },
   {
     id: '5',
@@ -106,6 +112,8 @@ export const brcs: BRC[] = [
       open: '07:00',
       close: '19:00',
     },
+    verificationStatus: 'approved',
+    verificationDate: '2024-01-20',
   },
   {
     id: '6',
@@ -127,6 +135,8 @@ export const brcs: BRC[] = [
       open: '16:00',
       close: '01:00',
     },
+    verificationStatus: 'approved',
+    verificationDate: '2024-03-05',
   },
   {
     id: '7',
@@ -148,6 +158,8 @@ export const brcs: BRC[] = [
       open: '17:00',
       close: '23:00',
     },
+    verificationStatus: 'approved',
+    verificationDate: '2024-02-28',
   },
   {
     id: '8',
@@ -169,6 +181,7 @@ export const brcs: BRC[] = [
       open: '11:30',
       close: '22:30',
     },
+    verificationStatus: 'pending',
   },
   {
     id: '9',
@@ -190,6 +203,8 @@ export const brcs: BRC[] = [
       open: '11:00',
       close: '22:00',
     },
+    verificationStatus: 'approved',
+    verificationDate: '2024-01-30',
   },
   {
     id: '10',
@@ -211,6 +226,7 @@ export const brcs: BRC[] = [
       open: '06:30',
       close: '19:30',
     },
+    verificationStatus: 'none',
   },
   {
     id: '11',
@@ -232,6 +248,7 @@ export const brcs: BRC[] = [
       open: '06:00',
       close: '22:00',
     },
+    verificationStatus: 'rejected',
   },
   {
     id: '12',
@@ -253,6 +270,8 @@ export const brcs: BRC[] = [
       open: '07:00',
       close: '18:00',
     },
+    verificationStatus: 'approved',
+    verificationDate: '2024-02-15',
   },
   {
     id: '13',
@@ -274,6 +293,7 @@ export const brcs: BRC[] = [
       open: '18:00',
       close: '02:00',
     },
+    verificationStatus: 'pending',
   },
   {
     id: '14',
@@ -295,6 +315,8 @@ export const brcs: BRC[] = [
       open: '16:00',
       close: '01:00',
     },
+    verificationStatus: 'approved',
+    verificationDate: '2024-03-01',
   },
   {
     id: '15',
@@ -316,6 +338,7 @@ export const brcs: BRC[] = [
       open: '21:00',
       close: '04:00',
     },
+    verificationStatus: 'none',
   },
   {
     id: '16',
@@ -337,6 +360,8 @@ export const brcs: BRC[] = [
       open: '11:00',
       close: '22:00',
     },
+    verificationStatus: 'approved',
+    verificationDate: '2024-02-20',
   },
   {
     id: '17',
@@ -358,6 +383,7 @@ export const brcs: BRC[] = [
       open: '10:00',
       close: '23:00',
     },
+    verificationStatus: 'pending',
   },
   {
     id: '18',
@@ -379,6 +405,7 @@ export const brcs: BRC[] = [
       open: '06:30',
       close: '16:00',
     },
+    verificationStatus: 'none',
   },
   {
     id: '19',
@@ -400,6 +427,8 @@ export const brcs: BRC[] = [
       open: '15:00',
       close: '01:00',
     },
+    verificationStatus: 'approved',
+    verificationDate: '2024-01-25',
   },
 ];
 
