@@ -4,7 +4,7 @@ import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Heart, Star, MapPin, Clock, Shield, ShieldCheck, ShieldX, ShieldAlert } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
-import { BRC, VerificationStatus } from '@/types';
+import { BRC } from '@/types';
 import { colors, shadows } from '@/constants/colors';
 import { useUserStore } from '@/store/useUserStore';
 import { useTranslation } from '@/store/useLanguageStore';
@@ -47,13 +47,13 @@ export default function BRCCard({ brc, size = 'medium' }: BRCCardProps) {
   const getVerificationIcon = () => {
     switch (brc.verificationStatus) {
       case 'approved':
-        return <ShieldCheck size={16} color={colors.success} />;
+        return <ShieldCheck size={16} color={colors.white} />;
       case 'pending':
-        return <ShieldAlert size={16} color={colors.warning} />;
+        return <ShieldAlert size={16} color={colors.white} />;
       case 'rejected':
-        return <ShieldX size={16} color={colors.error} />;
+        return <ShieldX size={16} color={colors.white} />;
       default:
-        return <Shield size={16} color={colors.textLight} />;
+        return <Shield size={16} color={colors.white} />;
     }
   };
 
@@ -70,18 +70,7 @@ export default function BRCCard({ brc, size = 'medium' }: BRCCardProps) {
     }
   };
 
-  const getVerificationColor = () => {
-    switch (brc.verificationStatus) {
-      case 'approved':
-        return colors.success;
-      case 'pending':
-        return colors.warning;
-      case 'rejected':
-        return colors.error;
-      default:
-        return colors.primary;
-    }
-  };
+
 
   const getCardStyle = () => {
     switch (size) {
@@ -157,26 +146,34 @@ export default function BRCCard({ brc, size = 'medium' }: BRCCardProps) {
           <Text style={styles.statusText}>{t('open')}</Text>
         </View>
         
-        {/* Verification Badge */}
+        {/* Verification Button - Facebook Style */}
         <TouchableOpacity 
           style={[
-            styles.verificationBadge,
-            { backgroundColor: `${getVerificationColor()}20` }
+            styles.verificationButton,
+            brc.verificationStatus === 'approved' && styles.verifiedButton,
+            brc.verificationStatus === 'pending' && styles.pendingButton,
+            brc.verificationStatus === 'rejected' && styles.rejectedButton,
+            (brc.verificationStatus === 'none' || !brc.verificationStatus) && styles.unverifiedButton
           ]}
           onPress={handleVerifyPress}
           disabled={brc.verificationStatus === 'approved' || brc.verificationStatus === 'pending' || isVerifying}
+          activeOpacity={0.8}
         >
-          {isVerifying ? (
-            <ActivityIndicator size={14} color={getVerificationColor()} />
-          ) : (
-            getVerificationIcon()
-          )}
-          <Text style={[
-            styles.verificationText,
-            { color: getVerificationColor() }
-          ]}>
-            {isVerifying ? t('verificationInProgress') : getVerificationText()}
-          </Text>
+          <View style={styles.verificationContent}>
+            {isVerifying ? (
+              <ActivityIndicator size={16} color={colors.white} />
+            ) : (
+              getVerificationIcon()
+            )}
+            <Text style={[
+              styles.verificationButtonText,
+              brc.verificationStatus === 'approved' && styles.verifiedButtonText,
+              brc.verificationStatus === 'pending' && styles.pendingButtonText,
+              brc.verificationStatus === 'rejected' && styles.rejectedButtonText
+            ]}>
+              {isVerifying ? t('verificationInProgress') : getVerificationText()}
+            </Text>
+          </View>
         </TouchableOpacity>
       </View>
       
@@ -364,22 +361,48 @@ const styles = StyleSheet.create({
     color: colors.primaryDark,
     fontWeight: '500',
   },
-  verificationBadge: {
+  verificationButton: {
     position: 'absolute',
-    top: 16,
-    right: 60,
+    bottom: 16,
+    right: 16,
+    borderRadius: 20,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    minWidth: 80,
+    ...shadows.small,
+  },
+  unverifiedButton: {
+    backgroundColor: colors.primary,
+  },
+  verifiedButton: {
+    backgroundColor: colors.success,
+  },
+  pendingButton: {
+    backgroundColor: colors.warning,
+  },
+  rejectedButton: {
+    backgroundColor: colors.error,
+  },
+  verificationContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.3)',
+    justifyContent: 'center',
   },
-  verificationText: {
-    fontSize: 10,
-    fontWeight: '600',
-    marginLeft: 4,
+  verificationButtonText: {
+    fontSize: 12,
+    fontWeight: '700',
+    marginLeft: 6,
+    color: colors.white,
+    textTransform: 'capitalize',
+  },
+  verifiedButtonText: {
+    color: colors.white,
+  },
+  pendingButtonText: {
+    color: colors.white,
+  },
+  rejectedButtonText: {
+    color: colors.white,
   },
   verifiedSinceContainer: {
     flexDirection: 'row',
