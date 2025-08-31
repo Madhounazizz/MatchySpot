@@ -64,7 +64,7 @@ export default function ProfileScreen() {
   };
 
   const navigateToEvents = () => {
-    router.push('/events');
+    router.push('/(tabs)/discover');
   };
 
 
