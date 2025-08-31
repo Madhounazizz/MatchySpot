@@ -1,18 +1,62 @@
-import React from 'react';
-import { StyleSheet, View, ScrollView, Text, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, View, ScrollView, Text, TouchableOpacity, Alert } from 'react-native';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
-import { MapPin, Star, Clock, Wifi, Coffee, ChevronRight } from 'lucide-react-native';
+import { MapPin, Star, Clock, Wifi, Coffee, ChevronRight, Shield, Heart, Filter } from 'lucide-react-native';
 import { colors, shadows } from '@/constants/colors';
 import { brcs } from '@/mocks/brcs';
 import SearchBar from '@/components/SearchBar';
 
 export default function CafesScreen() {
   const router = useRouter();
+  const [favorites, setFavorites] = useState<string[]>([]);
+  const [filterOpen, setFilterOpen] = useState<boolean>(false);
+  const [selectedFilter, setSelectedFilter] = useState<string>('all');
   const cafes = brcs.filter(brc => brc.type === 'cafe');
+
+  const filters = [
+    { id: 'all', label: 'All Cafes' },
+    { id: 'specialty', label: 'Specialty Coffee' },
+    { id: 'wifi', label: 'Work-Friendly' },
+    { id: 'pastries', label: 'Fresh Pastries' },
+  ];
+
+  const filteredCafes = selectedFilter === 'all' 
+    ? cafes 
+    : cafes.filter(cafe => 
+        cafe.tags.some(tag => 
+          tag.toLowerCase().includes(selectedFilter.toLowerCase()) ||
+          (selectedFilter === 'wifi' && tag.toLowerCase().includes('wifi')) ||
+          (selectedFilter === 'specialty' && tag.toLowerCase().includes('coffee'))
+        )
+      );
 
   const handleCafePress = (id: string) => {
     router.push(`/brc/${id}`);
+  };
+
+  const handleVerifyBusiness = (cafeId: string, cafeName: string) => {
+    Alert.alert(
+      'Verify Business',
+      `Are you the owner of ${cafeName}? This will start the business verification process.`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { 
+          text: 'Verify', 
+          onPress: () => {
+            Alert.alert('Verification Started', 'We\'ll review your request within 24-48 hours. You\'ll receive an email with next steps.');
+          }
+        }
+      ]
+    );
+  };
+
+  const toggleFavorite = (cafeId: string) => {
+    setFavorites(prev => 
+      prev.includes(cafeId) 
+        ? prev.filter(id => id !== cafeId)
+        : [...prev, cafeId]
+    );
   };
 
   return (
@@ -23,6 +67,43 @@ export default function CafesScreen() {
       </View>
 
       <SearchBar placeholder="Search cafés..." />
+
+      {/* Filter Bar */}
+      <View style={styles.filterContainer}>
+        <TouchableOpacity 
+          style={styles.filterButton}
+          onPress={() => setFilterOpen(!filterOpen)}
+        >
+          <Filter size={16} color={colors.primary} />
+          <Text style={styles.filterButtonText}>Filter</Text>
+        </TouchableOpacity>
+        
+        {filterOpen && (
+          <ScrollView 
+            horizontal 
+            showsHorizontalScrollIndicator={false}
+            style={styles.filterScroll}
+          >
+            {filters.map(filter => (
+              <TouchableOpacity
+                key={filter.id}
+                style={[
+                  styles.filterChip,
+                  selectedFilter === filter.id && styles.activeFilterChip
+                ]}
+                onPress={() => setSelectedFilter(filter.id)}
+              >
+                <Text style={[
+                  styles.filterChipText,
+                  selectedFilter === filter.id && styles.activeFilterChipText
+                ]}>
+                  {filter.label}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        )}
+      </View>
 
       <ScrollView
         style={styles.scrollView}
@@ -65,8 +146,8 @@ export default function CafesScreen() {
         </View>
 
         <View style={styles.listContainer}>
-          <Text style={styles.sectionTitle}>Popular Cafés</Text>
-          {cafes.map((cafe) => (
+          <Text style={styles.sectionTitle}>Popular Cafés ({filteredCafes.length})</Text>
+          {filteredCafes.map((cafe) => (
             <TouchableOpacity
               key={cafe.id}
               style={styles.cafeCard}
@@ -105,6 +186,27 @@ export default function CafesScreen() {
                       {cafe.openingHours.open} - {cafe.openingHours.close}
                     </Text>
                   </View>
+                </View>
+                
+                {/* Action Buttons */}
+                <View style={styles.actionRow}>
+                  <TouchableOpacity 
+                    style={styles.actionButton}
+                    onPress={() => toggleFavorite(cafe.id)}
+                  >
+                    <Heart 
+                      size={16} 
+                      color={favorites.includes(cafe.id) ? colors.error : colors.textLight}
+                      fill={favorites.includes(cafe.id) ? colors.error : 'none'}
+                    />
+                  </TouchableOpacity>
+                  <TouchableOpacity 
+                    style={styles.verifyButton}
+                    onPress={() => handleVerifyBusiness(cafe.id, cafe.name)}
+                  >
+                    <Shield size={14} color={colors.white} />
+                    <Text style={styles.verifyButtonText}>Verify</Text>
+                  </TouchableOpacity>
                 </View>
               </View>
               <ChevronRight size={20} color={colors.textLight} />
@@ -280,6 +382,72 @@ const styles = StyleSheet.create({
   infoText: {
     fontSize: 12,
     color: colors.textLight,
+    marginLeft: 4,
+  },
+  filterContainer: {
+    backgroundColor: colors.white,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+  },
+  filterButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+    backgroundColor: colors.accent,
+  },
+  filterButtonText: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: colors.primary,
+    marginLeft: 6,
+  },
+  filterScroll: {
+    marginTop: 8,
+  },
+  filterChip: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: colors.backgroundLight,
+    marginRight: 8,
+  },
+  activeFilterChip: {
+    backgroundColor: colors.primary,
+  },
+  filterChipText: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: colors.textLight,
+  },
+  activeFilterChipText: {
+    color: colors.white,
+  },
+  actionRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: 8,
+  },
+  actionButton: {
+    padding: 8,
+    borderRadius: 8,
+    backgroundColor: colors.backgroundLight,
+  },
+  verifyButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    backgroundColor: colors.primary,
+  },
+  verifyButtonText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: colors.white,
     marginLeft: 4,
   },
 });

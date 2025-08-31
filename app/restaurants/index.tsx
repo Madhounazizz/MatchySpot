@@ -1,18 +1,72 @@
-import React from 'react';
-import { StyleSheet, View, ScrollView, Text, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, View, ScrollView, Text, TouchableOpacity, Alert } from 'react-native';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
-import { MapPin, Star, Clock, ChevronRight } from 'lucide-react-native';
+import { MapPin, Star, Clock, ChevronRight, Shield, Heart, Utensils, Award, DollarSign } from 'lucide-react-native';
 import { colors, shadows } from '@/constants/colors';
 import { brcs } from '@/mocks/brcs';
 import SearchBar from '@/components/SearchBar';
 
 export default function RestaurantsScreen() {
   const router = useRouter();
+  const [favorites, setFavorites] = useState<string[]>([]);
+  const [selectedCuisine, setSelectedCuisine] = useState<string>('all');
   const restaurants = brcs.filter(brc => brc.type === 'restaurant');
+
+  const cuisines = [
+    { id: 'all', label: 'All', icon: Utensils },
+    { id: 'seafood', label: 'Seafood', icon: Utensils },
+    { id: 'farm', label: 'Farm-to-Table', icon: Utensils },
+    { id: 'fine', label: 'Fine Dining', icon: Award },
+  ];
+
+  const filteredRestaurants = selectedCuisine === 'all' 
+    ? restaurants 
+    : restaurants.filter(restaurant => 
+        restaurant.tags.some(tag => 
+          tag.toLowerCase().includes(selectedCuisine.toLowerCase()) ||
+          (selectedCuisine === 'seafood' && tag.toLowerCase().includes('seafood')) ||
+          (selectedCuisine === 'farm' && tag.toLowerCase().includes('farm'))
+        )
+      );
 
   const handleRestaurantPress = (id: string) => {
     router.push(`/brc/${id}`);
+  };
+
+  const handleVerifyBusiness = (restaurantId: string, restaurantName: string) => {
+    Alert.alert(
+      'Verify Business',
+      `Are you the owner of ${restaurantName}? This will start the business verification process.`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { 
+          text: 'Verify', 
+          onPress: () => {
+            Alert.alert('Verification Started', 'We\'ll review your request within 24-48 hours. You\'ll receive an email with next steps.');
+          }
+        }
+      ]
+    );
+  };
+
+  const toggleFavorite = (restaurantId: string) => {
+    setFavorites(prev => 
+      prev.includes(restaurantId) 
+        ? prev.filter(id => id !== restaurantId)
+        : [...prev, restaurantId]
+    );
+  };
+
+  const handleMakeReservation = (restaurantName: string) => {
+    Alert.alert('Make Reservation', `Would you like to make a reservation at ${restaurantName}?`, [
+      { text: 'Cancel', style: 'cancel' },
+      { text: 'Reserve', onPress: () => router.push('/booking') }
+    ]);
+  };
+
+  const getPriceLevel = (level: number) => {
+    return '$'.repeat(level) + '$'.repeat(4 - level).replace(/\$/g, '·');
   };
 
   return (
@@ -23,6 +77,40 @@ export default function RestaurantsScreen() {
       </View>
 
       <SearchBar placeholder="Search restaurants..." />
+
+      {/* Cuisine Filter */}
+      <View style={styles.cuisineContainer}>
+        <ScrollView 
+          horizontal 
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.cuisineScroll}
+        >
+          {cuisines.map(cuisine => {
+            const IconComponent = cuisine.icon;
+            return (
+              <TouchableOpacity
+                key={cuisine.id}
+                style={[
+                  styles.cuisineChip,
+                  selectedCuisine === cuisine.id && styles.activeCuisineChip
+                ]}
+                onPress={() => setSelectedCuisine(cuisine.id)}
+              >
+                <IconComponent 
+                  size={16} 
+                  color={selectedCuisine === cuisine.id ? colors.white : colors.primary} 
+                />
+                <Text style={[
+                  styles.cuisineChipText,
+                  selectedCuisine === cuisine.id && styles.activeCuisineChipText
+                ]}>
+                  {cuisine.label}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </ScrollView>
+      </View>
 
       <ScrollView
         style={styles.scrollView}
@@ -64,8 +152,8 @@ export default function RestaurantsScreen() {
         </View>
 
         <View style={styles.listContainer}>
-          <Text style={styles.sectionTitle}>All Restaurants</Text>
-          {restaurants.map((restaurant) => (
+          <Text style={styles.sectionTitle}>All Restaurants ({filteredRestaurants.length})</Text>
+          {filteredRestaurants.map((restaurant) => (
             <TouchableOpacity
               key={restaurant.id}
               style={styles.listItem}
@@ -103,6 +191,37 @@ export default function RestaurantsScreen() {
                       {restaurant.openingHours.open} - {restaurant.openingHours.close}
                     </Text>
                   </View>
+                  <View style={styles.infoItem}>
+                    <DollarSign size={12} color={colors.textLight} />
+                    <Text style={styles.infoText}>{getPriceLevel(restaurant.priceLevel)}</Text>
+                  </View>
+                </View>
+                
+                {/* Action Buttons */}
+                <View style={styles.actionRow}>
+                  <TouchableOpacity 
+                    style={styles.actionButton}
+                    onPress={() => toggleFavorite(restaurant.id)}
+                  >
+                    <Heart 
+                      size={16} 
+                      color={favorites.includes(restaurant.id) ? colors.error : colors.textLight}
+                      fill={favorites.includes(restaurant.id) ? colors.error : 'none'}
+                    />
+                  </TouchableOpacity>
+                  <TouchableOpacity 
+                    style={styles.reserveButton}
+                    onPress={() => handleMakeReservation(restaurant.name)}
+                  >
+                    <Text style={styles.reserveButtonText}>Reserve</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity 
+                    style={styles.verifyButton}
+                    onPress={() => handleVerifyBusiness(restaurant.id, restaurant.name)}
+                  >
+                    <Shield size={14} color={colors.white} />
+                    <Text style={styles.verifyButtonText}>Verify</Text>
+                  </TouchableOpacity>
                 </View>
               </View>
               <ChevronRight size={20} color={colors.textLight} />
@@ -269,5 +388,69 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: colors.primaryDark,
     fontWeight: '500',
+  },
+  cuisineContainer: {
+    backgroundColor: colors.white,
+    paddingVertical: 12,
+  },
+  cuisineScroll: {
+    paddingHorizontal: 16,
+  },
+  cuisineChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: colors.accent,
+    marginRight: 8,
+  },
+  activeCuisineChip: {
+    backgroundColor: colors.primary,
+  },
+  cuisineChipText: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: colors.primary,
+    marginLeft: 6,
+  },
+  activeCuisineChipText: {
+    color: colors.white,
+  },
+  actionRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: 8,
+  },
+  actionButton: {
+    padding: 8,
+    borderRadius: 8,
+    backgroundColor: colors.backgroundLight,
+  },
+  reserveButton: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 16,
+    backgroundColor: colors.accent,
+  },
+  reserveButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: colors.primary,
+  },
+  verifyButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    backgroundColor: colors.primary,
+  },
+  verifyButtonText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: colors.white,
+    marginLeft: 4,
   },
 });

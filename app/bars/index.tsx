@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, ScrollView, Text, TouchableOpacity, ImageBackground } from 'react-native';
+import { StyleSheet, View, ScrollView, Text, TouchableOpacity, ImageBackground, Alert } from 'react-native';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
-import { MapPin, Star, Clock, CloudHail, ChevronRight } from 'lucide-react-native';
+import { MapPin, Star, Clock, CloudHail, ChevronRight, Shield, Heart, Calendar, Music } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, shadows } from '@/constants/colors';
 import { brcs } from '@/mocks/brcs';
@@ -11,10 +11,47 @@ import SearchBar from '@/components/SearchBar';
 export default function BarsScreen() {
   const router = useRouter();
   const [activeFilter, setActiveFilter] = useState<string>('all');
+  const [favorites, setFavorites] = useState<string[]>([]);
   const bars = brcs.filter(brc => brc.type === 'bar');
+
+  const events = [
+    { id: '1', title: 'Jazz Night', time: '8:00 PM', venue: 'Neon Lounge' },
+    { id: '2', title: 'Trivia Tuesday', time: '7:00 PM', venue: 'Skyline Spirits' },
+  ];
 
   const handleBarPress = (id: string) => {
     router.push(`/brc/${id}`);
+  };
+
+  const handleVerifyBusiness = (barId: string, barName: string) => {
+    Alert.alert(
+      'Verify Business',
+      `Are you the owner of ${barName}? This will start the business verification process.`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { 
+          text: 'Verify', 
+          onPress: () => {
+            Alert.alert('Verification Started', 'We\'ll review your request within 24-48 hours. You\'ll receive an email with next steps.');
+          }
+        }
+      ]
+    );
+  };
+
+  const toggleFavorite = (barId: string) => {
+    setFavorites(prev => 
+      prev.includes(barId) 
+        ? prev.filter(id => id !== barId)
+        : [...prev, barId]
+    );
+  };
+
+  const handleBookEvent = (eventTitle: string) => {
+    Alert.alert('Book Event', `Would you like to book a table for ${eventTitle}?`, [
+      { text: 'Cancel', style: 'cancel' },
+      { text: 'Book Now', onPress: () => router.push('/booking') }
+    ]);
   };
 
   const filters = [
@@ -127,6 +164,33 @@ export default function BarsScreen() {
           </View>
         </View>
 
+        {/* Events Section */}
+        <View style={styles.eventsContainer}>
+          <Text style={styles.sectionTitle}>Tonight&apos;s Events</Text>
+          {events.map((event) => (
+            <TouchableOpacity 
+              key={event.id} 
+              style={styles.eventCard}
+              onPress={() => handleBookEvent(event.title)}
+            >
+              <View style={styles.eventIcon}>
+                <Music size={20} color={colors.primary} />
+              </View>
+              <View style={styles.eventContent}>
+                <Text style={styles.eventTitle}>{event.title}</Text>
+                <Text style={styles.eventVenue}>{event.venue}</Text>
+                <View style={styles.eventTimeRow}>
+                  <Calendar size={12} color={colors.textLight} />
+                  <Text style={styles.eventTime}>{event.time}</Text>
+                </View>
+              </View>
+              <TouchableOpacity style={styles.bookButton}>
+                <Text style={styles.bookButtonText}>Book</Text>
+              </TouchableOpacity>
+            </TouchableOpacity>
+          ))}
+        </View>
+
         <View style={styles.listContainer}>
           <Text style={styles.sectionTitle}>Popular Bars</Text>
           {bars.map((bar) => (
@@ -166,6 +230,27 @@ export default function BarsScreen() {
                       {bar.openingHours.open} - {bar.openingHours.close}
                     </Text>
                   </View>
+                </View>
+                
+                {/* Action Buttons */}
+                <View style={styles.actionRow}>
+                  <TouchableOpacity 
+                    style={styles.actionButton}
+                    onPress={() => toggleFavorite(bar.id)}
+                  >
+                    <Heart 
+                      size={16} 
+                      color={favorites.includes(bar.id) ? colors.error : colors.textLight}
+                      fill={favorites.includes(bar.id) ? colors.error : 'none'}
+                    />
+                  </TouchableOpacity>
+                  <TouchableOpacity 
+                    style={styles.verifyButton}
+                    onPress={() => handleVerifyBusiness(bar.id, bar.name)}
+                  >
+                    <Shield size={14} color={colors.white} />
+                    <Text style={styles.verifyButtonText}>Verify</Text>
+                  </TouchableOpacity>
                 </View>
               </View>
               <ChevronRight size={20} color={colors.textLight} />
@@ -426,6 +511,87 @@ const styles = StyleSheet.create({
   infoText: {
     fontSize: 12,
     color: colors.textLight,
+    marginLeft: 4,
+  },
+  eventsContainer: {
+    marginBottom: 24,
+  },
+  eventCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.white,
+    marginHorizontal: 16,
+    marginBottom: 12,
+    borderRadius: 12,
+    padding: 16,
+    ...shadows.small,
+  },
+  eventIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: colors.accent,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  eventContent: {
+    flex: 1,
+  },
+  eventTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.text,
+    marginBottom: 2,
+  },
+  eventVenue: {
+    fontSize: 14,
+    color: colors.textLight,
+    marginBottom: 4,
+  },
+  eventTimeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  eventTime: {
+    fontSize: 12,
+    color: colors.textLight,
+    marginLeft: 4,
+  },
+  bookButton: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 16,
+    backgroundColor: colors.primary,
+  },
+  bookButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: colors.white,
+  },
+  actionRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: 8,
+  },
+  actionButton: {
+    padding: 8,
+    borderRadius: 8,
+    backgroundColor: colors.backgroundLight,
+  },
+  verifyButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    backgroundColor: colors.primary,
+  },
+  verifyButtonText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: colors.white,
     marginLeft: 4,
   },
 });
