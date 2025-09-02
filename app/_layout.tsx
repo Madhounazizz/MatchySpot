@@ -10,6 +10,7 @@ import { useUserStore } from "@/store/useUserStore";
 import { BRCChatProvider } from "@/store/useBRCChatStore";
 import { LanguageProvider } from "@/store/useLanguageStore";
 import { TokenProvider } from "@/store/useTokenStore";
+import ErrorBoundary from "@/components/ErrorBoundary";
 
 
 export const unstable_settings = {
@@ -60,7 +61,11 @@ export default function RootLayout() {
     );
   }
 
-  return <RootLayoutNav />;
+  return (
+    <ErrorBoundary>
+      <RootLayoutNav />
+    </ErrorBoundary>
+  );
 }
 
 function RootLayoutNav() {

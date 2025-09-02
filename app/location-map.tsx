@@ -34,8 +34,12 @@ export default function LocationMapScreen() {
 
   const requestLocationPermission = async () => {
     try {
+      if (Platform.OS === 'web') {
+        await getCurrentLocationWeb();
+        return;
+      }
+
       const { status } = await Location.requestForegroundPermissionsAsync();
-      
       if (status !== 'granted') {
         Alert.alert(
           'Location Permission Required',
@@ -59,20 +63,19 @@ export default function LocationMapScreen() {
   const getCurrentLocation = async () => {
     try {
       setLoading(true);
-      
+
       const currentLocation = await Location.getCurrentPositionAsync({
         accuracy: Location.Accuracy.Balanced,
       });
 
       const { latitude, longitude } = currentLocation.coords;
-      
-      // Get address from coordinates
+
       const addressResponse = await Location.reverseGeocodeAsync({
         latitude,
         longitude,
       });
 
-      const address = addressResponse[0] 
+      const address = addressResponse[0]
         ? `${addressResponse[0].street || ''} ${addressResponse[0].city || ''}`
         : 'Current Location';
 
@@ -84,10 +87,44 @@ export default function LocationMapScreen() {
 
       setLocation(locationData);
       calculateNearbyBRCs(locationData);
-      
     } catch (error) {
       console.error('Error getting current location:', error);
       Alert.alert('Location Error', 'Unable to get your current location. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getCurrentLocationWeb = async () => {
+    try {
+      setLoading(true);
+      if (typeof navigator !== 'undefined' && navigator.geolocation) {
+        await new Promise<void>((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(
+            (pos) => {
+              const { latitude, longitude } = pos.coords as GeolocationCoordinates;
+              const locationData: LocationData = {
+                latitude,
+                longitude,
+                address: 'Browser Location',
+              };
+              setLocation(locationData);
+              calculateNearbyBRCs(locationData);
+              resolve();
+            },
+            (err) => {
+              console.error('Web geolocation error:', err);
+              Alert.alert('Location Error', 'Unable to access browser location.');
+              reject(err);
+            },
+            { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+          );
+        });
+      } else {
+        Alert.alert('Location Error', 'Geolocation is not supported by this browser.');
+      }
+    } catch (e) {
+      console.error('Error in getCurrentLocationWeb:', e);
     } finally {
       setLoading(false);
     }
