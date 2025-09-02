@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Pressable, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Pressable, ActivityIndicator, Animated } from 'react-native';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Heart, Star, MapPin, Clock, Shield, ShieldCheck, ShieldX, ShieldAlert } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import { BRC } from '@/types';
-import { colors, shadows } from '@/constants/colors';
+import { colors, shadows, typography, borderRadius, spacing } from '@/constants/colors';
 import { useUserStore } from '@/store/useUserStore';
 import { useTranslation } from '@/store/useLanguageStore';
 
@@ -108,12 +108,35 @@ export default function BRCCard({ brc, size = 'medium' }: BRCCardProps) {
     }
   };
 
+  const scaleAnim = React.useRef(new Animated.Value(1)).current;
+
+  const handlePressIn = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 0.98,
+      useNativeDriver: true,
+      tension: 300,
+      friction: 10,
+    }).start();
+  };
+
+  const handlePressOut = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 1,
+      useNativeDriver: true,
+      tension: 300,
+      friction: 10,
+    }).start();
+  };
+
   return (
-    <TouchableOpacity
-      style={[styles.container, getCardStyle(), shadows.medium]}
-      onPress={handlePress}
-      activeOpacity={0.9}
-    >
+    <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
+      <TouchableOpacity
+        style={[styles.container, getCardStyle(), shadows.card]}
+        onPress={handlePress}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+        activeOpacity={1}
+      >
       <View style={[styles.imageContainer, getImageStyle()]}>
         <Image
           source={{ uri: brc.image }}
@@ -221,7 +244,8 @@ export default function BRCCard({ brc, size = 'medium' }: BRCCardProps) {
           ))}
         </View>
       </View>
-    </TouchableOpacity>
+      </TouchableOpacity>
+    </Animated.View>
   );
 }
 

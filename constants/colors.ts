@@ -1,20 +1,20 @@
 export const colors = {
-  // Primary brand colors - Modern coral/salmon
+  // Primary brand colors - Modern vibrant coral
   primary: '#FF6B6B',
-  primaryLight: '#FF8E8E',
-  primaryDark: '#E55555',
-  primaryGradient: ['#FF6B6B', '#FF8E8E'],
+  primaryLight: '#FF8A80',
+  primaryDark: '#E53935',
+  primaryGradient: ['#FF6B6B', '#FF8A80'],
   
-  // Accent colors - Soft peach
-  accent: '#FFF0F0',
-  accentDark: '#FFE0E0',
-  accentBorder: '#FFD0D0',
+  // Accent colors - Soft warm tones
+  accent: '#FFF3E0',
+  accentDark: '#FFE0B2',
+  accentBorder: '#FFCC02',
   
-  // Secondary colors - Deep blue
-  secondary: '#4ECDC4',
-  secondaryLight: '#7ED7D1',
-  secondaryDark: '#3BA99F',
-  secondaryGradient: ['#4ECDC4', '#7ED7D1'],
+  // Secondary colors - Modern teal
+  secondary: '#26C6DA',
+  secondaryLight: '#4DD0E1',
+  secondaryDark: '#00ACC1',
+  secondaryGradient: ['#26C6DA', '#4DD0E1'],
   
   // Text colors - Enhanced hierarchy
   text: '#1A1A1A',
@@ -23,34 +23,35 @@ export const colors = {
   textExtraLight: '#9CA3AF',
   textInverse: '#FFFFFF',
   
-  // Background colors - Layered system
+  // Background colors - Modern layered system
   background: '#FFFFFF',
-  backgroundSecondary: '#FAFAFA',
-  backgroundTertiary: '#F5F5F5',
-  backgroundOverlay: 'rgba(0, 0, 0, 0.6)',
-  backgroundOverlayLight: 'rgba(0, 0, 0, 0.3)',
+  backgroundSecondary: '#F8FAFC',
+  backgroundTertiary: '#F1F5F9',
+  backgroundOverlay: 'rgba(0, 0, 0, 0.7)',
+  backgroundOverlayLight: 'rgba(0, 0, 0, 0.4)',
   
-  // Surface colors
+  // Surface colors - Enhanced depth
   surface: '#FFFFFF',
   surfaceElevated: '#FFFFFF',
   surfacePressed: '#F8F9FA',
+  surfaceHover: '#F1F5F9',
   
-  // Status colors - Modern palette
-  success: '#10B981',
-  successLight: '#34D399',
-  successDark: '#059669',
+  // Status colors - Vibrant modern palette
+  success: '#00C853',
+  successLight: '#69F0AE',
+  successDark: '#00A152',
   
-  error: '#EF4444',
-  errorLight: '#F87171',
-  errorDark: '#DC2626',
+  error: '#FF5252',
+  errorLight: '#FF8A80',
+  errorDark: '#D32F2F',
   
-  warning: '#F59E0B',
-  warningLight: '#FBBF24',
-  warningDark: '#D97706',
+  warning: '#FFB300',
+  warningLight: '#FFD54F',
+  warningDark: '#FF8F00',
   
-  info: '#3B82F6',
-  infoLight: '#60A5FA',
-  infoDark: '#2563EB',
+  info: '#2196F3',
+  infoLight: '#64B5F6',
+  infoDark: '#1976D2',
   
   // Neutral colors
   white: '#FFFFFF',
@@ -70,7 +71,7 @@ export const colors = {
 };
 
 export const shadows = {
-  // Subtle shadows for modern look
+  // Modern elevated shadows
   none: {
     shadowColor: 'transparent',
     shadowOffset: { width: 0, height: 0 },
@@ -81,34 +82,34 @@ export const shadows = {
   
   small: {
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
   },
   
   medium: {
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 3,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.12,
+    shadowRadius: 12,
+    elevation: 4,
   },
   
   large: {
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.12,
-    shadowRadius: 16,
-    elevation: 6,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.16,
+    shadowRadius: 20,
+    elevation: 8,
   },
   
   xlarge: {
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.15,
-    shadowRadius: 24,
-    elevation: 10,
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.20,
+    shadowRadius: 32,
+    elevation: 12,
   },
   
   // Colored shadows for interactive elements

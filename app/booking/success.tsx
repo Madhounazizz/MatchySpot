@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Animated } from 'react-native';
 import { Stack, useRouter, useLocalSearchParams } from 'expo-router';
 import { CheckCircle, Calendar, Clock, Users, MapPin, Home, MessageSquare, Star, Share2, Download, Phone } from 'lucide-react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { colors, shadows, typography, borderRadius, spacing } from '@/constants/colors';
 import Button from '@/components/Button';
 import { brcs } from '@/mocks/brcs';
@@ -99,20 +100,24 @@ export default function BookingSuccessScreen() {
           ]}
         >
           <View style={styles.successIconContainer}>
-            <View style={styles.successIconBackground}>
-              <CheckCircle size={120} color={colors.textInverse} fill={colors.success} />
-            </View>
-            <View style={styles.successBadge}>
-              <Text style={styles.successBadgeText}>✓</Text>
+            <LinearGradient
+              colors={['rgba(255,255,255,0.2)', 'rgba(255,255,255,0.1)']}
+              style={styles.successIconBackground}
+            >
+              <CheckCircle size={80} color={colors.textInverse} fill={colors.success} />
+            </LinearGradient>
+            <View style={styles.successPulse}>
+              <View style={styles.successPulseInner} />
             </View>
           </View>
           
-          <Text style={styles.successTitle}>Booking Confirmed!</Text>
+          <Text style={styles.successTitle}>🎉 Booking Confirmed!</Text>
           <Text style={styles.successSubtitle}>
-            Your table reservation is all set
+            Your table reservation is all set. Get ready for an amazing experience!
           </Text>
           <View style={styles.bookingIdContainer}>
-            <Text style={styles.bookingIdText}>Booking ID: {bookingId}</Text>
+            <Text style={styles.bookingIdLabel}>Confirmation Code</Text>
+            <Text style={styles.bookingIdText}>{bookingId}</Text>
           </View>
         </Animated.View>
 
@@ -617,5 +622,35 @@ const styles = StyleSheet.create({
   primaryButton: {
     flex: 1,
     height: 56,
+  },
+  
+  // New enhanced styles
+  successPulse: {
+    position: 'absolute',
+    top: -10,
+    left: -10,
+    right: -10,
+    bottom: -10,
+    borderRadius: 90,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  
+  successPulseInner: {
+    position: 'absolute',
+    top: 10,
+    left: 10,
+    right: 10,
+    bottom: 10,
+    borderRadius: 70,
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+  },
+  
+  bookingIdLabel: {
+    fontSize: typography.sizes.xs,
+    color: colors.textInverse,
+    textAlign: 'center',
+    opacity: 0.8,
+    marginBottom: spacing.xs,
+    fontWeight: typography.weights.medium,
   },
 });
