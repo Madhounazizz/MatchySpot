@@ -12,33 +12,111 @@ import {
 import {
   Users,
   Clock,
+  Star,
   Phone,
   Mail,
   Calendar,
-  CheckCircle,
-  XCircle,
-  MoreVertical,
   Plus,
-  Filter,
+  Edit3,
+  UserCheck,
+  UserX,
+  Award,
+  TrendingUp,
 } from 'lucide-react-native';
 import { colors, shadows } from '@/constants/colors';
 import { LinearGradient } from 'expo-linear-gradient';
-import { mockStaff } from '@/mocks/staff';
-import { Staff } from '@/types';
 
-type StaffFilter = 'all' | 'active' | 'inactive' | 'manager' | 'waiter' | 'host' | 'chef' | 'bartender';
+type StaffRole = 'manager' | 'chef' | 'waiter' | 'host' | 'bartender';
+type StaffStatus = 'active' | 'on-break' | 'off-duty' | 'sick';
+
+type StaffMember = {
+  id: string;
+  name: string;
+  role: StaffRole;
+  status: StaffStatus;
+  avatar?: string;
+  email: string;
+  phone: string;
+  rating: number;
+  hoursWorked: number;
+  ordersServed: number;
+  joinDate: string;
+  shift: string;
+  performance: number;
+};
+
+const mockStaff: StaffMember[] = [
+  {
+    id: '1',
+    name: 'Alex Thompson',
+    role: 'waiter',
+    status: 'active',
+    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
+    email: 'alex@restaurant.com',
+    phone: '+1 (555) 123-4567',
+    rating: 4.8,
+    hoursWorked: 42,
+    ordersServed: 156,
+    joinDate: '2023-03-15',
+    shift: '5:00 PM - 11:00 PM',
+    performance: 92,
+  },
+  {
+    id: '2',
+    name: 'Maria Garcia',
+    role: 'chef',
+    status: 'active',
+    avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face',
+    email: 'maria@restaurant.com',
+    phone: '+1 (555) 234-5678',
+    rating: 4.9,
+    hoursWorked: 45,
+    ordersServed: 89,
+    joinDate: '2022-08-20',
+    shift: '4:00 PM - 12:00 AM',
+    performance: 96,
+  },
+  {
+    id: '3',
+    name: 'James Wilson',
+    role: 'manager',
+    status: 'active',
+    avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
+    email: 'james@restaurant.com',
+    phone: '+1 (555) 345-6789',
+    rating: 4.7,
+    hoursWorked: 50,
+    ordersServed: 0,
+    joinDate: '2021-11-10',
+    shift: '2:00 PM - 10:00 PM',
+    performance: 88,
+  },
+  {
+    id: '4',
+    name: 'Sarah Kim',
+    role: 'bartender',
+    status: 'on-break',
+    avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
+    email: 'sarah@restaurant.com',
+    phone: '+1 (555) 456-7890',
+    rating: 4.6,
+    hoursWorked: 38,
+    ordersServed: 78,
+    joinDate: '2023-01-05',
+    shift: '6:00 PM - 2:00 AM',
+    performance: 85,
+  },
+];
 
 export default function StaffScreen() {
-  const [selectedFilter, setSelectedFilter] = useState<StaffFilter>('all');
+  const [staff, setStaff] = useState<StaffMember[]>(mockStaff);
+  const [selectedFilter, setSelectedFilter] = useState<'all' | StaffStatus>('all');
 
-  const filteredStaff = mockStaff.filter((staff) => {
-    if (selectedFilter === 'all') return true;
-    if (selectedFilter === 'active') return staff.isActive;
-    if (selectedFilter === 'inactive') return !staff.isActive;
-    return staff.role === selectedFilter;
-  });
+  const filteredStaff = staff.filter(member => 
+    selectedFilter === 'all' || member.status === selectedFilter
+  );
 
-  const getRoleColor = (role: Staff['role']): string => {
+  const getRoleColor = (role: StaffRole): string => {
     switch (role) {
       case 'manager':
         return colors.primary;
@@ -49,241 +127,207 @@ export default function StaffScreen() {
       case 'host':
         return colors.warning;
       case 'bartender':
-        return colors.accent;
+        return colors.secondary;
       default:
         return colors.textLight;
     }
   };
 
-  const getRoleIcon = (role: Staff['role']) => {
-    switch (role) {
-      case 'manager':
-        return Users;
-      case 'chef':
-        return Users;
-      case 'waiter':
-        return Users;
-      case 'host':
-        return Users;
-      case 'bartender':
-        return Users;
+  const getStatusColor = (status: StaffStatus): string => {
+    switch (status) {
+      case 'active':
+        return colors.success;
+      case 'on-break':
+        return colors.warning;
+      case 'off-duty':
+        return colors.textLight;
+      case 'sick':
+        return colors.error;
+      default:
+        return colors.textLight;
+    }
+  };
+
+  const getStatusIcon = (status: StaffStatus) => {
+    switch (status) {
+      case 'active':
+        return UserCheck;
+      case 'on-break':
+        return Clock;
+      case 'off-duty':
+        return UserX;
+      case 'sick':
+        return UserX;
       default:
         return Users;
     }
   };
 
-  const handleStaffAction = (staff: Staff) => {
-    const actions: Array<{text: string; onPress?: () => void; style?: 'default' | 'cancel' | 'destructive'}> = [
-      { text: 'View Details', onPress: () => console.log('View details for', staff.name) },
-      { text: 'Edit Schedule', onPress: () => console.log('Edit schedule for', staff.name) },
-    ];
-
-    if (staff.isActive) {
-      actions.push({ text: 'Mark Inactive', onPress: () => toggleStaffStatus(staff.id) });
-    } else {
-      actions.push({ text: 'Mark Active', onPress: () => toggleStaffStatus(staff.id) });
-    }
-
-    actions.push({ text: 'Cancel', style: 'cancel' });
-
-    Alert.alert(
-      staff.name,
-      `${staff.role} • ${staff.isActive ? 'Active' : 'Inactive'}`,
-      actions
-    );
+  const handleStatusChange = (memberId: string, newStatus: StaffStatus) => {
+    setStaff(prev => prev.map(member => 
+      member.id === memberId ? { ...member, status: newStatus } : member
+    ));
   };
 
-  const toggleStaffStatus = (staffId: string) => {
-    console.log(`Toggling status for staff ${staffId}`);
-  };
-
-  const FilterButton = ({ filter, label, count }: { 
-    filter: StaffFilter; 
-    label: string; 
-    count: number;
-  }) => (
-    <TouchableOpacity
-      style={[
-        styles.filterButton,
-        selectedFilter === filter && styles.filterButtonActive,
-      ]}
-      onPress={() => setSelectedFilter(filter)}
-    >
-      <Text
-        style={[
-          styles.filterButtonText,
-          selectedFilter === filter && styles.filterButtonTextActive,
-        ]}
-      >
-        {label} ({count})
-      </Text>
-    </TouchableOpacity>
-  );
-
-  const StaffCard = ({ staff }: { staff: Staff }) => {
-    const roleColor = getRoleColor(staff.role);
-    const RoleIcon = getRoleIcon(staff.role);
+  const StaffCard = ({ member }: { member: StaffMember }) => {
+    const StatusIcon = getStatusIcon(member.status);
+    const roleColor = getRoleColor(member.role);
+    const statusColor = getStatusColor(member.status);
 
     return (
-      <TouchableOpacity
-        style={[
-          styles.staffCard,
-          !staff.isActive && styles.inactiveCard,
-        ]}
-        onPress={() => handleStaffAction(staff)}
-        activeOpacity={0.9}
-        testID={`staff-${staff.id}`}
-      >
-        <View style={styles.staffHeader}>
+      <TouchableOpacity style={styles.staffCard} activeOpacity={0.9}>
+        <View style={styles.cardHeader}>
           <View style={styles.staffInfo}>
             <View style={styles.avatarContainer}>
-              <Image source={{ uri: staff.avatar }} style={styles.staffAvatar} />
-              <View style={[
-                styles.statusIndicator,
-                { backgroundColor: staff.isActive ? colors.success : colors.error }
-              ]} />
+              {member.avatar ? (
+                <Image source={{ uri: member.avatar }} style={styles.avatar} />
+              ) : (
+                <View style={styles.avatarPlaceholder}>
+                  <Users size={20} color={colors.white} strokeWidth={2} />
+                </View>
+              )}
+              <View style={[styles.statusIndicator, { backgroundColor: statusColor }]} />
             </View>
-            <View style={styles.staffDetails}>
-              <Text style={styles.staffName}>{staff.name}</Text>
+            <View style={styles.memberDetails}>
+              <Text style={styles.memberName}>{member.name}</Text>
               <View style={[styles.roleBadge, { backgroundColor: roleColor + '15' }]}>
-                <RoleIcon size={12} color={roleColor} strokeWidth={2} />
                 <Text style={[styles.roleText, { color: roleColor }]}>
-                  {staff.role.charAt(0).toUpperCase() + staff.role.slice(1)}
+                  {member.role.charAt(0).toUpperCase() + member.role.slice(1)}
                 </Text>
               </View>
-            </View>
-          </View>
-          <TouchableOpacity style={styles.moreButton}>
-            <MoreVertical size={16} color={colors.textLight} strokeWidth={2} />
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.contactSection}>
-          <View style={styles.contactInfo}>
-            <View style={styles.contactItem}>
-              <View style={styles.contactIcon}>
-                <Phone size={14} color={colors.primary} strokeWidth={2} />
+              <View style={styles.ratingContainer}>
+                <Star size={12} color={colors.warning} fill={colors.warning} />
+                <Text style={styles.ratingText}>{member.rating}</Text>
               </View>
-              <Text style={styles.contactText}>{staff.phone}</Text>
             </View>
-            <View style={styles.contactItem}>
-              <View style={styles.contactIcon}>
-                <Mail size={14} color={colors.secondary} strokeWidth={2} />
-              </View>
-              <Text style={styles.contactText}>{staff.email}</Text>
+          </View>
+          <View style={styles.cardActions}>
+            <View style={[styles.statusBadge, { backgroundColor: statusColor + '15' }]}>
+              <StatusIcon size={12} color={statusColor} strokeWidth={2} />
+              <Text style={[styles.statusText, { color: statusColor }]}>
+                {member.status === 'on-break' ? 'Break' : 
+                 member.status === 'off-duty' ? 'Off' :
+                 member.status === 'sick' ? 'Sick' : 'Active'}
+              </Text>
             </View>
+            <TouchableOpacity style={styles.editButton}>
+              <Edit3 size={14} color={colors.primary} strokeWidth={2} />
+            </TouchableOpacity>
           </View>
         </View>
 
-        <View style={styles.scheduleCard}>
-          <View style={styles.scheduleHeader}>
-            <View style={styles.scheduleIcon}>
-              <Clock size={14} color={colors.primary} strokeWidth={2} />
-            </View>
-            <Text style={styles.scheduleLabel}>Work Schedule</Text>
+        <View style={styles.performanceSection}>
+          <View style={styles.performanceBar}>
+            <View 
+              style={[
+                styles.performanceFill, 
+                { 
+                  width: `${member.performance}%`,
+                  backgroundColor: member.performance >= 90 ? colors.success : 
+                                 member.performance >= 70 ? colors.warning : colors.error
+                }
+              ]} 
+            />
           </View>
-          <View style={styles.scheduleDetails}>
-            <Text style={styles.scheduleTime}>
-              {staff.shift.start} - {staff.shift.end}
-            </Text>
-            <Text style={styles.scheduleDays}>
-              {staff.shift.days.join(' • ')}
-            </Text>
+          <Text style={styles.performanceText}>{member.performance}% Performance</Text>
+        </View>
+
+        <View style={styles.statsRow}>
+          <View style={styles.statItem}>
+            <Clock size={14} color={colors.primary} strokeWidth={2} />
+            <Text style={styles.statValue}>{member.hoursWorked}h</Text>
+            <Text style={styles.statLabel}>This Week</Text>
+          </View>
+          {member.role !== 'manager' && (
+            <View style={styles.statItem}>
+              <Award size={14} color={colors.success} strokeWidth={2} />
+              <Text style={styles.statValue}>{member.ordersServed}</Text>
+              <Text style={styles.statLabel}>Orders</Text>
+            </View>
+          )}
+          <View style={styles.statItem}>
+            <TrendingUp size={14} color={colors.warning} strokeWidth={2} />
+            <Text style={styles.statValue}>+12%</Text>
+            <Text style={styles.statLabel}>Growth</Text>
           </View>
         </View>
 
-        <View style={styles.staffFooter}>
-          <View style={styles.joinedInfo}>
-            <Calendar size={12} color={colors.textLight} strokeWidth={2} />
-            <Text style={styles.joinedText}>
-              Joined {new Date(staff.joinedDate).toLocaleDateString('en-US', { 
-                month: 'short', 
-                day: 'numeric', 
-                year: 'numeric' 
-              })}
-            </Text>
-          </View>
-          <View style={[
-            styles.statusBadge,
-            { backgroundColor: staff.isActive ? colors.success + '15' : colors.error + '15' }
-          ]}>
-            <Text style={[styles.statusText, { color: staff.isActive ? colors.success : colors.error }]}>
-              {staff.isActive ? 'Active' : 'Inactive'}
-            </Text>
+        <View style={styles.shiftInfo}>
+          <Text style={styles.shiftText}>Shift: {member.shift}</Text>
+          <View style={styles.contactButtons}>
+            <TouchableOpacity style={styles.contactButton}>
+              <Phone size={12} color={colors.primary} strokeWidth={2} />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.contactButton}>
+              <Mail size={12} color={colors.primary} strokeWidth={2} />
+            </TouchableOpacity>
           </View>
         </View>
       </TouchableOpacity>
     );
   };
 
-  const getFilterCounts = () => {
+  const getStaffStats = () => {
     return {
-      all: mockStaff.length,
-      active: mockStaff.filter(s => s.isActive).length,
-      inactive: mockStaff.filter(s => !s.isActive).length,
-      manager: mockStaff.filter(s => s.role === 'manager').length,
-      waiter: mockStaff.filter(s => s.role === 'waiter').length,
-      host: mockStaff.filter(s => s.role === 'host').length,
-      chef: mockStaff.filter(s => s.role === 'chef').length,
-      bartender: mockStaff.filter(s => s.role === 'bartender').length,
+      total: staff.length,
+      active: staff.filter(s => s.status === 'active').length,
+      onBreak: staff.filter(s => s.status === 'on-break').length,
+      offDuty: staff.filter(s => s.status === 'off-duty').length,
+      avgPerformance: Math.round(staff.reduce((sum, s) => sum + s.performance, 0) / staff.length),
     };
   };
 
-  const filterCounts = getFilterCounts();
+  const stats = getStaffStats();
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <View style={styles.headerContent}>
-          <View>
-            <Text style={styles.title}>Staff Management</Text>
-            <Text style={styles.subtitle}>{filteredStaff.length} staff members</Text>
+      <LinearGradient
+        colors={[colors.white, colors.backgroundLight]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.header}
+      >
+        <View>
+          <Text style={styles.title}>Staff Management</Text>
+          <Text style={styles.subtitle}>{stats.active} of {stats.total} staff active</Text>
+        </View>
+        <View style={styles.headerActions}>
+          <TouchableOpacity style={styles.scheduleButton}>
+            <Calendar size={20} color={colors.primary} />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.addButton}>
+            <Plus size={20} color={colors.white} />
+            <Text style={styles.addButtonText}>Add Staff</Text>
+          </TouchableOpacity>
+        </View>
+      </LinearGradient>
+
+      <View style={styles.statsSection}>
+        <View style={styles.statsRow}>
+          <View style={styles.statCard}>
+            <Text style={styles.statNumber}>{stats.active}</Text>
+            <Text style={styles.statLabel}>Active</Text>
           </View>
-          <View style={styles.headerActions}>
-            <TouchableOpacity style={styles.headerButton} activeOpacity={0.8}>
-              <Filter size={18} color={colors.primary} />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.addButton} activeOpacity={0.9}>
-              <Plus size={16} color={colors.white} />
-              <Text style={styles.addButtonText}>Add Staff</Text>
-            </TouchableOpacity>
+          <View style={styles.statCard}>
+            <Text style={[styles.statNumber, { color: colors.warning }]}>{stats.onBreak}</Text>
+            <Text style={styles.statLabel}>On Break</Text>
+          </View>
+          <View style={styles.statCard}>
+            <Text style={[styles.statNumber, { color: colors.textLight }]}>{stats.offDuty}</Text>
+            <Text style={styles.statLabel}>Off Duty</Text>
+          </View>
+          <View style={styles.statCard}>
+            <Text style={[styles.statNumber, { color: colors.primary }]}>{stats.avgPerformance}%</Text>
+            <Text style={styles.statLabel}>Avg Performance</Text>
           </View>
         </View>
       </View>
 
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={styles.filterContainer}
-        contentContainerStyle={styles.filterContent}
-      >
-        <FilterButton filter={'all'} label={'All'} count={filterCounts.all} />
-        <FilterButton filter={'active'} label={'Active'} count={filterCounts.active} />
-        <FilterButton filter={'inactive'} label={'Inactive'} count={filterCounts.inactive} />
-        <FilterButton filter={'manager'} label={'Managers'} count={filterCounts.manager} />
-        <FilterButton filter={'waiter'} label={'Waiters'} count={filterCounts.waiter} />
-        <FilterButton filter={'host'} label={'Hosts'} count={filterCounts.host} />
-        <FilterButton filter={'chef'} label={'Chefs'} count={filterCounts.chef} />
-        <FilterButton filter={'bartender'} label={'Bartenders'} count={filterCounts.bartender} />
-      </ScrollView>
-
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         <View style={styles.staffList}>
-          {filteredStaff.length > 0 ? (
-            filteredStaff.map((staff) => (
-              <StaffCard key={staff.id} staff={staff} />
-            ))
-          ) : (
-            <View style={styles.emptyState}>
-              <Users size={48} color={colors.textLight} />
-              <Text style={styles.emptyStateText}>No staff found</Text>
-              <Text style={styles.emptyStateSubtext}>
-                {selectedFilter === 'all'
-                  ? 'No staff members available'
-                  : `No ${selectedFilter} staff members found`}
-              </Text>
-            </View>
-          )}
+          {filteredStaff.map((member) => (
+            <StaffCard key={member.id} member={member} />
+          ))}
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -293,325 +337,245 @@ export default function StaffScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8fafc',
+    backgroundColor: colors.backgroundLight,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 28,
-    paddingVertical: 32,
+    paddingHorizontal: 16,
+    paddingVertical: 16,
     backgroundColor: colors.white,
-    borderBottomLeftRadius: 40,
-    borderBottomRightRadius: 40,
-    ...shadows.large,
-    elevation: 12,
-  },
-  headerContent: {
-    flex: 1,
+    ...shadows.small,
+    elevation: 4,
   },
   title: {
-    fontSize: 40,
-    fontWeight: '900',
+    fontSize: 24,
+    fontWeight: '700',
     color: colors.text,
-    letterSpacing: -1.5,
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: 14,
     color: colors.textLight,
-    marginTop: 6,
-    fontWeight: '600',
+    marginTop: 2,
+    fontWeight: '500',
   },
   headerActions: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
   },
-  headerButton: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
-    backgroundColor: colors.secondary + '15',
+  scheduleButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: colors.backgroundLight,
     alignItems: 'center',
     justifyContent: 'center',
-    ...shadows.small,
-    elevation: 4,
   },
   addButton: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.primary,
-    paddingHorizontal: 24,
-    paddingVertical: 16,
-    borderRadius: 20,
-    gap: 10,
-    ...shadows.card,
-    elevation: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 16,
+    gap: 6,
   },
-  filterContainer: {
-    paddingLeft: 28,
-    marginTop: 28,
-    marginBottom: 24,
-  },
-  filterContent: {
-    paddingRight: 20,
-    gap: 8,
-  },
-  filterButton: {
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 30,
-    backgroundColor: colors.white,
-    ...shadows.card,
-    elevation: 6,
-  },
-  filterButtonActive: {
-    backgroundColor: colors.primary,
-    ...shadows.large,
-    elevation: 8,
-  },
-  filterButtonText: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: colors.textLight,
-  },
-  filterButtonTextActive: {
+  addButtonText: {
     color: colors.white,
-    fontWeight: '800',
+    fontWeight: '600',
+    fontSize: 14,
+  },
+  statsSection: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+  statsRow: {
+    flexDirection: 'row',
+    backgroundColor: colors.white,
+    borderRadius: 12,
+    padding: 10,
+    ...shadows.small,
+    elevation: 2,
+  },
+  statCard: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  statNumber: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: colors.success,
+  },
+  statLabel: {
+    fontSize: 10,
+    color: colors.textLight,
+    marginTop: 3,
+    fontWeight: '500',
+    textAlign: 'center',
   },
   scrollView: {
     flex: 1,
   },
   staffList: {
-    paddingHorizontal: 28,
-    paddingBottom: 32,
+    paddingHorizontal: 16,
+    paddingBottom: 20,
   },
   staffCard: {
     backgroundColor: colors.white,
-    borderRadius: 36,
-    padding: 32,
-    marginBottom: 32,
-    ...shadows.large,
-    elevation: 20,
-    borderWidth: 0,
-    transform: [{ scale: 1 }],
-    position: 'relative',
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 12,
+    ...shadows.small,
+    elevation: 2,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
-  inactiveCard: {
-    opacity: 0.7,
-  },
-  staffHeader: {
+  cardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: 20,
+    marginBottom: 12,
   },
   staffInfo: {
     flexDirection: 'row',
     flex: 1,
-    alignItems: 'center',
   },
   avatarContainer: {
     position: 'relative',
-    marginRight: 20,
+    marginRight: 12,
   },
-  staffAvatar: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
-    borderWidth: 4,
-    borderColor: colors.white,
-    ...shadows.medium,
-    elevation: 8,
+  avatar: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+  },
+  avatarPlaceholder: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   statusIndicator: {
     position: 'absolute',
     bottom: 2,
     right: 2,
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    borderWidth: 3,
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    borderWidth: 2,
     borderColor: colors.white,
-    ...shadows.small,
-    elevation: 4,
   },
-  staffDetails: {
+  memberDetails: {
     flex: 1,
   },
-  staffName: {
-    fontSize: 28,
-    fontWeight: '900',
+  memberName: {
+    fontSize: 16,
+    fontWeight: '600',
     color: colors.text,
-    marginBottom: 12,
-    letterSpacing: -0.7,
-    lineHeight: 32,
+    marginBottom: 4,
   },
   roleBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 24,
-    gap: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 8,
     alignSelf: 'flex-start',
-    borderWidth: 1,
-    borderColor: 'transparent',
-    ...shadows.small,
-    elevation: 4,
+    marginBottom: 4,
   },
   roleText: {
-    fontSize: 14,
-    fontWeight: '800',
-    textTransform: 'capitalize',
-    letterSpacing: 0.3,
-  },
-  moreButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: colors.backgroundLight,
-    alignItems: 'center',
-    justifyContent: 'center',
-    ...shadows.small,
-    elevation: 4,
-  },
-  contactSection: {
-    marginBottom: 24,
-    backgroundColor: colors.backgroundLight,
-    padding: 24,
-    borderRadius: 24,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  contactInfo: {
-    gap: 16,
-  },
-  contactItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 16,
-  },
-  contactIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: colors.white,
-    alignItems: 'center',
-    justifyContent: 'center',
-    ...shadows.small,
-    elevation: 4,
-  },
-  contactText: {
-    fontSize: 16,
-    color: colors.text,
+    fontSize: 11,
     fontWeight: '600',
-    flex: 1,
   },
-  scheduleCard: {
-    backgroundColor: colors.primary + '12',
-    padding: 24,
-    borderRadius: 24,
-    marginBottom: 24,
-    borderLeftWidth: 6,
-    borderLeftColor: colors.primary,
-    borderWidth: 1,
-    borderColor: colors.primary + '20',
-    ...shadows.large,
-    elevation: 12,
-  },
-  scheduleHeader: {
+  ratingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
-    marginBottom: 16,
+    gap: 4,
   },
-  scheduleIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: colors.primary + '20',
+  ratingText: {
+    fontSize: 12,
+    fontWeight: '500',
+    color: colors.warning,
+  },
+  cardActions: {
+    alignItems: 'flex-end',
+    gap: 8,
+  },
+  statusBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+    gap: 4,
+  },
+  statusText: {
+    fontSize: 10,
+    fontWeight: '600',
+  },
+  editButton: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: colors.backgroundLight,
     alignItems: 'center',
     justifyContent: 'center',
-    ...shadows.small,
-    elevation: 4,
   },
-  scheduleLabel: {
-    fontSize: 20,
-    fontWeight: '800',
-    color: colors.text,
-    letterSpacing: -0.3,
+  performanceSection: {
+    marginBottom: 12,
   },
-  scheduleDetails: {
-    paddingLeft: 60,
+  performanceBar: {
+    height: 4,
+    backgroundColor: colors.backgroundLight,
+    borderRadius: 2,
+    overflow: 'hidden',
+    marginBottom: 4,
   },
-  scheduleTime: {
-    fontSize: 24,
-    fontWeight: '900',
-    color: colors.primary,
-    marginBottom: 8,
-    letterSpacing: -0.5,
+  performanceFill: {
+    height: '100%',
+    borderRadius: 2,
   },
-  scheduleDays: {
-    fontSize: 16,
+  performanceText: {
+    fontSize: 11,
     color: colors.textLight,
-    fontWeight: '600',
+    fontWeight: '500',
   },
-  staffFooter: {
+  statItem: {
+    flex: 1,
+    alignItems: 'center',
+    gap: 2,
+  },
+  statValue: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: colors.text,
+  },
+  shiftInfo: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    marginTop: 8,
+    paddingTop: 8,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
   },
-  joinedInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    backgroundColor: colors.backgroundLight,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-  },
-  joinedText: {
-    fontSize: 14,
+  shiftText: {
+    fontSize: 12,
     color: colors.textLight,
-    fontWeight: '600',
-  },
-  statusBadge: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 24,
-    borderWidth: 1,
-    borderColor: 'transparent',
-    ...shadows.small,
-    elevation: 4,
-  },
-  statusText: {
-    fontSize: 14,
-    fontWeight: '800',
-    letterSpacing: 0.3,
-  },
-  emptyState: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 80,
-  },
-  emptyStateText: {
-    fontSize: 24,
-    fontWeight: '800',
-    color: colors.text,
-    marginTop: 20,
-    marginBottom: 12,
-    letterSpacing: -0.5,
-  },
-  emptyStateSubtext: {
-    fontSize: 16,
-    color: colors.textLight,
-    textAlign: 'center',
     fontWeight: '500',
   },
-  addButtonText: {
-    color: colors.white,
-    fontWeight: '800',
-    fontSize: 16,
+  contactButtons: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  contactButton: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: colors.backgroundLight,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

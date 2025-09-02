@@ -99,6 +99,9 @@ export default function ReservationsScreen() {
                 <Text style={styles.partySize}>{reservation.partySize} guests</Text>
               </View>
             </View>
+            <View style={styles.estimatedRevenue}>
+              <Text style={styles.revenueText}>Est. Revenue: $85</Text>
+            </View>
           </View>
         </View>
         <View style={styles.cardRight}>
@@ -115,6 +118,9 @@ export default function ReservationsScreen() {
               <Text style={styles.tableNumber}>#{reservation.tableNumber}</Text>
             </View>
           )}
+          <View style={styles.priorityIndicator}>
+            <View style={[styles.priorityDot, { backgroundColor: colors.warning }]} />
+          </View>
         </View>
       </View>
 
@@ -626,6 +632,23 @@ const styles = StyleSheet.create({
     backgroundColor: colors.backgroundLight,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  estimatedRevenue: {
+    marginTop: 4,
+  },
+  revenueText: {
+    fontSize: 10,
+    color: colors.success,
+    fontWeight: '600',
+  },
+  priorityIndicator: {
+    alignItems: 'center',
+    marginTop: 4,
+  },
+  priorityDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
   },
   emptyState: {
     alignItems: 'center',

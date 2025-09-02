@@ -301,6 +301,16 @@ export default function InventoryScreen() {
               Expires: {item.expiryDate}
             </Text>
           )}
+          <View style={styles.inventoryMetrics}>
+            <View style={styles.metricItem}>
+              <Text style={styles.metricLabel}>Value:</Text>
+              <Text style={styles.metricValue}>${(item.currentStock * item.costPerUnit).toFixed(0)}</Text>
+            </View>
+            <View style={styles.metricItem}>
+              <Text style={styles.metricLabel}>Usage:</Text>
+              <Text style={styles.metricValue}>High</Text>
+            </View>
+          </View>
         </View>
 
         <View style={styles.cardFooter}>
@@ -710,5 +720,25 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: colors.textLight,
     textAlign: 'center',
+  },
+  inventoryMetrics: {
+    flexDirection: 'row',
+    gap: 12,
+    marginTop: 4,
+  },
+  metricItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 2,
+  },
+  metricLabel: {
+    fontSize: 9,
+    color: colors.textLight,
+    fontWeight: '500',
+  },
+  metricValue: {
+    fontSize: 9,
+    color: colors.text,
+    fontWeight: '600',
   },
 });

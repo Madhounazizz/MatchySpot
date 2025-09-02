@@ -138,31 +138,38 @@ export default function MenuManagement() {
         </Text>
         
         <View style={styles.itemFooter}>
-          <View style={[styles.categoryBadge, { backgroundColor: getCategoryColor(item.category) + '15' }]}>
-            <Text style={[styles.categoryText, { color: getCategoryColor(item.category) }]}>
-              {item.category}
-            </Text>
+          <View style={styles.leftFooter}>
+            <View style={[styles.categoryBadge, { backgroundColor: getCategoryColor(item.category) + '15' }]}>
+              <Text style={[styles.categoryText, { color: getCategoryColor(item.category) }]}>
+                {item.category}
+              </Text>
+            </View>
+            
+            {(item.isVegetarian || item.isVegan || item.isGlutenFree) && (
+              <View style={styles.dietaryTags}>
+                {item.isVegetarian && (
+                  <View style={[styles.dietaryTag, { backgroundColor: colors.success + '15' }]}>
+                    <Text style={[styles.dietaryTagText, { color: colors.success }]}>V</Text>
+                  </View>
+                )}
+                {item.isVegan && (
+                  <View style={[styles.dietaryTag, { backgroundColor: colors.primary + '15' }]}>
+                    <Text style={[styles.dietaryTagText, { color: colors.primary }]}>VG</Text>
+                  </View>
+                )}
+                {item.isGlutenFree && (
+                  <View style={[styles.dietaryTag, { backgroundColor: colors.warning + '15' }]}>
+                    <Text style={[styles.dietaryTagText, { color: colors.warning }]}>GF</Text>
+                  </View>
+                )}
+              </View>
+            )}
           </View>
           
-          {(item.isVegetarian || item.isVegan || item.isGlutenFree) && (
-            <View style={styles.dietaryTags}>
-              {item.isVegetarian && (
-                <View style={[styles.dietaryTag, { backgroundColor: colors.success + '15' }]}>
-                  <Text style={[styles.dietaryTagText, { color: colors.success }]}>V</Text>
-                </View>
-              )}
-              {item.isVegan && (
-                <View style={[styles.dietaryTag, { backgroundColor: colors.primary + '15' }]}>
-                  <Text style={[styles.dietaryTagText, { color: colors.primary }]}>VG</Text>
-                </View>
-              )}
-              {item.isGlutenFree && (
-                <View style={[styles.dietaryTag, { backgroundColor: colors.warning + '15' }]}>
-                  <Text style={[styles.dietaryTagText, { color: colors.warning }]}>GF</Text>
-                </View>
-              )}
-            </View>
-          )}
+          <View style={styles.popularityIndicator}>
+            <Star size={10} color={colors.warning} fill={colors.warning} />
+            <Text style={styles.popularityText}>Popular</Text>
+          </View>
         </View>
       </View>
     </TouchableOpacity>
@@ -480,6 +487,25 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+  },
+  leftFooter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  popularityIndicator: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 2,
+    backgroundColor: colors.warning + '10',
+    paddingHorizontal: 4,
+    paddingVertical: 2,
+    borderRadius: 6,
+  },
+  popularityText: {
+    fontSize: 8,
+    color: colors.warning,
+    fontWeight: '600',
   },
   itemPrice: {
     fontSize: 13,

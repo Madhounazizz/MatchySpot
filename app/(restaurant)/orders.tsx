@@ -297,6 +297,11 @@ export default function OrdersScreen() {
             </View>
           )}
           
+          <View style={styles.orderProfitability}>
+            <DollarSign size={10} color={colors.success} strokeWidth={2} />
+            <Text style={styles.profitText}>+${Math.round(order.totalAmount * 0.3)}</Text>
+          </View>
+          
           <TouchableOpacity style={styles.viewButton}>
             <Eye size={14} color={colors.primary} strokeWidth={2} />
           </TouchableOpacity>
@@ -648,5 +653,19 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: colors.textLight,
     textAlign: 'center',
+  },
+  orderProfitability: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 2,
+    backgroundColor: colors.success + '10',
+    paddingHorizontal: 4,
+    paddingVertical: 2,
+    borderRadius: 6,
+  },
+  profitText: {
+    fontSize: 9,
+    color: colors.success,
+    fontWeight: '600',
   },
 });

@@ -271,14 +271,28 @@ export default function TablesScreen() {
 
       <View style={styles.resTray}>
         <View style={styles.trayHeader}>
-          <Text style={styles.trayTitle}>Incoming</Text>
-          <Text style={styles.traySubtitle}>{activeReservations.length} reservations</Text>
+          <Text style={styles.trayTitle}>Incoming Reservations</Text>
+          <Text style={styles.traySubtitle}>{activeReservations.length} waiting • Est. Revenue: $420</Text>
         </View>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.trayContent}>
           {activeReservations.map((r) => (
             <DraggableReservation key={r.id} res={r} onDragStart={startReservationDrag} />
           ))}
         </ScrollView>
+        <View style={styles.trayStats}>
+          <View style={styles.trayStatItem}>
+            <Text style={styles.trayStatNumber}>85%</Text>
+            <Text style={styles.trayStatLabel}>Occupancy</Text>
+          </View>
+          <View style={styles.trayStatItem}>
+            <Text style={styles.trayStatNumber}>12min</Text>
+            <Text style={styles.trayStatLabel}>Avg Wait</Text>
+          </View>
+          <View style={styles.trayStatItem}>
+            <Text style={styles.trayStatNumber}>$65</Text>
+            <Text style={styles.trayStatLabel}>Avg Check</Text>
+          </View>
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -530,5 +544,27 @@ const styles = StyleSheet.create({
     color: colors.white, 
     fontSize: 12, 
     fontWeight: '600',
+  },
+  trayStats: {
+    flexDirection: 'row',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    backgroundColor: colors.backgroundLight,
+    marginTop: 8,
+  },
+  trayStatItem: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  trayStatNumber: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: colors.primary,
+  },
+  trayStatLabel: {
+    fontSize: 10,
+    color: colors.textLight,
+    fontWeight: '500',
+    marginTop: 2,
   },
 });
