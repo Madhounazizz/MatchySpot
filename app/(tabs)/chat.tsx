@@ -4,7 +4,7 @@ import { Stack } from 'expo-router';
 import { MessageSquare, Users } from 'lucide-react-native';
 import { conversations } from '@/mocks/conversations';
 import ConversationItem from '@/components/ConversationItem';
-import { colors, shadows, typography, borderRadius, spacing } from '@/constants/colors';
+import { colors, shadows } from '@/constants/colors';
 import SearchBar from '@/components/SearchBar';
 
 export default function ChatScreen() {
@@ -17,14 +17,14 @@ export default function ChatScreen() {
   const renderEmptyState = () => (
     <View style={styles.emptyContainer}>
       <View style={styles.emptyIconContainer}>
-        <MessageSquare size={80} color={colors.primary} />
+        <MessageSquare size={64} color={colors.textExtraLight} />
       </View>
       <Text style={styles.emptyTitle}>No conversations yet</Text>
       <Text style={styles.emptyText}>
         Match with people and start chatting to plan your next meetup!
       </Text>
       <TouchableOpacity style={styles.exploreButton}>
-        <Users size={20} color={colors.textInverse} />
+        <Users size={20} color={colors.white} />
         <Text style={styles.exploreButtonText}>Find People</Text>
       </TouchableOpacity>
     </View>
@@ -32,16 +32,9 @@ export default function ChatScreen() {
 
   const renderHeader = () => (
     <View style={styles.headerContainer}>
-      <View style={styles.headerContent}>
-        <Text style={styles.headerTitle}>Messages</Text>
-        <View style={styles.conversationBadge}>
-          <Text style={styles.conversationCount}>
-            {conversations.length}
-          </Text>
-        </View>
-      </View>
+      <Text style={styles.headerTitle}>Messages</Text>
       <Text style={styles.headerSubtitle}>
-        Stay connected with your matches
+        {conversations.length} conversation{conversations.length !== 1 ? 's' : ''}
       </Text>
     </View>
   );
@@ -82,118 +75,81 @@ export default function ChatScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.backgroundSecondary,
+    backgroundColor: colors.backgroundLight,
   },
-  
   headerContainer: {
-    paddingHorizontal: spacing.md,
+    paddingHorizontal: 16,
     paddingTop: 60,
-    paddingBottom: spacing.lg,
-    backgroundColor: colors.surface,
-    borderBottomLeftRadius: borderRadius['2xl'],
-    borderBottomRightRadius: borderRadius['2xl'],
-    ...shadows.medium,
+    paddingBottom: 16,
+    backgroundColor: colors.white,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.backgroundLight,
   },
-  
-  headerContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: spacing.xs,
-  },
-  
   headerTitle: {
-    fontSize: typography.sizes['4xl'],
-    fontWeight: typography.weights.extrabold,
+    fontSize: 32,
+    fontWeight: '700',
     color: colors.text,
+    marginBottom: 4,
   },
-  
-  conversationBadge: {
-    backgroundColor: colors.primary,
-    borderRadius: borderRadius.full,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs,
-    minWidth: 32,
-    alignItems: 'center',
-  },
-  
-  conversationCount: {
-    fontSize: typography.sizes.sm,
-    fontWeight: typography.weights.bold,
-    color: colors.textInverse,
-  },
-  
   headerSubtitle: {
-    fontSize: typography.sizes.base,
+    fontSize: 16,
     color: colors.textLight,
   },
-  
   searchContainer: {
-    backgroundColor: colors.surface,
-    paddingBottom: spacing.md,
-    paddingHorizontal: spacing.md,
-    marginTop: -spacing.sm,
-    borderBottomLeftRadius: borderRadius.xl,
-    borderBottomRightRadius: borderRadius.xl,
+    backgroundColor: colors.white,
+    paddingBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.backgroundLight,
   },
   listContent: {
-    paddingTop: spacing.md,
-    paddingBottom: spacing.lg,
+    paddingTop: 8,
+    paddingBottom: 20,
   },
-  
   emptyListContent: {
     flexGrow: 1,
   },
-  
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: spacing.xl,
+    padding: 32,
   },
-  
   emptyIconContainer: {
-    width: 140,
-    height: 140,
-    borderRadius: 70,
-    backgroundColor: colors.accent,
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    backgroundColor: colors.backgroundLight,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: spacing.xl,
-    ...shadows.large,
+    marginBottom: 24,
   },
-  
   emptyTitle: {
-    fontSize: typography.sizes['3xl'],
-    fontWeight: typography.weights.extrabold,
+    fontSize: 24,
+    fontWeight: '700',
     color: colors.text,
-    marginBottom: spacing.md,
+    marginBottom: 12,
     textAlign: 'center',
   },
-  
   emptyText: {
-    fontSize: typography.sizes.lg,
+    fontSize: 16,
     color: colors.textLight,
     textAlign: 'center',
-    lineHeight: typography.sizes.lg * typography.lineHeights.relaxed,
-    marginBottom: spacing['2xl'],
-    paddingHorizontal: spacing.md,
+    lineHeight: 24,
+    marginBottom: 32,
   },
-  
   exploreButton: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.primary,
-    paddingHorizontal: spacing.xl,
-    paddingVertical: spacing.md,
-    borderRadius: borderRadius.full,
-    ...shadows.primary,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 24,
+    ...shadows.medium,
   },
-  
   exploreButtonText: {
-    color: colors.textInverse,
-    fontSize: typography.sizes.lg,
-    fontWeight: typography.weights.semibold,
-    marginLeft: spacing.sm,
+    color: colors.white,
+    fontSize: 16,
+    fontWeight: '600',
+    marginLeft: 8,
   },
 });

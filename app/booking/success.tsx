@@ -2,8 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Animated } from 'react-native';
 import { Stack, useRouter, useLocalSearchParams } from 'expo-router';
 import { CheckCircle, Calendar, Clock, Users, MapPin, Home, MessageSquare, Star, Share2, Download, Phone } from 'lucide-react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { colors, shadows, typography, borderRadius, spacing } from '@/constants/colors';
+import { colors, shadows } from '@/constants/colors';
 import Button from '@/components/Button';
 import { brcs } from '@/mocks/brcs';
 
@@ -100,25 +99,17 @@ export default function BookingSuccessScreen() {
           ]}
         >
           <View style={styles.successIconContainer}>
-            <LinearGradient
-              colors={['rgba(255,255,255,0.2)', 'rgba(255,255,255,0.1)']}
-              style={styles.successIconBackground}
-            >
-              <CheckCircle size={80} color={colors.textInverse} fill={colors.success} />
-            </LinearGradient>
-            <View style={styles.successPulse}>
-              <View style={styles.successPulseInner} />
+            <CheckCircle size={100} color={colors.white} fill={colors.success} />
+            <View style={styles.successBadge}>
+              <Text style={styles.successBadgeText}>✓</Text>
             </View>
           </View>
           
-          <Text style={styles.successTitle}>🎉 Booking Confirmed!</Text>
+          <Text style={styles.successTitle}>Booking Confirmed!</Text>
           <Text style={styles.successSubtitle}>
-            Your table reservation is all set. Get ready for an amazing experience!
+            Your table reservation is all set
           </Text>
-          <View style={styles.bookingIdContainer}>
-            <Text style={styles.bookingIdLabel}>Confirmation Code</Text>
-            <Text style={styles.bookingIdText}>{bookingId}</Text>
-          </View>
+          <Text style={styles.bookingIdText}>Booking ID: {bookingId}</Text>
         </Animated.View>
 
         <Animated.View 
@@ -130,16 +121,14 @@ export default function BookingSuccessScreen() {
             }
           ]}
         >
-          {/* Enhanced Restaurant Info Card */}
+          {/* Restaurant Info Card */}
           <View style={styles.restaurantCard}>
             <View style={styles.restaurantHeader}>
               <View style={styles.restaurantInfo}>
                 <Text style={styles.restaurantName}>{selectedBRC?.name}</Text>
                 <View style={styles.ratingContainer}>
-                  <View style={styles.ratingBadge}>
-                    <Star size={14} color={colors.warning} fill={colors.warning} />
-                    <Text style={styles.ratingText}>4.8</Text>
-                  </View>
+                  <Star size={16} color={colors.warning} fill={colors.warning} />
+                  <Text style={styles.ratingText}>4.8</Text>
                   <Text style={styles.reviewsText}>(324 reviews)</Text>
                 </View>
                 <Text style={styles.restaurantAddress}>{selectedBRC?.address}</Text>
@@ -147,24 +136,24 @@ export default function BookingSuccessScreen() {
             </View>
             
             <View style={styles.quickActions}>
-              <TouchableOpacity style={[styles.quickActionButton, styles.callButton]} onPress={handleCallRestaurant}>
-                <Phone size={18} color={colors.textInverse} />
-                <Text style={[styles.quickActionText, styles.callButtonText]}>Call</Text>
+              <TouchableOpacity style={styles.quickActionButton} onPress={handleCallRestaurant}>
+                <Phone size={20} color={colors.primary} />
+                <Text style={styles.quickActionText}>Call</Text>
               </TouchableOpacity>
               
-              <TouchableOpacity style={[styles.quickActionButton, styles.chatButton]} onPress={handleContactPlace}>
-                <MessageSquare size={18} color={colors.textInverse} />
-                <Text style={[styles.quickActionText, styles.chatButtonText]}>Chat</Text>
+              <TouchableOpacity style={styles.quickActionButton} onPress={handleContactPlace}>
+                <MessageSquare size={20} color={colors.primary} />
+                <Text style={styles.quickActionText}>Chat</Text>
               </TouchableOpacity>
               
-              <TouchableOpacity style={[styles.quickActionButton, styles.shareButton]} onPress={handleShareBooking}>
-                <Share2 size={18} color={colors.textInverse} />
-                <Text style={[styles.quickActionText, styles.shareButtonText]}>Share</Text>
+              <TouchableOpacity style={styles.quickActionButton} onPress={handleShareBooking}>
+                <Share2 size={20} color={colors.primary} />
+                <Text style={styles.quickActionText}>Share</Text>
               </TouchableOpacity>
               
-              <TouchableOpacity style={[styles.quickActionButton, styles.saveButton]} onPress={handleDownloadConfirmation}>
-                <Download size={18} color={colors.textInverse} />
-                <Text style={[styles.quickActionText, styles.saveButtonText]}>Save</Text>
+              <TouchableOpacity style={styles.quickActionButton} onPress={handleDownloadConfirmation}>
+                <Download size={20} color={colors.primary} />
+                <Text style={styles.quickActionText}>Save</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -292,264 +281,184 @@ export default function BookingSuccessScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.backgroundSecondary,
+    backgroundColor: colors.background,
   },
-  
   scrollView: {
     flex: 1,
   },
-  
   successHeader: {
     backgroundColor: colors.success,
     paddingTop: 100,
-    paddingBottom: spacing['2xl'],
-    paddingHorizontal: spacing.lg,
+    paddingBottom: 40,
+    paddingHorizontal: 20,
     alignItems: 'center',
-    borderBottomLeftRadius: borderRadius['3xl'],
-    borderBottomRightRadius: borderRadius['3xl'],
+    borderBottomLeftRadius: 30,
+    borderBottomRightRadius: 30,
   },
-  
   successIconContainer: {
     position: 'relative',
-    marginBottom: spacing.xl,
+    marginBottom: 20,
   },
-  
-  successIconBackground: {
-    width: 160,
-    height: 160,
-    borderRadius: 80,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    ...shadows.xlarge,
-  },
-  
   successBadge: {
     position: 'absolute',
-    top: -spacing.sm,
-    right: -spacing.sm,
-    backgroundColor: colors.surface,
-    borderRadius: borderRadius.full,
-    width: 48,
-    height: 48,
+    top: -5,
+    right: -5,
+    backgroundColor: colors.white,
+    borderRadius: 20,
+    width: 40,
+    height: 40,
     justifyContent: 'center',
     alignItems: 'center',
-    ...shadows.large,
+    ...shadows.card,
   },
-  
   successBadgeText: {
-    fontSize: typography.sizes['2xl'],
-    fontWeight: typography.weights.extrabold,
+    fontSize: 20,
+    fontWeight: 'bold',
     color: colors.success,
   },
-  
   successTitle: {
-    fontSize: typography.sizes['4xl'],
-    fontWeight: typography.weights.extrabold,
-    color: colors.textInverse,
+    fontSize: 32,
+    fontWeight: '800',
+    color: colors.white,
     textAlign: 'center',
-    marginBottom: spacing.sm,
+    marginBottom: 8,
   },
-  
   successSubtitle: {
-    fontSize: typography.sizes.xl,
-    color: colors.textInverse,
+    fontSize: 18,
+    color: colors.white,
     textAlign: 'center',
     opacity: 0.9,
-    marginBottom: spacing.lg,
+    marginBottom: 12,
   },
-  
-  bookingIdContainer: {
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    borderRadius: borderRadius.full,
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.sm,
-  },
-  
   bookingIdText: {
-    fontSize: typography.sizes.base,
-    color: colors.textInverse,
+    fontSize: 14,
+    color: colors.white,
     textAlign: 'center',
-    fontWeight: typography.weights.semibold,
+    opacity: 0.8,
+    fontWeight: '600',
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
   },
   content: {
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.lg,
-    paddingBottom: 120,
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 100,
   },
-  
   restaurantCard: {
-    backgroundColor: colors.surface,
-    borderRadius: borderRadius['2xl'],
-    padding: spacing.xl,
-    marginBottom: spacing.lg,
-    ...shadows.large,
+    backgroundColor: colors.card,
+    borderRadius: 20,
+    padding: 20,
+    marginBottom: 20,
+    ...shadows.card,
   },
-  
   restaurantHeader: {
-    marginBottom: spacing.xl,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: 20,
   },
-  
   restaurantInfo: {
     flex: 1,
   },
-  
   restaurantName: {
-    fontSize: typography.sizes['2xl'],
-    fontWeight: typography.weights.extrabold,
+    fontSize: 22,
+    fontWeight: '700',
     color: colors.text,
-    marginBottom: spacing.sm,
+    marginBottom: 8,
   },
-  
   ratingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: spacing.sm,
+    marginBottom: 8,
   },
-  
-  ratingBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.accent,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs,
-    borderRadius: borderRadius.full,
-    marginRight: spacing.sm,
-  },
-  
   ratingText: {
-    fontSize: typography.sizes.sm,
-    fontWeight: typography.weights.bold,
+    fontSize: 16,
+    fontWeight: '600',
     color: colors.text,
-    marginLeft: spacing.xs,
+    marginLeft: 4,
   },
-  
   reviewsText: {
-    fontSize: typography.sizes.sm,
+    fontSize: 14,
     color: colors.textLight,
+    marginLeft: 8,
   },
-  
   restaurantAddress: {
-    fontSize: typography.sizes.base,
+    fontSize: 14,
     color: colors.textLight,
-    lineHeight: typography.sizes.base * typography.lineHeights.relaxed,
+    lineHeight: 20,
   },
-  
   quickActions: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingTop: spacing.lg,
+    justifyContent: 'space-around',
+    paddingTop: 20,
     borderTopWidth: 1,
-    borderTopColor: colors.borderLight,
-    gap: spacing.sm,
+    borderTopColor: colors.backgroundDark,
   },
-  
   quickActionButton: {
-    flex: 1,
     alignItems: 'center',
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.sm,
-    borderRadius: borderRadius.xl,
-    ...shadows.medium,
+    padding: 12,
+    borderRadius: 12,
+    backgroundColor: colors.accent,
+    minWidth: 70,
   },
-  
-  callButton: {
-    backgroundColor: colors.success,
-  },
-  
-  chatButton: {
-    backgroundColor: colors.primary,
-  },
-  
-  shareButton: {
-    backgroundColor: colors.secondary,
-  },
-  
-  saveButton: {
-    backgroundColor: colors.info,
-  },
-  
   quickActionText: {
-    fontSize: typography.sizes.xs,
-    fontWeight: typography.weights.semibold,
-    marginTop: spacing.xs,
-  },
-  
-  callButtonText: {
-    color: colors.textInverse,
-  },
-  
-  chatButtonText: {
-    color: colors.textInverse,
-  },
-  
-  shareButtonText: {
-    color: colors.textInverse,
-  },
-  
-  saveButtonText: {
-    color: colors.textInverse,
+    fontSize: 12,
+    color: colors.primary,
+    fontWeight: '600',
+    marginTop: 4,
   },
   bookingDetailsCard: {
-    backgroundColor: colors.surface,
-    borderRadius: borderRadius['2xl'],
-    padding: spacing.xl,
-    marginBottom: spacing.lg,
-    ...shadows.large,
+    backgroundColor: colors.card,
+    borderRadius: 20,
+    padding: 20,
+    marginBottom: 20,
+    ...shadows.card,
   },
-  
   cardTitle: {
-    fontSize: typography.sizes.xl,
-    fontWeight: typography.weights.extrabold,
+    fontSize: 18,
+    fontWeight: '700',
     color: colors.text,
-    marginBottom: spacing.lg,
+    marginBottom: 20,
   },
-  
   detailsGrid: {
-    gap: spacing.md,
+    gap: 16,
   },
-  
   detailItem: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.accent,
-    padding: spacing.lg,
-    borderRadius: borderRadius.xl,
-    ...shadows.small,
+    padding: 16,
+    borderRadius: 16,
   },
-  
   detailIconContainer: {
-    width: 56,
-    height: 56,
-    borderRadius: borderRadius.xl,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
     backgroundColor: colors.primary + '20',
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: spacing.md,
+    marginRight: 16,
   },
-  
   detailContent: {
     flex: 1,
   },
-  
   detailLabel: {
-    fontSize: typography.sizes.sm,
+    fontSize: 14,
     color: colors.textLight,
-    marginBottom: spacing.xs,
-    fontWeight: typography.weights.medium,
+    marginBottom: 4,
   },
-  
   detailValue: {
-    fontSize: typography.sizes.lg,
-    fontWeight: typography.weights.bold,
+    fontSize: 16,
+    fontWeight: '600',
     color: colors.text,
   },
   timelineCard: {
-    backgroundColor: colors.surface,
-    borderRadius: borderRadius['2xl'],
-    padding: spacing.xl,
-    marginBottom: spacing.lg,
-    ...shadows.large,
+    backgroundColor: colors.card,
+    borderRadius: 20,
+    padding: 20,
+    marginBottom: 20,
+    ...shadows.card,
   },
   timelineItem: {
     flexDirection: 'row',
@@ -603,13 +512,13 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: colors.surface,
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.md,
+    backgroundColor: colors.card,
+    paddingHorizontal: 20,
+    paddingTop: 16,
     paddingBottom: 40,
-    borderTopLeftRadius: borderRadius['2xl'],
-    borderTopRightRadius: borderRadius['2xl'],
-    ...shadows.large,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    ...shadows.card,
   },
   actionRow: {
     flexDirection: 'row',
@@ -622,35 +531,5 @@ const styles = StyleSheet.create({
   primaryButton: {
     flex: 1,
     height: 56,
-  },
-  
-  // New enhanced styles
-  successPulse: {
-    position: 'absolute',
-    top: -10,
-    left: -10,
-    right: -10,
-    bottom: -10,
-    borderRadius: 90,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-  },
-  
-  successPulseInner: {
-    position: 'absolute',
-    top: 10,
-    left: 10,
-    right: 10,
-    bottom: 10,
-    borderRadius: 70,
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
-  },
-  
-  bookingIdLabel: {
-    fontSize: typography.sizes.xs,
-    color: colors.textInverse,
-    textAlign: 'center',
-    opacity: 0.8,
-    marginBottom: spacing.xs,
-    fontWeight: typography.weights.medium,
   },
 });

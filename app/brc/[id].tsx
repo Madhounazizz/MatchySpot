@@ -52,8 +52,6 @@ export default function BRCDetailScreen() {
       router.push('/booking');
     }
   };
-
-
   
 
 
@@ -343,19 +341,17 @@ export default function BRCDetailScreen() {
       
       <View style={styles.footer}>
         <View style={styles.footerContent}>
-          <View style={styles.footerInfo}>
+          <View>
             <Text style={styles.footerTitle}>Ready to visit?</Text>
             <Text style={styles.footerSubtitle}>Book your table now</Text>
           </View>
           
-          <View style={styles.footerButtons}>
-            <Button
-              title="Book Table"
-              onPress={handleBookTable}
-              style={styles.fullWidthButton}
-              icon={<Calendar size={18} color={colors.white} />}
-            />
-          </View>
+          <Button
+            title="Book Table"
+            onPress={handleBookTable}
+            style={styles.bookButton}
+            icon={<Calendar size={20} color={colors.white} />}
+          />
         </View>
       </View>
     </View>
@@ -633,30 +629,22 @@ const styles = StyleSheet.create({
     ...shadows.large,
   },
   footerContent: {
-    padding: 20,
-  },
-  footerInfo: {
-    marginBottom: 16,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
+    padding: 20,
   },
   footerTitle: {
     fontSize: 18,
     fontWeight: '600',
     color: colors.text,
-    textAlign: 'center',
   },
   footerSubtitle: {
     fontSize: 14,
     color: colors.textLight,
-    textAlign: 'center',
-    marginTop: 4,
   },
-  footerButtons: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  fullWidthButton: {
-    width: '100%',
+  bookButton: {
+    width: 160,
   },
   reviewsHeader: {
     flexDirection: 'row',

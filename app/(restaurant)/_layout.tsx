@@ -2,41 +2,35 @@ import React from "react";
 import { Tabs } from "expo-router";
 import { Calendar, ChefHat, LayoutGrid, Menu, Package, Settings } from "lucide-react-native";
 import { colors } from "@/constants/colors";
-import { Platform } from "react-native";
 
 export default function RestaurantTabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: '#FF6B6B',
+        tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textLight,
         tabBarStyle: {
           backgroundColor: colors.white,
           borderTopWidth: 0,
-          elevation: 12,
+          elevation: 8,
           shadowColor: '#000',
-          shadowOffset: { width: 0, height: -4 },
-          shadowOpacity: 0.12,
-          shadowRadius: 12,
-          height: Platform.OS === 'ios' ? 85 : 75,
-          paddingBottom: Platform.OS === 'ios' ? 25 : 12,
-          paddingTop: 12,
-          borderTopLeftRadius: 20,
-          borderTopRightRadius: 20,
+          shadowOffset: { width: 0, height: -2 },
+          shadowOpacity: 0.08,
+          shadowRadius: 8,
+          height: 70,
+          paddingBottom: 10,
+          paddingTop: 8,
         },
         tabBarLabelStyle: {
-          fontSize: 10,
-          fontWeight: '600',
-          marginTop: 6,
+          fontSize: 9,
+          fontWeight: '500',
+          marginTop: 4,
         },
         tabBarIconStyle: {
-          marginTop: 2,
+          marginTop: 4,
         },
         headerShown: false,
         lazy: true,
-        tabBarItemStyle: {
-          paddingVertical: 4,
-        },
       }}
     >
       <Tabs.Screen
@@ -45,9 +39,8 @@ export default function RestaurantTabLayout() {
           title: "Reservations",
           tabBarIcon: ({ color, focused }) => (
             <Calendar 
-              size={focused ? 26 : 22} 
+              size={focused ? 24 : 22} 
               color={color}
-              strokeWidth={focused ? 2.5 : 2}
             />
           ),
         }}
@@ -58,9 +51,8 @@ export default function RestaurantTabLayout() {
           title: "Orders",
           tabBarIcon: ({ color, focused }) => (
             <ChefHat 
-              size={focused ? 26 : 22} 
+              size={focused ? 24 : 22} 
               color={color}
-              strokeWidth={focused ? 2.5 : 2}
             />
           ),
         }}
@@ -68,12 +60,11 @@ export default function RestaurantTabLayout() {
       <Tabs.Screen
         name="tables"
         options={{
-          title: "Tables",
+          title: "Table Mgmt",
           tabBarIcon: ({ color, focused }) => (
             <LayoutGrid 
-              size={focused ? 26 : 22} 
+              size={focused ? 24 : 22} 
               color={color}
-              strokeWidth={focused ? 2.5 : 2}
             />
           ),
         }}
@@ -81,12 +72,11 @@ export default function RestaurantTabLayout() {
       <Tabs.Screen
         name="menu"
         options={{
-          title: "Menu",
+          title: "Menu Mgmt",
           tabBarIcon: ({ color, focused }) => (
             <Menu 
-              size={focused ? 26 : 22} 
+              size={focused ? 24 : 22} 
               color={color}
-              strokeWidth={focused ? 2.5 : 2}
             />
           ),
         }}
@@ -94,12 +84,11 @@ export default function RestaurantTabLayout() {
       <Tabs.Screen
         name="inventory"
         options={{
-          title: "Stock",
+          title: "Inventory",
           tabBarIcon: ({ color, focused }) => (
             <Package 
-              size={focused ? 26 : 22} 
+              size={focused ? 24 : 22} 
               color={color}
-              strokeWidth={focused ? 2.5 : 2}
             />
           ),
         }}
@@ -110,9 +99,8 @@ export default function RestaurantTabLayout() {
           title: "Settings",
           tabBarIcon: ({ color, focused }) => (
             <Settings 
-              size={focused ? 26 : 22} 
+              size={focused ? 24 : 22} 
               color={color}
-              strokeWidth={focused ? 2.5 : 2}
             />
           ),
         }}

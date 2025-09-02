@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -8,8 +8,6 @@ import {
   SafeAreaView,
   Image,
   Alert,
-  Animated,
-  Dimensions,
 } from 'react-native';
 import {
   Calendar,
@@ -23,9 +21,6 @@ import {
   MoreVertical,
   Filter,
   Plus,
-  Star,
-  MapPin,
-  Sparkles,
 } from 'lucide-react-native';
 import { colors, shadows } from '@/constants/colors';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -33,30 +28,11 @@ import { mockReservations } from '@/mocks/reservations';
 import { Reservation } from '@/types';
 import { router } from 'expo-router';
 
-const { width } = Dimensions.get('window');
-
 type FilterStatus = 'all' | 'pending' | 'confirmed' | 'seated' | 'completed' | 'cancelled';
 
 export default function ReservationsScreen() {
   const [selectedFilter, setSelectedFilter] = useState<FilterStatus>('all');
   const [selectedDate, setSelectedDate] = useState('2025-01-20');
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const slideAnim = useRef(new Animated.Value(50)).current;
-
-  React.useEffect(() => {
-    Animated.parallel([
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 800,
-        useNativeDriver: true,
-      }),
-      Animated.timing(slideAnim, {
-        toValue: 0,
-        duration: 600,
-        useNativeDriver: true,
-      }),
-    ]).start();
-  }, []);
 
   const filteredReservations = mockReservations.filter((reservation) => {
     const matchesDate = reservation.date === selectedDate;
@@ -95,214 +71,118 @@ export default function ReservationsScreen() {
 
 
 
-  const ReservationCard = ({ reservation, index }: { reservation: Reservation; index: number }) => {
-    const cardAnim = useRef(new Animated.Value(0)).current;
-    const scaleAnim = useRef(new Animated.Value(0.95)).current;
-
-    React.useEffect(() => {
-      Animated.sequence([
-        Animated.delay(index * 100),
-        Animated.parallel([
-          Animated.timing(cardAnim, {
-            toValue: 1,
-            duration: 500,
-            useNativeDriver: true,
-          }),
-          Animated.spring(scaleAnim, {
-            toValue: 1,
-            tension: 100,
-            friction: 8,
-            useNativeDriver: true,
-          }),
-        ]),
-      ]).start();
-    }, [index]);
-
-    return (
-      <Animated.View
-        style={[
-          styles.reservationCard,
-          {
-            opacity: cardAnim,
-            transform: [{ scale: scaleAnim }],
-          },
-        ]}
-      >
-        <TouchableOpacity activeOpacity={0.95} testID={`reservation-${reservation.id}`}>
-          <LinearGradient
-            colors={['#FFFFFF', '#FAFBFC']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.cardGradient}
-          >
-            <View style={styles.cardHeader}>
-              <View style={styles.customerInfo}>
-                <View style={styles.avatarContainer}>
-                  {reservation.customerAvatar ? (
-                    <Image
-                      source={{ uri: reservation.customerAvatar }}
-                      style={styles.customerAvatar}
-                    />
-                  ) : (
-                    <LinearGradient
-                      colors={['#FF6B6B', '#FF8E8E']}
-                      style={styles.avatarPlaceholder}
-                    >
-                      <Users size={18} color={colors.white} strokeWidth={2.5} />
-                    </LinearGradient>
-                  )}
-                  <View style={styles.onlineIndicator} />
-                </View>
-                <View style={styles.customerDetails}>
-                  <View style={styles.nameRow}>
-                    <Text style={styles.customerName}>{reservation.customerName}</Text>
-                    <View style={styles.vipBadge}>
-                      <Star size={10} color="#FFD700" fill="#FFD700" />
-                    </View>
-                  </View>
-                  <View style={styles.reservationMeta}>
-                    <View style={styles.metaItem}>
-                      <Clock size={14} color="#FF6B6B" strokeWidth={2} />
-                      <Text style={styles.reservationTime}>{reservation.time}</Text>
-                    </View>
-                    <View style={styles.metaItem}>
-                      <Users size={14} color="#4ECDC4" strokeWidth={2} />
-                      <Text style={styles.partySize}>{reservation.partySize} guests</Text>
-                    </View>
-                  </View>
-                  <View style={styles.locationRow}>
-                    <MapPin size={12} color={colors.textLight} strokeWidth={2} />
-                    <Text style={styles.locationText}>Main Dining Area</Text>
-                  </View>
-                </View>
-              </View>
-              <View style={styles.cardRight}>
-                <View style={[
-                  styles.statusBadge,
-                  { backgroundColor: getStatusColor(reservation.status) + '20' }
-                ]}>
-                  <View style={[styles.statusDot, { backgroundColor: getStatusColor(reservation.status) }]} />
-                  <Text style={[styles.statusText, { color: getStatusColor(reservation.status) }]}>
-                    {reservation.status.charAt(0).toUpperCase() + reservation.status.slice(1)}
-                  </Text>
-                </View>
-                {reservation.tableNumber && (
-                  <LinearGradient
-                    colors={['#4ECDC4', '#44A08D']}
-                    style={styles.tableNumberBadge}
-                  >
-                    <Text style={styles.tableNumber}>T{reservation.tableNumber}</Text>
-                  </LinearGradient>
-                )}
-              </View>
-            </View>
-
-            {reservation.specialRequests && (
-              <View style={styles.specialRequestsCard}>
-                <LinearGradient
-                  colors={['#FFF3E0', '#FFE0B2']}
-                  style={styles.requestsGradient}
-                >
-                  <Sparkles size={14} color="#FF9800" strokeWidth={2} />
-                  <Text style={styles.specialRequestsText}>{reservation.specialRequests}</Text>
-                </LinearGradient>
+  const ReservationCard = ({ reservation }: { reservation: Reservation }) => (
+    <TouchableOpacity style={styles.reservationCard} activeOpacity={0.9} testID={`reservation-${reservation.id}`}>
+      <View style={styles.cardHeader}>
+        <View style={styles.customerInfo}>
+          <View style={styles.avatarContainer}>
+            {reservation.customerAvatar ? (
+              <Image
+                source={{ uri: reservation.customerAvatar }}
+                style={styles.customerAvatar}
+              />
+            ) : (
+              <View style={styles.avatarPlaceholder}>
+                <Users size={16} color={colors.white} strokeWidth={2} />
               </View>
             )}
-
-            <View style={styles.actionButtons}>
-              {reservation.status === 'pending' && (
-                <>
-                  <TouchableOpacity
-                    style={[styles.actionButton, styles.confirmButton]}
-                    onPress={() => handleStatusUpdate(reservation.id, 'confirmed')}
-                  >
-                    <LinearGradient
-                      colors={['#4CAF50', '#45A049']}
-                      style={styles.buttonGradient}
-                    >
-                      <Check size={16} color={colors.white} strokeWidth={2.5} />
-                      <Text style={styles.actionButtonText}>Confirm</Text>
-                    </LinearGradient>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={[styles.actionButton, styles.rejectButton]}
-                    onPress={() => handleStatusUpdate(reservation.id, 'cancelled')}
-                  >
-                    <LinearGradient
-                      colors={['#F44336', '#E53935']}
-                      style={styles.buttonGradient}
-                    >
-                      <X size={16} color={colors.white} strokeWidth={2.5} />
-                      <Text style={styles.actionButtonText}>Decline</Text>
-                    </LinearGradient>
-                  </TouchableOpacity>
-                </>
-              )}
-              {reservation.status === 'confirmed' && (
-                <TouchableOpacity
-                  style={[styles.actionButton, styles.seatButton]}
-                  onPress={() => handleStatusUpdate(reservation.id, 'seated')}
-                >
-                  <LinearGradient
-                    colors={['#FF6B6B', '#FF5252']}
-                    style={styles.buttonGradient}
-                  >
-                    <Users size={16} color={colors.white} strokeWidth={2.5} />
-                    <Text style={styles.actionButtonText}>Seat Guests</Text>
-                  </LinearGradient>
-                </TouchableOpacity>
-              )}
-              {reservation.status === 'seated' && (
-                <TouchableOpacity
-                  style={[styles.actionButton, styles.completeButton]}
-                  onPress={() => handleStatusUpdate(reservation.id, 'completed')}
-                >
-                  <LinearGradient
-                    colors={['#4CAF50', '#45A049']}
-                    style={styles.buttonGradient}
-                  >
-                    <Check size={16} color={colors.white} strokeWidth={2.5} />
-                    <Text style={styles.actionButtonText}>Complete</Text>
-                  </LinearGradient>
-                </TouchableOpacity>
-              )}
-              <TouchableOpacity style={styles.contactButton}>
-                <Phone size={16} color="#FF6B6B" strokeWidth={2.5} />
-              </TouchableOpacity>
+          </View>
+          <View style={styles.customerDetails}>
+            <Text style={styles.customerName}>{reservation.customerName}</Text>
+            <View style={styles.reservationMeta}>
+              <View style={styles.metaItem}>
+                <Clock size={12} color={colors.primary} strokeWidth={2} />
+                <Text style={styles.reservationTime}>{reservation.time}</Text>
+              </View>
+              <View style={styles.metaItem}>
+                <Users size={12} color={colors.secondary} strokeWidth={2} />
+                <Text style={styles.partySize}>{reservation.partySize} guests</Text>
+              </View>
             </View>
-          </LinearGradient>
+          </View>
+        </View>
+        <View style={styles.cardRight}>
+          <View style={[
+            styles.statusBadge,
+            { backgroundColor: getStatusColor(reservation.status) + '15' }
+          ]}>
+            <Text style={[styles.statusText, { color: getStatusColor(reservation.status) }]}>
+              {reservation.status.charAt(0).toUpperCase() + reservation.status.slice(1)}
+            </Text>
+          </View>
+          {reservation.tableNumber && (
+            <View style={styles.tableNumberBadge}>
+              <Text style={styles.tableNumber}>#{reservation.tableNumber}</Text>
+            </View>
+          )}
+        </View>
+      </View>
+
+      {reservation.specialRequests && (
+        <View style={styles.specialRequestsCard}>
+          <MessageSquare size={12} color={colors.primary} strokeWidth={2} />
+          <Text style={styles.specialRequestsText}>{reservation.specialRequests}</Text>
+        </View>
+      )}
+
+      <View style={styles.actionButtons}>
+        {reservation.status === 'pending' && (
+          <>
+            <TouchableOpacity
+              style={[styles.actionButton, styles.confirmButton]}
+              onPress={() => handleStatusUpdate(reservation.id, 'confirmed')}
+            >
+              <Check size={14} color={colors.white} strokeWidth={2} />
+              <Text style={styles.actionButtonText}>Confirm</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.actionButton, styles.rejectButton]}
+              onPress={() => handleStatusUpdate(reservation.id, 'cancelled')}
+            >
+              <X size={14} color={colors.white} strokeWidth={2} />
+              <Text style={styles.actionButtonText}>Cancel</Text>
+            </TouchableOpacity>
+          </>
+        )}
+        {reservation.status === 'confirmed' && (
+          <TouchableOpacity
+            style={[styles.actionButton, styles.seatButton]}
+            onPress={() => handleStatusUpdate(reservation.id, 'seated')}
+          >
+            <Users size={14} color={colors.white} strokeWidth={2} />
+            <Text style={styles.actionButtonText}>Seat Guests</Text>
+          </TouchableOpacity>
+        )}
+        {reservation.status === 'seated' && (
+          <TouchableOpacity
+            style={[styles.actionButton, styles.completeButton]}
+            onPress={() => handleStatusUpdate(reservation.id, 'completed')}
+          >
+            <Check size={14} color={colors.white} strokeWidth={2} />
+            <Text style={styles.actionButtonText}>Complete</Text>
+          </TouchableOpacity>
+        )}
+        <TouchableOpacity style={styles.contactButton}>
+          <Phone size={14} color={colors.primary} strokeWidth={2} />
         </TouchableOpacity>
-      </Animated.View>
-    );
-  };
+      </View>
+    </TouchableOpacity>
+  );
 
   return (
     <SafeAreaView style={styles.container}>
-      <LinearGradient
-        colors={['#FF6B6B', '#FF8E8E', '#FFAB91']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.header}
-      >
-        <Animated.View 
-          style={[
-            styles.headerContent,
-            {
-              opacity: fadeAnim,
-              transform: [{ translateY: slideAnim }],
-            },
-          ]}
-        >
+      <View style={styles.header}>
+        <View style={styles.headerContent}>
           <View>
             <Text style={styles.title}>Reservations</Text>
             <Text style={styles.subtitle}>{filteredReservations.length} reservations today</Text>
           </View>
           <View style={styles.headerActions}>
             <TouchableOpacity style={styles.headerButton} testID="reservations-calendar-btn" activeOpacity={0.8}>
-              <Calendar size={20} color={colors.white} strokeWidth={2.5} />
+              <Calendar size={18} color={colors.primary} />
             </TouchableOpacity>
             <TouchableOpacity style={styles.headerButton} testID="reservations-filter-btn" activeOpacity={0.8}>
-              <Filter size={20} color={colors.white} strokeWidth={2.5} />
+              <Filter size={18} color={colors.primary} />
             </TouchableOpacity>
             <TouchableOpacity 
               style={styles.addButton} 
@@ -310,17 +190,12 @@ export default function ReservationsScreen() {
               activeOpacity={0.9}
               onPress={() => router.push('/(restaurant)/new-reservation')}
             >
-              <LinearGradient
-                colors={['#FFFFFF', '#F5F5F5']}
-                style={styles.addButtonGradient}
-              >
-                <Plus size={18} color="#FF6B6B" strokeWidth={2.5} />
-                <Text style={styles.addButtonText}>New</Text>
-              </LinearGradient>
+              <Plus size={16} color={colors.white} />
+              <Text style={styles.addButtonText}>New</Text>
             </TouchableOpacity>
           </View>
-        </Animated.View>
-      </LinearGradient>
+        </View>
+      </View>
 
       <View style={styles.dateSelector}>
         <Text style={styles.selectedDate}>Today - January 20, 2025</Text>
@@ -454,32 +329,19 @@ export default function ReservationsScreen() {
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         <View style={styles.reservationsList}>
           {filteredReservations.length > 0 ? (
-            filteredReservations.map((reservation, index) => (
-              <ReservationCard key={reservation.id} reservation={reservation} index={index} />
+            filteredReservations.map((reservation) => (
+              <ReservationCard key={reservation.id} reservation={reservation} />
             ))
           ) : (
-            <Animated.View 
-              style={[
-                styles.emptyState,
-                {
-                  opacity: fadeAnim,
-                  transform: [{ translateY: slideAnim }],
-                },
-              ]}
-            >
-              <LinearGradient
-                colors={['#E3F2FD', '#BBDEFB']}
-                style={styles.emptyStateGradient}
-              >
-                <Calendar size={64} color="#2196F3" strokeWidth={1.5} />
-                <Text style={styles.emptyStateText}>No reservations found</Text>
-                <Text style={styles.emptyStateSubtext}>
-                  {selectedFilter === 'all'
-                    ? 'No reservations for this date'
-                    : `No ${selectedFilter} reservations for this date`}
-                </Text>
-              </LinearGradient>
-            </Animated.View>
+            <View style={styles.emptyState}>
+              <Calendar size={48} color={colors.textLight} />
+              <Text style={styles.emptyStateText}>No reservations found</Text>
+              <Text style={styles.emptyStateSubtext}>
+                {selectedFilter === 'all'
+                  ? 'No reservations for this date'
+                  : `No ${selectedFilter} reservations for this date`}
+              </Text>
+            </View>
           )}
         </View>
       </ScrollView>
@@ -509,17 +371,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   title: {
-    fontSize: 28,
-    fontWeight: '800',
-    color: colors.white,
-    textShadowColor: 'rgba(0,0,0,0.1)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 2,
+    fontSize: 24,
+    fontWeight: '700',
+    color: colors.text,
   },
   subtitle: {
-    fontSize: 15,
-    color: 'rgba(255,255,255,0.9)',
-    marginTop: 4,
+    fontSize: 14,
+    color: colors.textLight,
+    marginTop: 2,
     fontWeight: '500',
   },
   headerActions: {
@@ -528,34 +387,26 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   headerButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: 'rgba(255,255,255,0.2)',
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: colors.backgroundLight,
     alignItems: 'center',
     justifyContent: 'center',
-    backdropFilter: 'blur(10px)',
   },
   addButton: {
-    borderRadius: 20,
-    overflow: 'hidden',
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-  },
-  addButtonGradient: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 18,
-    paddingVertical: 10,
-    gap: 8,
+    backgroundColor: colors.primary,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 16,
+    gap: 6,
   },
   addButtonText: {
-    color: '#FF6B6B',
-    fontWeight: '700',
-    fontSize: 15,
+    color: colors.white,
+    fontWeight: '600',
+    fontSize: 14,
   },
   dateSelector: {
     paddingHorizontal: 16,
@@ -634,18 +485,14 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   reservationCard: {
-    borderRadius: 20,
-    marginBottom: 16,
-    overflow: 'hidden',
-    elevation: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-  },
-  cardGradient: {
-    padding: 16,
-    borderRadius: 20,
+    backgroundColor: colors.white,
+    borderRadius: 14,
+    padding: 12,
+    marginBottom: 8,
+    ...shadows.small,
+    elevation: 2,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   cardHeader: {
     flexDirection: 'row',
@@ -654,22 +501,14 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   statusBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 12,
-    marginBottom: 6,
-    gap: 6,
-  },
-  statusDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
+    paddingHorizontal: 6,
+    paddingVertical: 3,
+    borderRadius: 8,
+    marginBottom: 4,
   },
   statusText: {
-    fontSize: 11,
-    fontWeight: '700',
+    fontSize: 9,
+    fontWeight: '600',
   },
   cardRight: {
     alignItems: 'flex-end',
@@ -688,55 +527,21 @@ const styles = StyleSheet.create({
     borderRadius: 14,
   },
   avatarPlaceholder: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  onlineIndicator: {
-    position: 'absolute',
-    bottom: 0,
-    right: 0,
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    backgroundColor: '#4CAF50',
-    borderWidth: 2,
-    borderColor: colors.white,
   },
   customerDetails: {
     flex: 1,
   },
-  nameRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 4,
-  },
   customerName: {
-    fontSize: 16,
-    fontWeight: '700',
+    fontSize: 13,
+    fontWeight: '600',
     color: colors.text,
-    marginRight: 8,
-  },
-  vipBadge: {
-    backgroundColor: '#FFF3E0',
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  locationRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 4,
-  },
-  locationText: {
-    fontSize: 11,
-    color: colors.textLight,
-    marginLeft: 4,
-    fontWeight: '500',
+    marginBottom: 2,
   },
   reservationMeta: {
     flexDirection: 'row',
@@ -758,15 +563,13 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   specialRequestsCard: {
-    marginBottom: 12,
-    borderRadius: 12,
-    overflow: 'hidden',
-  },
-  requestsGradient: {
+    backgroundColor: colors.backgroundLight,
+    padding: 8,
+    borderRadius: 8,
+    marginBottom: 8,
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 12,
-    gap: 8,
+    gap: 6,
   },
   specialRequestsText: {
     fontSize: 11,
@@ -775,15 +578,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   tableNumberBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: colors.secondary,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 8,
   },
   tableNumber: {
-    fontSize: 11,
-    fontWeight: '700',
+    fontSize: 9,
+    fontWeight: '600',
     color: colors.white,
   },
   actionButtons: {
@@ -793,20 +595,12 @@ const styles = StyleSheet.create({
   },
   actionButton: {
     flex: 1,
-    borderRadius: 12,
-    overflow: 'hidden',
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-  },
-  buttonGradient: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 10,
-    gap: 6,
+    paddingVertical: 6,
+    borderRadius: 10,
+    gap: 3,
   },
   actionButtonText: {
     color: colors.white,
@@ -826,29 +620,17 @@ const styles = StyleSheet.create({
     backgroundColor: colors.success,
   },
   contactButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
-    backgroundColor: 'rgba(255,107,107,0.1)',
+    width: 26,
+    height: 26,
+    borderRadius: 8,
+    backgroundColor: colors.backgroundLight,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: 'rgba(255,107,107,0.2)',
   },
   emptyState: {
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 60,
-    marginHorizontal: 20,
-    borderRadius: 20,
-    overflow: 'hidden',
-  },
-  emptyStateGradient: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 40,
-    paddingHorizontal: 20,
-    width: '100%',
   },
   emptyStateText: {
     fontSize: 16,
