@@ -3,7 +3,7 @@ import { StyleSheet, View, Text, ScrollView, TouchableOpacity } from 'react-nati
 import { Image } from 'expo-image';
 import { useLocalSearchParams, Stack, useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Heart, Star, MapPin, Clock, Phone, Share, Calendar, MessageCircle, ThumbsUp, Users } from 'lucide-react-native';
+import { Heart, Star, MapPin, Clock, Phone, Share, Calendar, MessageCircle, ThumbsUp } from 'lucide-react-native';
 import { colors, shadows } from '@/constants/colors';
 import Button from '@/components/Button';
 import { brcs } from '@/mocks/brcs';
@@ -53,14 +53,7 @@ export default function BRCDetailScreen() {
     }
   };
 
-  const handlePlanMeetup = () => {
-    console.log('Planning meetup at:', brc.name);
-    // Navigate to meetup planning screen or show modal
-    router.push({
-      pathname: '/invite',
-      params: { brcId: brc.id, brcName: brc.name }
-    });
-  };
+
   
 
 
@@ -352,21 +345,14 @@ export default function BRCDetailScreen() {
         <View style={styles.footerContent}>
           <View style={styles.footerInfo}>
             <Text style={styles.footerTitle}>Ready to visit?</Text>
-            <Text style={styles.footerSubtitle}>Book a table or plan a meetup</Text>
+            <Text style={styles.footerSubtitle}>Book your table now</Text>
           </View>
           
           <View style={styles.footerButtons}>
             <Button
-              title="Plan Meetup"
-              variant="outline"
-              onPress={handlePlanMeetup}
-              style={styles.meetupButton}
-              icon={<Users size={18} color={colors.primary} />}
-            />
-            <Button
               title="Book Table"
               onPress={handleBookTable}
-              style={styles.bookButton}
+              style={styles.fullWidthButton}
               icon={<Calendar size={18} color={colors.white} />}
             />
           </View>
@@ -669,14 +655,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 12,
   },
-  meetupButton: {
-    flex: 1,
-    borderWidth: 2,
-    borderColor: colors.primary,
-    backgroundColor: 'transparent',
-  },
-  bookButton: {
-    flex: 1,
+  fullWidthButton: {
+    width: '100%',
   },
   reviewsHeader: {
     flexDirection: 'row',
