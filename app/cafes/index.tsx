@@ -1,35 +1,77 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, ScrollView, Text, TouchableOpacity, Alert } from 'react-native';
+import React, { useState, useMemo } from 'react';
+import { StyleSheet, View, ScrollView, Text, TouchableOpacity, Alert, FlatList } from 'react-native';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
-import { MapPin, Star, Clock, Wifi, Coffee, ChevronRight, Shield, Heart, Filter } from 'lucide-react-native';
+import { MapPin, Star, Clock, Wifi, Coffee, ChevronRight, Shield, Heart, Filter, Award, TrendingUp, BookOpen, Cake } from 'lucide-react-native';
 import { colors, shadows } from '@/constants/colors';
 import { brcs } from '@/mocks/brcs';
 import SearchBar from '@/components/SearchBar';
+import BRCCard from '@/components/BRCCard';
+import { useTranslation } from '@/store/useLanguageStore';
+import { LinearGradient } from 'expo-linear-gradient';
+
+
 
 export default function CafesScreen() {
   const router = useRouter();
+  const { t } = useTranslation();
   const [favorites, setFavorites] = useState<string[]>([]);
   const [filterOpen, setFilterOpen] = useState<boolean>(false);
   const [selectedFilter, setSelectedFilter] = useState<string>('all');
-  const cafes = brcs.filter(brc => brc.type === 'cafe');
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  
+  const cafes = useMemo(() => brcs.filter(brc => brc.type === 'cafe'), []);
+  const featuredCafes = useMemo(() => cafes.filter(cafe => cafe.rating >= 4.5).slice(0, 3), [cafes]);
+  const nearbyCafes = useMemo(() => cafes.filter(cafe => cafe.distance && parseFloat(cafe.distance.replace(' mi', '')) <= 1.0), [cafes]);
 
   const filters = [
-    { id: 'all', label: 'All Cafes' },
-    { id: 'specialty', label: 'Specialty Coffee' },
-    { id: 'wifi', label: 'Work-Friendly' },
-    { id: 'pastries', label: 'Fresh Pastries' },
+    { id: 'all', label: t('allCafes'), icon: Coffee },
+    { id: 'specialty', label: t('specialtyCoffee'), icon: Award },
+    { id: 'wifi', label: t('workFriendly'), icon: Wifi },
+    { id: 'pastries', label: t('freshPastries'), icon: Cake },
+    { id: 'trending', label: t('trending'), icon: TrendingUp },
+    { id: 'study', label: t('studySpots'), icon: BookOpen },
   ];
 
-  const filteredCafes = selectedFilter === 'all' 
-    ? cafes 
-    : cafes.filter(cafe => 
-        cafe.tags.some(tag => 
-          tag.toLowerCase().includes(selectedFilter.toLowerCase()) ||
-          (selectedFilter === 'wifi' && tag.toLowerCase().includes('wifi')) ||
-          (selectedFilter === 'specialty' && tag.toLowerCase().includes('coffee'))
-        )
+  const filteredCafes = useMemo(() => {
+    let filtered = cafes;
+    
+    // Apply search filter
+    if (searchQuery.trim()) {
+      filtered = filtered.filter(cafe => 
+        cafe.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        cafe.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        cafe.address.toLowerCase().includes(searchQuery.toLowerCase())
       );
+    }
+    
+    // Apply category filter
+    if (selectedFilter !== 'all') {
+      filtered = filtered.filter(cafe => {
+        switch (selectedFilter) {
+          case 'specialty':
+            return cafe.tags.some(tag => tag.toLowerCase().includes('coffee') || tag.toLowerCase().includes('artisanal'));
+          case 'wifi':
+            return cafe.tags.some(tag => tag.toLowerCase().includes('wifi') || tag.toLowerCase().includes('study'));
+          case 'pastries':
+            return cafe.tags.some(tag => tag.toLowerCase().includes('pastries') || tag.toLowerCase().includes('baked'));
+          case 'trending':
+            return cafe.rating >= 4.5 && cafe.reviewCount >= 200;
+          case 'study':
+            return cafe.tags.some(tag => tag.toLowerCase().includes('study') || tag.toLowerCase().includes('wifi'));
+          default:
+            return true;
+        }
+      });
+    }
+    
+    return filtered.sort((a, b) => {
+      // Sort by rating first, then by review count
+      if (b.rating !== a.rating) return b.rating - a.rating;
+      return b.reviewCount - a.reviewCount;
+    });
+  }, [cafes, searchQuery, selectedFilter]);
 
   const handleCafePress = (id: string) => {
     router.push(`/brc/${id}`);
@@ -66,17 +108,38 @@ export default function CafesScreen() {
         <Text style={styles.subtitle}>Find your perfect coffee spot</Text>
       </View>
 
-      <SearchBar placeholder="Search cafés..." />
+      <SearchBar 
+        placeholder={t('searchCafes')} 
+        value={searchQuery}
+        onChangeText={setSearchQuery}
+      />
 
       {/* Filter Bar */}
       <View style={styles.filterContainer}>
-        <TouchableOpacity 
-          style={styles.filterButton}
-          onPress={() => setFilterOpen(!filterOpen)}
-        >
-          <Filter size={16} color={colors.primary} />
-          <Text style={styles.filterButtonText}>Filter</Text>
-        </TouchableOpacity>
+        <View style={styles.filterHeader}>
+          <TouchableOpacity 
+            style={styles.filterButton}
+            onPress={() => setFilterOpen(!filterOpen)}
+          >
+            <Filter size={16} color={colors.primary} />
+            <Text style={styles.filterButtonText}>{t('filter')}</Text>
+          </TouchableOpacity>
+          
+          <View style={styles.viewModeContainer}>
+            <TouchableOpacity 
+              style={[styles.viewModeButton, viewMode === 'grid' && styles.activeViewMode]}
+              onPress={() => setViewMode('grid')}
+            >
+              <Text style={[styles.viewModeText, viewMode === 'grid' && styles.activeViewModeText]}>Grid</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              style={[styles.viewModeButton, viewMode === 'list' && styles.activeViewMode]}
+              onPress={() => setViewMode('list')}
+            >
+              <Text style={[styles.viewModeText, viewMode === 'list' && styles.activeViewModeText]}>List</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
         
         {filterOpen && (
           <ScrollView 
@@ -84,23 +147,30 @@ export default function CafesScreen() {
             showsHorizontalScrollIndicator={false}
             style={styles.filterScroll}
           >
-            {filters.map(filter => (
-              <TouchableOpacity
-                key={filter.id}
-                style={[
-                  styles.filterChip,
-                  selectedFilter === filter.id && styles.activeFilterChip
-                ]}
-                onPress={() => setSelectedFilter(filter.id)}
-              >
-                <Text style={[
-                  styles.filterChipText,
-                  selectedFilter === filter.id && styles.activeFilterChipText
-                ]}>
-                  {filter.label}
-                </Text>
-              </TouchableOpacity>
-            ))}
+            {filters.map(filter => {
+              const IconComponent = filter.icon;
+              return (
+                <TouchableOpacity
+                  key={filter.id}
+                  style={[
+                    styles.filterChip,
+                    selectedFilter === filter.id && styles.activeFilterChip
+                  ]}
+                  onPress={() => setSelectedFilter(filter.id)}
+                >
+                  <IconComponent 
+                    size={14} 
+                    color={selectedFilter === filter.id ? colors.white : colors.primary} 
+                  />
+                  <Text style={[
+                    styles.filterChipText,
+                    selectedFilter === filter.id && styles.activeFilterChipText
+                  ]}>
+                    {filter.label}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
           </ScrollView>
         )}
       </View>
@@ -117,101 +187,212 @@ export default function CafesScreen() {
             style={styles.heroImage}
             contentFit="cover"
           />
-          <View style={styles.heroOverlay}>
-            <Text style={styles.heroTitle}>Coffee Time</Text>
-            <Text style={styles.heroSubtitle}>Discover cozy spots for your daily brew</Text>
-          </View>
+          <LinearGradient
+            colors={['transparent', 'rgba(0,0,0,0.8)']}
+            style={styles.heroOverlay}
+          >
+            <Text style={styles.heroTitle}>{t('coffeeTime')}</Text>
+            <Text style={styles.heroSubtitle}>{t('discoverCozySpots')}</Text>
+            <View style={styles.heroStats}>
+              <View style={styles.heroStat}>
+                <Coffee size={16} color={colors.white} />
+                <Text style={styles.heroStatText}>{cafes.length} {t('cafes')}</Text>
+              </View>
+              <View style={styles.heroStat}>
+                <Star size={16} color={colors.white} />
+                <Text style={styles.heroStatText}>{(cafes.reduce((sum, cafe) => sum + cafe.rating, 0) / cafes.length).toFixed(1)} {t('avgRating')}</Text>
+              </View>
+            </View>
+          </LinearGradient>
         </View>
 
-        {/* Categories */}
-        <View style={styles.categoriesContainer}>
-          <TouchableOpacity style={styles.categoryItem}>
-            <View style={styles.categoryIcon}>
-              <Coffee size={20} color={colors.primary} />
+        {/* Featured Cafes */}
+        {featuredCafes.length > 0 && (
+          <View style={styles.sectionContainer}>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>{t('featuredCafes')}</Text>
+              <TouchableOpacity onPress={() => router.push('/discover')}>
+                <Text style={styles.seeAllText}>{t('seeAll')}</Text>
+              </TouchableOpacity>
             </View>
-            <Text style={styles.categoryText}>Specialty</Text>
+            <FlatList
+              data={featuredCafes}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              keyExtractor={(item) => `featured-${item.id}`}
+              renderItem={({ item }) => (
+                <BRCCard brc={item} size="large" />
+              )}
+              contentContainerStyle={styles.horizontalList}
+            />
+          </View>
+        )}
+        
+        {/* Nearby Cafes */}
+        {nearbyCafes.length > 0 && (
+          <View style={styles.sectionContainer}>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>{t('nearbyCafes')}</Text>
+              <TouchableOpacity>
+                <Text style={styles.seeAllText}>{t('seeAll')}</Text>
+              </TouchableOpacity>
+            </View>
+            <FlatList
+              data={nearbyCafes}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              keyExtractor={(item) => `nearby-${item.id}`}
+              renderItem={({ item }) => (
+                <BRCCard brc={item} size="medium" />
+              )}
+              contentContainerStyle={styles.horizontalList}
+            />
+          </View>
+        )}
+        
+        {/* Quick Categories */}
+        <View style={styles.categoriesContainer}>
+          <TouchableOpacity 
+            style={styles.categoryItem}
+            onPress={() => setSelectedFilter('specialty')}
+          >
+            <View style={styles.categoryIcon}>
+              <Award size={20} color={colors.primary} />
+            </View>
+            <Text style={styles.categoryText}>{t('specialty')}</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.categoryItem}>
+          <TouchableOpacity 
+            style={styles.categoryItem}
+            onPress={() => setSelectedFilter('wifi')}
+          >
             <View style={styles.categoryIcon}>
               <Wifi size={20} color={colors.primary} />
             </View>
-            <Text style={styles.categoryText}>Work-friendly</Text>
+            <Text style={styles.categoryText}>{t('workFriendly')}</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.categoryItem}>
+          <TouchableOpacity 
+            style={styles.categoryItem}
+            onPress={() => setSelectedFilter('pastries')}
+          >
             <View style={styles.categoryIcon}>
-              <Coffee size={20} color={colors.primary} />
+              <Cake size={20} color={colors.primary} />
             </View>
-            <Text style={styles.categoryText}>Pastries</Text>
+            <Text style={styles.categoryText}>{t('pastries')}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={styles.categoryItem}
+            onPress={() => setSelectedFilter('study')}
+          >
+            <View style={styles.categoryIcon}>
+              <BookOpen size={20} color={colors.primary} />
+            </View>
+            <Text style={styles.categoryText}>{t('studySpots')}</Text>
           </TouchableOpacity>
         </View>
 
+        {/* All Cafes */}
         <View style={styles.listContainer}>
-          <Text style={styles.sectionTitle}>Popular Cafés ({filteredCafes.length})</Text>
-          {filteredCafes.map((cafe) => (
-            <TouchableOpacity
-              key={cafe.id}
-              style={styles.cafeCard}
-              onPress={() => handleCafePress(cafe.id)}
-              activeOpacity={0.7}
-            >
-              <Image
-                source={{ uri: cafe.image }}
-                style={styles.cafeImage}
-                contentFit="cover"
-              />
-              <View style={styles.cafeContent}>
-                <Text style={styles.cafeName}>{cafe.name}</Text>
-                <View style={styles.ratingRow}>
-                  <Star size={14} color={colors.primary} fill={colors.primary} />
-                  <Text style={styles.ratingText}>{cafe.rating}</Text>
-                  <Text style={styles.reviewCount}>({cafe.reviewCount})</Text>
-                </View>
-                
-                <View style={styles.tagsRow}>
-                  {cafe.tags.slice(0, 3).map((tag, index) => (
-                    <View key={index} style={styles.tag}>
-                      <Text style={styles.tagText}>{tag}</Text>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>
+              {selectedFilter === 'all' ? t('allCafes') : filters.find(f => f.id === selectedFilter)?.label} ({filteredCafes.length})
+            </Text>
+            {searchQuery && (
+              <TouchableOpacity onPress={() => setSearchQuery('')}>
+                <Text style={styles.clearSearchText}>{t('clear')}</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+          
+          {filteredCafes.length === 0 ? (
+            <View style={styles.emptyState}>
+              <Coffee size={48} color={colors.textLight} />
+              <Text style={styles.emptyStateTitle}>{t('noCafesFound')}</Text>
+              <Text style={styles.emptyStateSubtitle}>{t('tryDifferentFilter')}</Text>
+            </View>
+          ) : (
+            <>
+              {viewMode === 'grid' ? (
+                <FlatList
+                  data={filteredCafes}
+                  numColumns={2}
+                  keyExtractor={(item) => item.id}
+                  renderItem={({ item }) => (
+                    <View style={styles.gridItem}>
+                      <BRCCard brc={item} size="small" />
                     </View>
-                  ))}
-                </View>
-                
-                <View style={styles.infoRow}>
-                  <View style={styles.infoItem}>
-                    <MapPin size={12} color={colors.textLight} />
-                    <Text style={styles.infoText}>{cafe.distance}</Text>
-                  </View>
-                  <View style={styles.infoItem}>
-                    <Clock size={12} color={colors.textLight} />
-                    <Text style={styles.infoText}>
-                      {cafe.openingHours.open} - {cafe.openingHours.close}
-                    </Text>
-                  </View>
-                </View>
-                
-                {/* Action Buttons */}
-                <View style={styles.actionRow}>
-                  <TouchableOpacity 
-                    style={styles.actionButton}
-                    onPress={() => toggleFavorite(cafe.id)}
+                  )}
+                  contentContainerStyle={styles.gridContainer}
+                  scrollEnabled={false}
+                />
+              ) : (
+                filteredCafes.map((cafe) => (
+                  <TouchableOpacity
+                    key={cafe.id}
+                    style={styles.cafeCard}
+                    onPress={() => handleCafePress(cafe.id)}
+                    activeOpacity={0.7}
                   >
-                    <Heart 
-                      size={16} 
-                      color={favorites.includes(cafe.id) ? colors.error : colors.textLight}
-                      fill={favorites.includes(cafe.id) ? colors.error : 'none'}
+                    <Image
+                      source={{ uri: cafe.image }}
+                      style={styles.cafeImage}
+                      contentFit="cover"
                     />
+                    <View style={styles.cafeContent}>
+                      <Text style={styles.cafeName}>{cafe.name}</Text>
+                      <View style={styles.ratingRow}>
+                        <Star size={14} color={colors.primary} fill={colors.primary} />
+                        <Text style={styles.ratingText}>{cafe.rating}</Text>
+                        <Text style={styles.reviewCount}>({cafe.reviewCount})</Text>
+                      </View>
+                      
+                      <View style={styles.tagsRow}>
+                        {cafe.tags.slice(0, 3).map((tag, index) => (
+                          <View key={index} style={styles.tag}>
+                            <Text style={styles.tagText}>{tag}</Text>
+                          </View>
+                        ))}
+                      </View>
+                      
+                      <View style={styles.infoRow}>
+                        <View style={styles.infoItem}>
+                          <MapPin size={12} color={colors.textLight} />
+                          <Text style={styles.infoText}>{cafe.distance}</Text>
+                        </View>
+                        <View style={styles.infoItem}>
+                          <Clock size={12} color={colors.textLight} />
+                          <Text style={styles.infoText}>
+                            {cafe.openingHours.open} - {cafe.openingHours.close}
+                          </Text>
+                        </View>
+                      </View>
+                      
+                      {/* Action Buttons */}
+                      <View style={styles.actionRow}>
+                        <TouchableOpacity 
+                          style={styles.actionButton}
+                          onPress={() => toggleFavorite(cafe.id)}
+                        >
+                          <Heart 
+                            size={16} 
+                            color={favorites.includes(cafe.id) ? colors.error : colors.textLight}
+                            fill={favorites.includes(cafe.id) ? colors.error : 'none'}
+                          />
+                        </TouchableOpacity>
+                        <TouchableOpacity 
+                          style={styles.verifyButton}
+                          onPress={() => handleVerifyBusiness(cafe.id, cafe.name)}
+                        >
+                          <Shield size={14} color={colors.white} />
+                          <Text style={styles.verifyButtonText}>{t('verify')}</Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                    <ChevronRight size={20} color={colors.textLight} />
                   </TouchableOpacity>
-                  <TouchableOpacity 
-                    style={styles.verifyButton}
-                    onPress={() => handleVerifyBusiness(cafe.id, cafe.name)}
-                  >
-                    <Shield size={14} color={colors.white} />
-                    <Text style={styles.verifyButtonText}>Verify</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-              <ChevronRight size={20} color={colors.textLight} />
-            </TouchableOpacity>
-          ))}
+                ))
+              )}
+            </>
+          )}
         </View>
       </ScrollView>
     </View>
@@ -264,7 +445,22 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     padding: 20,
-    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'flex-end',
+  },
+  heroStats: {
+    flexDirection: 'row',
+    marginTop: 12,
+    gap: 20,
+  },
+  heroStat: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  heroStatText: {
+    fontSize: 12,
+    color: colors.white,
+    marginLeft: 6,
+    fontWeight: '500',
   },
   heroTitle: {
     fontSize: 24,
@@ -277,6 +473,24 @@ const styles = StyleSheet.create({
     color: colors.white,
     opacity: 0.9,
   },
+  sectionContainer: {
+    marginTop: 24,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    marginBottom: 16,
+  },
+  seeAllText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: colors.primary,
+  },
+  horizontalList: {
+    paddingLeft: 16,
+  },
   categoriesContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -286,7 +500,7 @@ const styles = StyleSheet.create({
   },
   categoryItem: {
     alignItems: 'center',
-    width: '30%',
+    flex: 1,
   },
   categoryIcon: {
     width: 60,
@@ -306,11 +520,38 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     color: colors.text,
-    marginBottom: 16,
-    paddingHorizontal: 16,
+  },
+  clearSearchText: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: colors.error,
   },
   listContainer: {
     marginTop: 16,
+  },
+  emptyState: {
+    alignItems: 'center',
+    paddingVertical: 40,
+    paddingHorizontal: 16,
+  },
+  emptyStateTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: colors.text,
+    marginTop: 16,
+    marginBottom: 8,
+  },
+  emptyStateSubtitle: {
+    fontSize: 14,
+    color: colors.textLight,
+    textAlign: 'center',
+  },
+  gridContainer: {
+    paddingHorizontal: 8,
+  },
+  gridItem: {
+    flex: 1,
+    paddingHorizontal: 8,
   },
   cafeCard: {
     flexDirection: 'row',
@@ -389,6 +630,34 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
   },
+  filterHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  viewModeContainer: {
+    flexDirection: 'row',
+    backgroundColor: colors.backgroundLight,
+    borderRadius: 20,
+    padding: 2,
+  },
+  viewModeButton: {
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+    borderRadius: 18,
+  },
+  activeViewMode: {
+    backgroundColor: colors.white,
+    ...shadows.small,
+  },
+  viewModeText: {
+    fontSize: 12,
+    fontWeight: '500',
+    color: colors.textLight,
+  },
+  activeViewModeText: {
+    color: colors.primary,
+  },
   filterButton: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -408,6 +677,8 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   filterChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
@@ -421,6 +692,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
     color: colors.textLight,
+    marginLeft: 6,
   },
   activeFilterChipText: {
     color: colors.white,

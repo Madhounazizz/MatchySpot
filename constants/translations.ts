@@ -79,6 +79,26 @@ export const translations = {
     myEvents: 'My Events',
     inviteFriends: 'Invite Friends',
     restaurantDashboard: 'Restaurant Dashboard',
+    
+    // Cafe specific
+    allCafes: 'All Cafes',
+    specialtyCoffee: 'Specialty Coffee',
+    workFriendly: 'Work-Friendly',
+    freshPastries: 'Fresh Pastries',
+    trending: 'Trending',
+    studySpots: 'Study Spots',
+    searchCafes: 'Search cafés...',
+    coffeeTime: 'Coffee Time',
+    discoverCozySpots: 'Discover cozy spots for your daily brew',
+    avgRating: 'avg rating',
+    featuredCafes: 'Featured Cafés',
+    nearbyCafes: 'Nearby Cafés',
+    seeAll: 'See All',
+    specialty: 'Specialty',
+    pastries: 'Pastries',
+    clear: 'Clear',
+    noCafesFound: 'No cafés found',
+    tryDifferentFilter: 'Try adjusting your search or filters',
   },
   fr: {
     // Navigation
@@ -160,6 +180,26 @@ export const translations = {
     myEvents: 'Mes Événements',
     inviteFriends: 'Inviter des Amis',
     restaurantDashboard: 'Tableau de Bord Restaurant',
+    
+    // Cafe specific
+    allCafes: 'Tous les Cafés',
+    specialtyCoffee: 'Café de Spécialité',
+    workFriendly: 'Adapté au Travail',
+    freshPastries: 'Pâtisseries Fraîches',
+    trending: 'Tendance',
+    studySpots: 'Espaces d\'Étude',
+    searchCafes: 'Rechercher des cafés...',
+    coffeeTime: 'L\'Heure du Café',
+    discoverCozySpots: 'Découvrez des endroits confortables pour votre café quotidien',
+    avgRating: 'note moyenne',
+    featuredCafes: 'Cafés en Vedette',
+    nearbyCafes: 'Cafés à Proximité',
+    seeAll: 'Voir Tout',
+    specialty: 'Spécialité',
+    pastries: 'Pâtisseries',
+    clear: 'Effacer',
+    noCafesFound: 'Aucun café trouvé',
+    tryDifferentFilter: 'Essayez d\'ajuster votre recherche ou vos filtres',
   },
 };
 
