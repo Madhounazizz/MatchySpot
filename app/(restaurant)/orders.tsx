@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,8 @@ import {
   TouchableOpacity,
   SafeAreaView,
   Alert,
+  Animated,
+  Dimensions,
 } from 'react-native';
 import {
   Clock,
@@ -19,9 +21,14 @@ import {
   Filter,
   Plus,
   Eye,
+  Timer,
+  Flame,
+  Star,
 } from 'lucide-react-native';
 import { colors, shadows } from '@/constants/colors';
 import { LinearGradient } from 'expo-linear-gradient';
+
+const { width } = Dimensions.get('window');
 
 type OrderStatus = 'pending' | 'preparing' | 'ready' | 'served' | 'cancelled';
 type OrderPriority = 'low' | 'medium' | 'high';
@@ -122,6 +129,23 @@ type OrderFilter = 'all' | 'pending' | 'preparing' | 'ready' | 'served';
 export default function OrdersScreen() {
   const [orders, setOrders] = useState<Order[]>(mockOrders);
   const [selectedFilter, setSelectedFilter] = useState<OrderFilter>('all');
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const slideAnim = useRef(new Animated.Value(50)).current;
+
+  React.useEffect(() => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 800,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 600,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
 
   const filteredOrders = useMemo(() => {
     if (selectedFilter === 'all') return orders;
@@ -227,81 +251,164 @@ export default function OrdersScreen() {
     );
   };
 
-  const OrderCard = ({ order }: { order: Order }) => {
+  const OrderCard = ({ order, index }: { order: Order; index: number }) => {
     const StatusIcon = getStatusIcon(order.status);
     const statusColor = getStatusColor(order.status);
     const priorityColor = getPriorityColor(order.priority);
+    const cardAnim = useRef(new Animated.Value(0)).current;
+    const scaleAnim = useRef(new Animated.Value(0.95)).current;
+
+    React.useEffect(() => {
+      Animated.sequence([
+        Animated.delay(index * 100),
+        Animated.parallel([
+          Animated.timing(cardAnim, {
+            toValue: 1,
+            duration: 500,
+            useNativeDriver: true,
+          }),
+          Animated.spring(scaleAnim, {
+            toValue: 1,
+            tension: 100,
+            friction: 8,
+            useNativeDriver: true,
+          }),
+        ]),
+      ]).start();
+    }, [index]);
 
     return (
-      <TouchableOpacity 
-        style={styles.orderCard} 
-        activeOpacity={0.9}
-        testID={`order-${order.id}`}
+      <Animated.View
+        style={[
+          styles.orderCard,
+          {
+            opacity: cardAnim,
+            transform: [{ scale: scaleAnim }],
+          },
+        ]}
       >
-        <View style={styles.orderHeader}>
-          <View style={styles.orderLeft}>
-            <View style={[styles.statusIcon, { backgroundColor: statusColor + '15' }]}>
-              <StatusIcon size={16} color={statusColor} strokeWidth={2} />
-            </View>
-            <View style={styles.orderInfo}>
-              <View style={styles.orderTitleRow}>
-                <Text style={styles.tableNumber}>{order.tableNumber}</Text>
-                <View style={[styles.priorityDot, { backgroundColor: priorityColor }]} />
+        <TouchableOpacity 
+          activeOpacity={0.95}
+          testID={`order-${order.id}`}
+        >
+          <LinearGradient
+            colors={['#FFFFFF', '#FAFBFC']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.cardGradient}
+          >
+            <View style={styles.orderHeader}>
+              <View style={styles.orderLeft}>
+                <LinearGradient
+                  colors={[statusColor + '20', statusColor + '10']}
+                  style={styles.statusIcon}
+                >
+                  <StatusIcon size={18} color={statusColor} strokeWidth={2.5} />
+                </LinearGradient>
+                <View style={styles.orderInfo}>
+                  <View style={styles.orderTitleRow}>
+                    <Text style={styles.tableNumber}>{order.tableNumber}</Text>
+                    <LinearGradient
+                      colors={[priorityColor, priorityColor + 'CC']}
+                      style={styles.priorityBadge}
+                    >
+                      <Flame size={10} color={colors.white} strokeWidth={2} />
+                    </LinearGradient>
+                  </View>
+                  {order.customerName && (
+                    <View style={styles.customerRow}>
+                      <Text style={styles.customerName}>{order.customerName}</Text>
+                      <View style={styles.vipIndicator}>
+                        <Star size={8} color="#FFD700" fill="#FFD700" />
+                      </View>
+                    </View>
+                  )}
+                  <View style={styles.timeRow}>
+                    <Clock size={12} color="#FF6B6B" strokeWidth={2} />
+                    <Text style={styles.orderTime}>{order.orderTime}</Text>
+                  </View>
+                </View>
               </View>
-              {order.customerName && (
-                <Text style={styles.customerName}>{order.customerName}</Text>
+              <View style={styles.orderActions}>
+                <LinearGradient
+                  colors={[statusColor + '20', statusColor + '10']}
+                  style={styles.statusBadge}
+                >
+                  <View style={[styles.statusDot, { backgroundColor: statusColor }]} />
+                  <Text style={[styles.statusText, { color: statusColor }]}>
+                    {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                  </Text>
+                </LinearGradient>
+                <LinearGradient
+                  colors={['#4CAF50', '#45A049']}
+                  style={styles.totalBadge}
+                >
+                  <DollarSign size={12} color={colors.white} strokeWidth={2} />
+                  <Text style={styles.totalText}>{order.totalAmount}</Text>
+                </LinearGradient>
+              </View>
+            </View>
+
+            <View style={styles.orderItems}>
+              <LinearGradient
+                colors={['#F3E5F5', '#E1BEE7']}
+                style={styles.itemsGradient}
+              >
+                <ChefHat size={14} color="#9C27B0" strokeWidth={2} />
+                <Text style={styles.itemsSummary}>
+                  {order.items.length} item{order.items.length > 1 ? 's' : ''} • {order.items.slice(0, 2).map(item => `${item.quantity}x ${item.name}`).join(', ')}{order.items.length > 2 && ` +${order.items.length - 2} more`}
+                </Text>
+              </LinearGradient>
+            </View>
+
+            {order.notes && (
+              <View style={styles.notesSection}>
+                <LinearGradient
+                  colors={['#FFF3E0', '#FFE0B2']}
+                  style={styles.notesGradient}
+                >
+                  <AlertCircle size={12} color="#FF9800" strokeWidth={2} />
+                  <Text style={styles.notesText}>{order.notes}</Text>
+                </LinearGradient>
+              </View>
+            )}
+
+            <View style={styles.orderFooter}>
+              {order.status !== 'served' && order.status !== 'cancelled' && (
+                <TouchableOpacity
+                  style={styles.actionButton}
+                  onPress={() => handleStatusUpdate(order)}
+                >
+                  <LinearGradient
+                    colors={[statusColor, statusColor + 'DD']}
+                    style={styles.actionGradient}
+                  >
+                    <Text style={styles.actionButtonText}>
+                      {order.status === 'pending' ? 'Start Cooking' :
+                       order.status === 'preparing' ? 'Mark Ready' :
+                       order.status === 'ready' ? 'Serve Now' : 'Update'}
+                    </Text>
+                  </LinearGradient>
+                </TouchableOpacity>
               )}
-              <Text style={styles.orderTime}>{order.orderTime}</Text>
+              
+              {order.estimatedTime > 0 && (
+                <LinearGradient
+                  colors={['#E3F2FD', '#BBDEFB']}
+                  style={styles.timeEstimate}
+                >
+                  <Timer size={14} color="#2196F3" strokeWidth={2} />
+                  <Text style={styles.timeText}>{order.estimatedTime}min</Text>
+                </LinearGradient>
+              )}
+              
+              <TouchableOpacity style={styles.viewButton}>
+                <Eye size={16} color="#FF6B6B" strokeWidth={2.5} />
+              </TouchableOpacity>
             </View>
-          </View>
-          <View style={styles.orderActions}>
-            <View style={[styles.statusBadge, { backgroundColor: statusColor + '15' }]}>
-              <Text style={[styles.statusText, { color: statusColor }]}>
-                {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
-              </Text>
-            </View>
-            <Text style={styles.totalText}>${order.totalAmount}</Text>
-          </View>
-        </View>
-
-        <View style={styles.orderItems}>
-          <Text style={styles.itemsSummary}>
-            {order.items.length} item{order.items.length > 1 ? 's' : ''} • {order.items.slice(0, 2).map(item => `${item.quantity}x ${item.name}`).join(', ')}{order.items.length > 2 && ` +${order.items.length - 2} more`}
-          </Text>
-        </View>
-
-        {order.notes && (
-          <View style={styles.notesSection}>
-            <Text style={styles.notesText}>{order.notes}</Text>
-          </View>
-        )}
-
-        <View style={styles.orderFooter}>
-          {order.status !== 'served' && order.status !== 'cancelled' && (
-            <TouchableOpacity
-              style={[styles.actionButton, { backgroundColor: statusColor }]}
-              onPress={() => handleStatusUpdate(order)}
-            >
-              <Text style={styles.actionButtonText}>
-                {order.status === 'pending' ? 'Start' :
-                 order.status === 'preparing' ? 'Ready' :
-                 order.status === 'ready' ? 'Serve' : 'Update'}
-              </Text>
-            </TouchableOpacity>
-          )}
-          
-          {order.estimatedTime > 0 && (
-            <View style={styles.timeEstimate}>
-              <Clock size={12} color={colors.textLight} strokeWidth={2} />
-              <Text style={styles.timeText}>{order.estimatedTime}min</Text>
-            </View>
-          )}
-          
-          <TouchableOpacity style={styles.viewButton}>
-            <Eye size={14} color={colors.primary} strokeWidth={2} />
-          </TouchableOpacity>
-        </View>
-      </TouchableOpacity>
+          </LinearGradient>
+        </TouchableOpacity>
+      </Animated.View>
     );
   };
 
@@ -320,24 +427,39 @@ export default function OrdersScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <LinearGradient
-        colors={[colors.white, colors.backgroundLight]}
+        colors={['#FF9800', '#FFB74D', '#FFCC02']}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.header}
       >
-        <View>
-          <Text style={styles.title}>Orders</Text>
-          <Text style={styles.subtitle}>{filteredOrders.length} active orders</Text>
-        </View>
-        <View style={styles.headerActions}>
-          <TouchableOpacity style={styles.filterIcon} testID="orders-filter-btn" activeOpacity={0.8}>
-            <Filter size={20} color={colors.primary} />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.addButton} testID="orders-add-btn" activeOpacity={0.9}>
-            <Plus size={20} color={colors.white} />
-            <Text style={styles.addButtonText}>New</Text>
-          </TouchableOpacity>
-        </View>
+        <Animated.View 
+          style={[
+            styles.headerContent,
+            {
+              opacity: fadeAnim,
+              transform: [{ translateY: slideAnim }],
+            },
+          ]}
+        >
+          <View>
+            <Text style={styles.title}>Kitchen Orders</Text>
+            <Text style={styles.subtitle}>{filteredOrders.length} active orders</Text>
+          </View>
+          <View style={styles.headerActions}>
+            <TouchableOpacity style={styles.filterIcon} testID="orders-filter-btn" activeOpacity={0.8}>
+              <Filter size={20} color={colors.white} strokeWidth={2.5} />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.addButton} testID="orders-add-btn" activeOpacity={0.9}>
+              <LinearGradient
+                colors={['#FFFFFF', '#F5F5F5']}
+                style={styles.addButtonGradient}
+              >
+                <Plus size={18} color="#FF9800" strokeWidth={2.5} />
+                <Text style={styles.addButtonText}>New</Text>
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
+        </Animated.View>
       </LinearGradient>
 
       <View style={styles.tabBarContainer}>
@@ -357,19 +479,32 @@ export default function OrdersScreen() {
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         <View style={styles.ordersList}>
           {filteredOrders.length > 0 ? (
-            filteredOrders.map((order) => (
-              <OrderCard key={order.id} order={order} />
+            filteredOrders.map((order, index) => (
+              <OrderCard key={order.id} order={order} index={index} />
             ))
           ) : (
-            <View style={styles.emptyState}>
-              <ChefHat size={48} color={colors.textLight} />
-              <Text style={styles.emptyStateText}>No orders found</Text>
-              <Text style={styles.emptyStateSubtext}>
-                {selectedFilter === 'all'
-                  ? 'No orders available'
-                  : `No ${selectedFilter} orders found`}
-              </Text>
-            </View>
+            <Animated.View 
+              style={[
+                styles.emptyState,
+                {
+                  opacity: fadeAnim,
+                  transform: [{ translateY: slideAnim }],
+                },
+              ]}
+            >
+              <LinearGradient
+                colors={['#FFF3E0', '#FFE0B2']}
+                style={styles.emptyStateGradient}
+              >
+                <ChefHat size={64} color="#FF9800" strokeWidth={1.5} />
+                <Text style={styles.emptyStateText}>No orders found</Text>
+                <Text style={styles.emptyStateSubtext}>
+                  {selectedFilter === 'all'
+                    ? 'Kitchen is all caught up!'
+                    : `No ${selectedFilter} orders found`}
+                </Text>
+              </LinearGradient>
+            </Animated.View>
           )}
         </View>
       </ScrollView>
@@ -392,15 +527,24 @@ const styles = StyleSheet.create({
     ...shadows.small,
     elevation: 4,
   },
+  headerContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flex: 1,
+  },
   title: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: colors.text,
+    fontSize: 28,
+    fontWeight: '800',
+    color: colors.white,
+    textShadowColor: 'rgba(0,0,0,0.1)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
   subtitle: {
-    fontSize: 14,
-    color: colors.textLight,
-    marginTop: 2,
+    fontSize: 15,
+    color: 'rgba(255,255,255,0.9)',
+    marginTop: 4,
     fontWeight: '500',
   },
   headerActions: {
@@ -409,26 +553,34 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   filterIcon: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: colors.backgroundLight,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255,255,255,0.2)',
     alignItems: 'center',
     justifyContent: 'center',
+    backdropFilter: 'blur(10px)',
   },
   addButton: {
+    borderRadius: 20,
+    overflow: 'hidden',
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+  },
+  addButtonGradient: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.primary,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 16,
-    gap: 6,
+    paddingHorizontal: 18,
+    paddingVertical: 10,
+    gap: 8,
   },
   addButtonText: {
-    color: colors.white,
-    fontWeight: '600',
-    fontSize: 14,
+    color: '#FF9800',
+    fontWeight: '700',
+    fontSize: 15,
   },
   tabBarContainer: {
     backgroundColor: '#F9FAFB',
@@ -500,14 +652,18 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   orderCard: {
-    backgroundColor: colors.white,
-    borderRadius: 12,
-    padding: 12,
-    marginBottom: 8,
-    ...shadows.small,
-    elevation: 2,
-    borderWidth: 1,
-    borderColor: colors.border,
+    borderRadius: 20,
+    marginBottom: 16,
+    overflow: 'hidden',
+    elevation: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+  },
+  cardGradient: {
+    padding: 16,
+    borderRadius: 20,
   },
   orderHeader: {
     flexDirection: 'row',
@@ -520,12 +676,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   statusIcon: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 8,
+    marginRight: 12,
   },
   orderInfo: {
     flex: 1,
@@ -536,21 +692,41 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   tableNumber: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: colors.text,
+    marginRight: 8,
+  },
+  priorityBadge: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  customerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  customerName: {
     fontSize: 14,
     fontWeight: '600',
     color: colors.text,
     marginRight: 6,
   },
-  priorityDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
+  vipIndicator: {
+    backgroundColor: '#FFF3E0',
+    paddingHorizontal: 4,
+    paddingVertical: 2,
+    borderRadius: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  customerName: {
-    fontSize: 12,
-    fontWeight: '500',
-    color: colors.textLight,
-    marginBottom: 1,
+  timeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
   },
   orderTime: {
     fontSize: 11,
@@ -562,12 +738,20 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   totalText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: colors.success,
+    fontSize: 12,
+    fontWeight: '700',
+    color: colors.white,
   },
   orderItems: {
-    marginBottom: 8,
+    marginBottom: 12,
+    borderRadius: 12,
+    overflow: 'hidden',
+  },
+  itemsGradient: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 12,
+    gap: 8,
   },
   itemsSummary: {
     fontSize: 11,
@@ -576,10 +760,15 @@ const styles = StyleSheet.create({
     lineHeight: 15,
   },
   notesSection: {
-    backgroundColor: colors.backgroundLight,
-    padding: 6,
-    borderRadius: 6,
-    marginBottom: 6,
+    marginBottom: 12,
+    borderRadius: 12,
+    overflow: 'hidden',
+  },
+  notesGradient: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 12,
+    gap: 8,
   },
   notesText: {
     fontSize: 12,
@@ -594,20 +783,45 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   statusBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 12,
+    marginBottom: 6,
+    gap: 6,
+  },
+  statusDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
   },
   statusText: {
-    fontSize: 10,
-    fontWeight: '600',
+    fontSize: 11,
+    fontWeight: '700',
+  },
+  totalBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 10,
+    gap: 4,
   },
   actionButton: {
-    paddingHorizontal: 8,
-    paddingVertical: 5,
-    borderRadius: 8,
     flex: 1,
+    borderRadius: 12,
+    overflow: 'hidden',
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+  },
+  actionGradient: {
     alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 10,
   },
   actionButtonText: {
     fontSize: 12,
@@ -617,7 +831,10 @@ const styles = StyleSheet.create({
   timeEstimate: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 2,
+    paddingHorizontal: 8,
+    paddingVertical: 6,
+    borderRadius: 10,
+    gap: 4,
   },
   timeText: {
     fontSize: 10,
@@ -625,17 +842,29 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   viewButton: {
-    width: 24,
-    height: 24,
+    width: 40,
+    height: 40,
     borderRadius: 12,
-    backgroundColor: colors.backgroundLight,
+    backgroundColor: 'rgba(255,107,107,0.1)',
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255,107,107,0.2)',
   },
   emptyState: {
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 60,
+    marginHorizontal: 20,
+    borderRadius: 20,
+    overflow: 'hidden',
+  },
+  emptyStateGradient: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 40,
+    paddingHorizontal: 20,
+    width: '100%',
   },
   emptyStateText: {
     fontSize: 18,
