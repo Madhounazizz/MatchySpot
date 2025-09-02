@@ -1,12 +1,14 @@
 import React from 'react';
 import { StyleSheet, View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { Image } from 'expo-image';
-import { ArrowUp, ArrowDown, Gift, ChevronRight } from 'lucide-react-native';
+import { ArrowUp, ArrowDown, Gift, ChevronRight, Coins } from 'lucide-react-native';
 import { colors, shadows } from '@/constants/colors';
 import Button from '@/components/Button';
-import { transactions, walletSummary } from '@/mocks/wallet';
+import { useTokens } from '@/store/useTokenStore';
 
 export default function WalletScreen() {
+  const { balance, transactions, addTokens } = useTokens();
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
@@ -19,99 +21,80 @@ export default function WalletScreen() {
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <View style={styles.balanceCard}>
-        <Text style={styles.balanceLabel}>Available Points</Text>
-        <Text style={styles.balanceValue}>{walletSummary.balance}</Text>
-        
-        <View style={styles.statsRow}>
-          <View style={styles.statItem}>
-            <Text style={styles.statLabel}>Total Earned</Text>
-            <Text style={styles.statValue}>{walletSummary.totalEarned}</Text>
-          </View>
-          
-          <View style={styles.statDivider} />
-          
-          <View style={styles.statItem}>
-            <Text style={styles.statLabel}>Total Spent</Text>
-            <Text style={styles.statValue}>{walletSummary.totalSpent}</Text>
-          </View>
+        <Text style={styles.balanceLabel}>Token Balance</Text>
+        <View style={styles.balanceRow}>
+          <Coins size={22} color={colors.white} />
+          <Text style={styles.balanceValue}>{balance}</Text>
         </View>
       </View>
       
       <View style={styles.rewardsContainer}>
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Available Rewards</Text>
-          <TouchableOpacity style={styles.seeAllButton}>
-            <Text style={styles.seeAllText}>See All</Text>
-            <ChevronRight size={16} color={colors.primary} />
-          </TouchableOpacity>
+          <Text style={styles.sectionTitle}>Quick Earn</Text>
         </View>
-        
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.rewardsScroll}
-        >
-          {walletSummary.availableRewards.map((reward) => (
-            <View key={reward.id} style={styles.rewardCard}>
-              <View style={styles.rewardHeader}>
-                <Gift size={20} color={colors.primary} />
-                <Text style={styles.rewardPoints}>{reward.points} pts</Text>
-              </View>
-              
-              <Text style={styles.rewardName}>{reward.name}</Text>
-              <Text style={styles.rewardVenue}>{reward.brcName}</Text>
-              
-              <Button
-                title="Redeem"
-                size="small"
-                onPress={() => handleRedeemReward(reward.id)}
-                style={styles.redeemButton}
-              />
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.rewardsScroll}>
+          <View style={styles.rewardCard}>
+            <View style={styles.rewardHeader}>
+              <Gift size={20} color={colors.primary} />
+              <Text style={styles.rewardPoints}>+50</Text>
             </View>
-          ))}
+            <Text style={styles.rewardName}>Referral Complete</Text>
+            <Text style={styles.rewardVenue}>Both you and friend</Text>
+            <Button title="Claim +50" size="small" onPress={() => addTokens(50, 'Referral reward')} style={styles.redeemButton} />
+          </View>
+          <View style={styles.rewardCard}>
+            <View style={styles.rewardHeader}>
+              <Gift size={20} color={colors.primary} />
+              <Text style={styles.rewardPoints}>+20</Text>
+            </View>
+            <Text style={styles.rewardName}>Post a Review</Text>
+            <Text style={styles.rewardVenue}>Any BRC</Text>
+            <Button title="Open Reviews" size="small" onPress={() => {}} style={styles.redeemButton} />
+          </View>
+          <View style={styles.rewardCard}>
+            <View style={styles.rewardHeader}>
+              <Gift size={20} color={colors.primary} />
+              <Text style={styles.rewardPoints}>-20</Text>
+            </View>
+            <Text style={styles.rewardName}>Book a Table</Text>
+            <Text style={styles.rewardVenue}>Reservation cost</Text>
+            <Button title="Book Now" size="small" onPress={() => {}} style={styles.redeemButton} />
+          </View>
         </ScrollView>
       </View>
       
       <View style={styles.transactionsContainer}>
         <Text style={styles.sectionTitle}>Transaction History</Text>
-        
-        {transactions.map((transaction) => (
-          <View key={transaction.id} style={styles.transactionItem}>
-            <View style={styles.transactionIconContainer}>
-              {transaction.type === 'earn' ? (
-                <ArrowUp size={20} color={colors.success} />
-              ) : (
-                <ArrowDown size={20} color={colors.error} />
-              )}
-            </View>
-            
-            <View style={styles.transactionInfo}>
-              <Text style={styles.transactionDescription}>
-                {transaction.description}
+        {transactions.length === 0 ? (
+          <Text style={{ color: colors.textLight }}>No transactions yet</Text>
+        ) : (
+          transactions.map((transaction) => (
+            <View key={transaction.id} style={styles.transactionItem}>
+              <View style={styles.transactionIconContainer}>
+                {transaction.type === 'earn' ? (
+                  <ArrowUp size={20} color={colors.success} />
+                ) : (
+                  <ArrowDown size={20} color={colors.error} />
+                )}
+              </View>
+              <View style={styles.transactionInfo}>
+                <Text style={styles.transactionDescription}>{transaction.description}</Text>
+                {transaction.brcName && (
+                  <Text style={styles.transactionVenue}>{transaction.brcName}</Text>
+                )}
+                <Text style={styles.transactionDate}>{formatDate(transaction.date)}</Text>
+              </View>
+              <Text
+                style={[
+                  styles.transactionAmount,
+                  transaction.type === 'earn' ? styles.earnAmount : styles.spendAmount,
+                ]}
+              >
+                {transaction.type === 'earn' ? '+' : '-'}{transaction.amount}
               </Text>
-              
-              {transaction.brcName && (
-                <Text style={styles.transactionVenue}>{transaction.brcName}</Text>
-              )}
-              
-              <Text style={styles.transactionDate}>
-                {formatDate(transaction.date)}
-              </Text>
             </View>
-            
-            <Text
-              style={[
-                styles.transactionAmount,
-                transaction.type === 'earn'
-                  ? styles.earnAmount
-                  : styles.spendAmount,
-              ]}
-            >
-              {transaction.type === 'earn' ? '+' : '-'}
-              {transaction.amount}
-            </Text>
-          </View>
-        ))}
+          ))
+        )}
       </View>
       
       <View style={styles.earnPointsContainer}>
@@ -195,37 +178,31 @@ const styles = StyleSheet.create({
     color: 'rgba(255, 255, 255, 0.8)',
     marginBottom: 8,
   },
+  balanceRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
   balanceValue: {
     fontSize: 36,
     fontWeight: '700',
     color: colors.white,
-    marginBottom: 20,
+    marginBottom: 0,
   },
   statsRow: {
-    flexDirection: 'row',
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    borderRadius: 12,
-    padding: 16,
+    display: 'none',
   },
   statItem: {
-    flex: 1,
-    alignItems: 'center',
+    display: 'none',
   },
   statLabel: {
-    fontSize: 14,
-    color: 'rgba(255, 255, 255, 0.8)',
-    marginBottom: 4,
+    display: 'none',
   },
   statValue: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: colors.white,
+    display: 'none',
   },
   statDivider: {
-    width: 1,
-    height: '100%',
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
-    marginHorizontal: 10,
+    display: 'none',
   },
   rewardsContainer: {
     marginBottom: 20,
