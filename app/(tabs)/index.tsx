@@ -3,7 +3,7 @@ import { StyleSheet, View, ScrollView, Text, TouchableOpacity } from 'react-nati
 import { useRouter } from 'expo-router';
 import { Coffee, Utensils, Wine, Sparkles, QrCode } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { colors } from '@/constants/colors';
+import { colors, shadows, typography, borderRadius, spacing } from '@/constants/colors';
 import SearchBar from '@/components/SearchBar';
 import CategoryPills from '@/components/CategoryPills';
 import SectionHeader from '@/components/SectionHeader';
@@ -55,17 +55,27 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <ScrollView 
-        style={styles.scrollView}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.contentContainer}
+      <LinearGradient
+        colors={[colors.primary, colors.primaryLight]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.headerGradient}
       >
         <View style={styles.header}>
           <Text style={styles.greeting}>Hello, Alex 👋</Text>
           <Text style={styles.subtitle}>Find your perfect match today</Text>
         </View>
+      </LinearGradient>
+      
+      <ScrollView 
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.contentContainer}
+      >
         
-        <SearchBar />
+        <View style={styles.searchContainer}>
+          <SearchBar />
+        </View>
         
         <CategoryPills
           categories={categories}
@@ -73,10 +83,12 @@ export default function HomeScreen() {
           onSelectCategory={handleCategorySelect}
         />
         
-        <SectionHeader
-          title="Featured Places"
-          onSeeAllPress={handleSeeAllBRCs}
-        />
+        <View style={styles.sectionContainer}>
+          <SectionHeader
+            title="Featured Places"
+            onSeeAllPress={handleSeeAllBRCs}
+          />
+        </View>
         
         <ScrollView
           horizontal
@@ -90,10 +102,12 @@ export default function HomeScreen() {
           ))}
         </ScrollView>
         
-        <SectionHeader
-          title="Upcoming Events"
-          onSeeAllPress={handleSeeAllEvents}
-        />
+        <View style={styles.sectionContainer}>
+          <SectionHeader
+            title="Upcoming Events"
+            onSeeAllPress={handleSeeAllEvents}
+          />
+        </View>
         
         <ScrollView
           horizontal
@@ -106,10 +120,12 @@ export default function HomeScreen() {
         </ScrollView>
         
 
-        <SectionHeader
-          title="Near You"
-          onSeeAllPress={handleSeeAllBRCs}
-        />
+        <View style={styles.sectionContainer}>
+          <SectionHeader
+            title="Near You"
+            onSeeAllPress={handleSeeAllBRCs}
+          />
+        </View>
         
         <ScrollView
           horizontal
@@ -124,22 +140,31 @@ export default function HomeScreen() {
         </ScrollView>
         
         {/* QR Scanner Section */}
-        <SectionHeader
-          title="Scan QR Code"
-        />
+        <View style={styles.sectionContainer}>
+          <SectionHeader
+            title="Quick Actions"
+          />
+        </View>
         
         <View style={styles.qrScannerSection}>
           <TouchableOpacity
             style={styles.qrScannerButton}
             onPress={() => router.push('/qr-scanner')}
           >
-            <View style={styles.qrIconContainer}>
-              <QrCode size={28} color={colors.primary} />
-            </View>
-            <View style={styles.qrTextContainer}>
-              <Text style={styles.qrButtonText}>Scan QR Code</Text>
-              <Text style={styles.qrSubText}>Order food & join chatroom</Text>
-            </View>
+            <LinearGradient
+              colors={[colors.secondary, colors.secondaryLight]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={styles.qrGradientBackground}
+            >
+              <View style={styles.qrIconContainer}>
+                <QrCode size={32} color={colors.white} />
+              </View>
+              <View style={styles.qrTextContainer}>
+                <Text style={styles.qrButtonText}>Scan QR Code</Text>
+                <Text style={styles.qrSubText}>Order food & join chatroom</Text>
+              </View>
+            </LinearGradient>
           </TouchableOpacity>
           
           {/* Test QR Codes Link */}
@@ -158,108 +183,143 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.white,
+    backgroundColor: colors.backgroundSecondary,
   },
+  
+  headerGradient: {
+    paddingTop: 60,
+    paddingBottom: 30,
+    borderBottomLeftRadius: borderRadius['3xl'],
+    borderBottomRightRadius: borderRadius['3xl'],
+  },
+  
+  header: {
+    paddingHorizontal: spacing.md,
+    alignItems: 'center',
+  },
+  
+  greeting: {
+    fontSize: typography.sizes['4xl'],
+    fontWeight: typography.weights.extrabold,
+    color: colors.textInverse,
+    marginBottom: spacing.xs,
+    textAlign: 'center',
+  },
+  
+  subtitle: {
+    fontSize: typography.sizes.lg,
+    color: colors.textInverse,
+    opacity: 0.9,
+    textAlign: 'center',
+  },
+  
   scrollView: {
     flex: 1,
+    marginTop: -20,
   },
+  
   contentContainer: {
+    paddingTop: 20,
     paddingBottom: 100,
   },
-  header: {
-    paddingHorizontal: 16,
-    paddingTop: 20,
-    paddingBottom: 8,
+  
+  searchContainer: {
+    paddingHorizontal: spacing.md,
+    marginBottom: spacing.lg,
   },
-  greeting: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: colors.text,
-    marginBottom: 4,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: colors.textLight,
-    marginBottom: 16,
+  
+  sectionContainer: {
+    paddingHorizontal: spacing.md,
   },
   featuredContainer: {
-    paddingLeft: 16,
-    paddingRight: 8,
-    marginBottom: 24,
+    paddingLeft: spacing.md,
+    paddingRight: spacing.sm,
+    marginBottom: spacing.lg,
   },
+  
   featuredCardWrapper: {
-    marginRight: 16,
+    marginRight: spacing.md,
     width: 300,
   },
+  
   horizontalList: {
-    paddingLeft: 16,
-    paddingRight: 8,
-    paddingBottom: 24,
+    paddingLeft: spacing.md,
+    paddingRight: spacing.sm,
+    paddingBottom: spacing.lg,
   },
+  
   usersContainer: {
-    paddingHorizontal: 16,
-    marginBottom: 24,
+    paddingHorizontal: spacing.md,
+    marginBottom: spacing.lg,
   },
+  
   nearbyContainer: {
-    paddingLeft: 16,
-    paddingRight: 8,
-    paddingBottom: 24,
+    paddingLeft: spacing.md,
+    paddingRight: spacing.sm,
+    paddingBottom: spacing.lg,
   },
+  
   nearbyCardWrapper: {
-    marginRight: 12,
+    marginRight: spacing.sm,
   },
   qrScannerSection: {
-    paddingHorizontal: 16,
-    paddingBottom: 24,
+    paddingHorizontal: spacing.md,
+    paddingBottom: spacing.lg,
   },
+  
   qrScannerButton: {
-    backgroundColor: colors.white,
-    borderRadius: 16,
-    padding: 20,
+    borderRadius: borderRadius['2xl'],
+    marginBottom: spacing.sm,
+    overflow: 'hidden',
+    ...shadows.large,
+  },
+  
+  qrGradientBackground: {
+    padding: spacing.lg,
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
-    borderWidth: 1,
-    borderColor: colors.border,
   },
+  
   qrIconContainer: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: colors.backgroundLight,
+    width: 64,
+    height: 64,
+    borderRadius: borderRadius.full,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 16,
+    marginRight: spacing.md,
   },
+  
   qrTextContainer: {
     flex: 1,
   },
+  
   qrButtonText: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: colors.text,
-    marginBottom: 4,
+    fontSize: typography.sizes.xl,
+    fontWeight: typography.weights.bold,
+    color: colors.textInverse,
+    marginBottom: spacing.xs,
   },
+  
   qrSubText: {
-    fontSize: 14,
-    color: colors.textLight,
+    fontSize: typography.sizes.sm,
+    color: colors.textInverse,
+    opacity: 0.9,
   },
+  
   testQRButton: {
-    backgroundColor: colors.backgroundLight,
-    borderRadius: 12,
-    paddingVertical: 12,
-    paddingHorizontal: 20,
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.lg,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: colors.borderLight,
+    ...shadows.small,
   },
+  
   testQRText: {
-    fontSize: 14,
-    fontWeight: '500',
+    fontSize: typography.sizes.sm,
+    fontWeight: typography.weights.medium,
     color: colors.textLight,
     textAlign: 'center',
   },

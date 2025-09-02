@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Animated } from 'react-native';
 import { Stack, useRouter, useLocalSearchParams } from 'expo-router';
 import { CheckCircle, Calendar, Clock, Users, MapPin, Home, MessageSquare, Star, Share2, Download, Phone } from 'lucide-react-native';
-import { colors, shadows } from '@/constants/colors';
+import { colors, shadows, typography, borderRadius, spacing } from '@/constants/colors';
 import Button from '@/components/Button';
 import { brcs } from '@/mocks/brcs';
 
@@ -99,7 +99,9 @@ export default function BookingSuccessScreen() {
           ]}
         >
           <View style={styles.successIconContainer}>
-            <CheckCircle size={100} color={colors.white} fill={colors.success} />
+            <View style={styles.successIconBackground}>
+              <CheckCircle size={120} color={colors.textInverse} fill={colors.success} />
+            </View>
             <View style={styles.successBadge}>
               <Text style={styles.successBadgeText}>✓</Text>
             </View>
@@ -109,7 +111,9 @@ export default function BookingSuccessScreen() {
           <Text style={styles.successSubtitle}>
             Your table reservation is all set
           </Text>
-          <Text style={styles.bookingIdText}>Booking ID: {bookingId}</Text>
+          <View style={styles.bookingIdContainer}>
+            <Text style={styles.bookingIdText}>Booking ID: {bookingId}</Text>
+          </View>
         </Animated.View>
 
         <Animated.View 
@@ -121,14 +125,16 @@ export default function BookingSuccessScreen() {
             }
           ]}
         >
-          {/* Restaurant Info Card */}
+          {/* Enhanced Restaurant Info Card */}
           <View style={styles.restaurantCard}>
             <View style={styles.restaurantHeader}>
               <View style={styles.restaurantInfo}>
                 <Text style={styles.restaurantName}>{selectedBRC?.name}</Text>
                 <View style={styles.ratingContainer}>
-                  <Star size={16} color={colors.warning} fill={colors.warning} />
-                  <Text style={styles.ratingText}>4.8</Text>
+                  <View style={styles.ratingBadge}>
+                    <Star size={14} color={colors.warning} fill={colors.warning} />
+                    <Text style={styles.ratingText}>4.8</Text>
+                  </View>
                   <Text style={styles.reviewsText}>(324 reviews)</Text>
                 </View>
                 <Text style={styles.restaurantAddress}>{selectedBRC?.address}</Text>
@@ -136,24 +142,24 @@ export default function BookingSuccessScreen() {
             </View>
             
             <View style={styles.quickActions}>
-              <TouchableOpacity style={styles.quickActionButton} onPress={handleCallRestaurant}>
-                <Phone size={20} color={colors.primary} />
-                <Text style={styles.quickActionText}>Call</Text>
+              <TouchableOpacity style={[styles.quickActionButton, styles.callButton]} onPress={handleCallRestaurant}>
+                <Phone size={18} color={colors.textInverse} />
+                <Text style={[styles.quickActionText, styles.callButtonText]}>Call</Text>
               </TouchableOpacity>
               
-              <TouchableOpacity style={styles.quickActionButton} onPress={handleContactPlace}>
-                <MessageSquare size={20} color={colors.primary} />
-                <Text style={styles.quickActionText}>Chat</Text>
+              <TouchableOpacity style={[styles.quickActionButton, styles.chatButton]} onPress={handleContactPlace}>
+                <MessageSquare size={18} color={colors.textInverse} />
+                <Text style={[styles.quickActionText, styles.chatButtonText]}>Chat</Text>
               </TouchableOpacity>
               
-              <TouchableOpacity style={styles.quickActionButton} onPress={handleShareBooking}>
-                <Share2 size={20} color={colors.primary} />
-                <Text style={styles.quickActionText}>Share</Text>
+              <TouchableOpacity style={[styles.quickActionButton, styles.shareButton]} onPress={handleShareBooking}>
+                <Share2 size={18} color={colors.textInverse} />
+                <Text style={[styles.quickActionText, styles.shareButtonText]}>Share</Text>
               </TouchableOpacity>
               
-              <TouchableOpacity style={styles.quickActionButton} onPress={handleDownloadConfirmation}>
-                <Download size={20} color={colors.primary} />
-                <Text style={styles.quickActionText}>Save</Text>
+              <TouchableOpacity style={[styles.quickActionButton, styles.saveButton]} onPress={handleDownloadConfirmation}>
+                <Download size={18} color={colors.textInverse} />
+                <Text style={[styles.quickActionText, styles.saveButtonText]}>Save</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -281,184 +287,264 @@ export default function BookingSuccessScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: colors.backgroundSecondary,
   },
+  
   scrollView: {
     flex: 1,
   },
+  
   successHeader: {
     backgroundColor: colors.success,
     paddingTop: 100,
-    paddingBottom: 40,
-    paddingHorizontal: 20,
+    paddingBottom: spacing['2xl'],
+    paddingHorizontal: spacing.lg,
     alignItems: 'center',
-    borderBottomLeftRadius: 30,
-    borderBottomRightRadius: 30,
+    borderBottomLeftRadius: borderRadius['3xl'],
+    borderBottomRightRadius: borderRadius['3xl'],
   },
+  
   successIconContainer: {
     position: 'relative',
-    marginBottom: 20,
+    marginBottom: spacing.xl,
   },
-  successBadge: {
-    position: 'absolute',
-    top: -5,
-    right: -5,
-    backgroundColor: colors.white,
-    borderRadius: 20,
-    width: 40,
-    height: 40,
+  
+  successIconBackground: {
+    width: 160,
+    height: 160,
+    borderRadius: 80,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
     justifyContent: 'center',
     alignItems: 'center',
-    ...shadows.card,
+    ...shadows.xlarge,
   },
+  
+  successBadge: {
+    position: 'absolute',
+    top: -spacing.sm,
+    right: -spacing.sm,
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.full,
+    width: 48,
+    height: 48,
+    justifyContent: 'center',
+    alignItems: 'center',
+    ...shadows.large,
+  },
+  
   successBadgeText: {
-    fontSize: 20,
-    fontWeight: 'bold',
+    fontSize: typography.sizes['2xl'],
+    fontWeight: typography.weights.extrabold,
     color: colors.success,
   },
+  
   successTitle: {
-    fontSize: 32,
-    fontWeight: '800',
-    color: colors.white,
+    fontSize: typography.sizes['4xl'],
+    fontWeight: typography.weights.extrabold,
+    color: colors.textInverse,
     textAlign: 'center',
-    marginBottom: 8,
+    marginBottom: spacing.sm,
   },
+  
   successSubtitle: {
-    fontSize: 18,
-    color: colors.white,
+    fontSize: typography.sizes.xl,
+    color: colors.textInverse,
     textAlign: 'center',
     opacity: 0.9,
-    marginBottom: 12,
+    marginBottom: spacing.lg,
   },
-  bookingIdText: {
-    fontSize: 14,
-    color: colors.white,
-    textAlign: 'center',
-    opacity: 0.8,
-    fontWeight: '600',
+  
+  bookingIdContainer: {
     backgroundColor: 'rgba(255,255,255,0.2)',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
+    borderRadius: borderRadius.full,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.sm,
+  },
+  
+  bookingIdText: {
+    fontSize: typography.sizes.base,
+    color: colors.textInverse,
+    textAlign: 'center',
+    fontWeight: typography.weights.semibold,
   },
   content: {
-    paddingHorizontal: 20,
-    paddingTop: 20,
-    paddingBottom: 100,
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.lg,
+    paddingBottom: 120,
   },
+  
   restaurantCard: {
-    backgroundColor: colors.card,
-    borderRadius: 20,
-    padding: 20,
-    marginBottom: 20,
-    ...shadows.card,
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius['2xl'],
+    padding: spacing.xl,
+    marginBottom: spacing.lg,
+    ...shadows.large,
   },
+  
   restaurantHeader: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginBottom: 20,
+    marginBottom: spacing.xl,
   },
+  
   restaurantInfo: {
     flex: 1,
   },
+  
   restaurantName: {
-    fontSize: 22,
-    fontWeight: '700',
+    fontSize: typography.sizes['2xl'],
+    fontWeight: typography.weights.extrabold,
     color: colors.text,
-    marginBottom: 8,
+    marginBottom: spacing.sm,
   },
+  
   ratingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: spacing.sm,
   },
+  
+  ratingBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.accent,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    borderRadius: borderRadius.full,
+    marginRight: spacing.sm,
+  },
+  
   ratingText: {
-    fontSize: 16,
-    fontWeight: '600',
+    fontSize: typography.sizes.sm,
+    fontWeight: typography.weights.bold,
     color: colors.text,
-    marginLeft: 4,
+    marginLeft: spacing.xs,
   },
+  
   reviewsText: {
-    fontSize: 14,
+    fontSize: typography.sizes.sm,
     color: colors.textLight,
-    marginLeft: 8,
   },
+  
   restaurantAddress: {
-    fontSize: 14,
+    fontSize: typography.sizes.base,
     color: colors.textLight,
-    lineHeight: 20,
+    lineHeight: typography.sizes.base * typography.lineHeights.relaxed,
   },
+  
   quickActions: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingTop: 20,
+    justifyContent: 'space-between',
+    paddingTop: spacing.lg,
     borderTopWidth: 1,
-    borderTopColor: colors.backgroundDark,
+    borderTopColor: colors.borderLight,
+    gap: spacing.sm,
   },
+  
   quickActionButton: {
+    flex: 1,
     alignItems: 'center',
-    padding: 12,
-    borderRadius: 12,
-    backgroundColor: colors.accent,
-    minWidth: 70,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.sm,
+    borderRadius: borderRadius.xl,
+    ...shadows.medium,
   },
+  
+  callButton: {
+    backgroundColor: colors.success,
+  },
+  
+  chatButton: {
+    backgroundColor: colors.primary,
+  },
+  
+  shareButton: {
+    backgroundColor: colors.secondary,
+  },
+  
+  saveButton: {
+    backgroundColor: colors.info,
+  },
+  
   quickActionText: {
-    fontSize: 12,
-    color: colors.primary,
-    fontWeight: '600',
-    marginTop: 4,
+    fontSize: typography.sizes.xs,
+    fontWeight: typography.weights.semibold,
+    marginTop: spacing.xs,
+  },
+  
+  callButtonText: {
+    color: colors.textInverse,
+  },
+  
+  chatButtonText: {
+    color: colors.textInverse,
+  },
+  
+  shareButtonText: {
+    color: colors.textInverse,
+  },
+  
+  saveButtonText: {
+    color: colors.textInverse,
   },
   bookingDetailsCard: {
-    backgroundColor: colors.card,
-    borderRadius: 20,
-    padding: 20,
-    marginBottom: 20,
-    ...shadows.card,
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius['2xl'],
+    padding: spacing.xl,
+    marginBottom: spacing.lg,
+    ...shadows.large,
   },
+  
   cardTitle: {
-    fontSize: 18,
-    fontWeight: '700',
+    fontSize: typography.sizes.xl,
+    fontWeight: typography.weights.extrabold,
     color: colors.text,
-    marginBottom: 20,
+    marginBottom: spacing.lg,
   },
+  
   detailsGrid: {
-    gap: 16,
+    gap: spacing.md,
   },
+  
   detailItem: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.accent,
-    padding: 16,
-    borderRadius: 16,
+    padding: spacing.lg,
+    borderRadius: borderRadius.xl,
+    ...shadows.small,
   },
+  
   detailIconContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: 56,
+    height: 56,
+    borderRadius: borderRadius.xl,
     backgroundColor: colors.primary + '20',
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 16,
+    marginRight: spacing.md,
   },
+  
   detailContent: {
     flex: 1,
   },
+  
   detailLabel: {
-    fontSize: 14,
+    fontSize: typography.sizes.sm,
     color: colors.textLight,
-    marginBottom: 4,
+    marginBottom: spacing.xs,
+    fontWeight: typography.weights.medium,
   },
+  
   detailValue: {
-    fontSize: 16,
-    fontWeight: '600',
+    fontSize: typography.sizes.lg,
+    fontWeight: typography.weights.bold,
     color: colors.text,
   },
   timelineCard: {
-    backgroundColor: colors.card,
-    borderRadius: 20,
-    padding: 20,
-    marginBottom: 20,
-    ...shadows.card,
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius['2xl'],
+    padding: spacing.xl,
+    marginBottom: spacing.lg,
+    ...shadows.large,
   },
   timelineItem: {
     flexDirection: 'row',
@@ -512,13 +598,13 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: colors.card,
-    paddingHorizontal: 20,
-    paddingTop: 16,
+    backgroundColor: colors.surface,
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.md,
     paddingBottom: 40,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    ...shadows.card,
+    borderTopLeftRadius: borderRadius['2xl'],
+    borderTopRightRadius: borderRadius['2xl'],
+    ...shadows.large,
   },
   actionRow: {
     flexDirection: 'row',

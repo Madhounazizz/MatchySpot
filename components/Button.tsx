@@ -1,16 +1,18 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, ActivityIndicator, View } from 'react-native';
-import { colors, shadows } from '@/constants/colors';
+import { LinearGradient } from 'expo-linear-gradient';
+import { colors, shadows, typography, borderRadius, spacing } from '@/constants/colors';
 
 type ButtonProps = {
   title: string;
   onPress: () => void;
-  variant?: 'primary' | 'secondary' | 'outline';
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'gradient';
   size?: 'small' | 'medium' | 'large';
   fullWidth?: boolean;
   disabled?: boolean;
   loading?: boolean;
   icon?: React.ReactNode;
+  iconPosition?: 'left' | 'right';
   style?: object;
 };
 
@@ -23,6 +25,7 @@ export default function Button({
   disabled = false,
   loading = false,
   icon,
+  iconPosition = 'left',
   style,
 }: ButtonProps) {
   const getButtonStyle = () => {
@@ -38,6 +41,12 @@ export default function Button({
         break;
       case 'outline':
         buttonStyle = styles.outlineButton;
+        break;
+      case 'ghost':
+        buttonStyle = styles.ghostButton;
+        break;
+      case 'gradient':
+        buttonStyle = styles.gradientButton;
         break;
     }
     
@@ -72,6 +81,10 @@ export default function Button({
         return styles.secondaryText;
       case 'outline':
         return styles.outlineText;
+      case 'ghost':
+        return styles.ghostText;
+      case 'gradient':
+        return styles.gradientText;
     }
   };
   
@@ -86,6 +99,53 @@ export default function Button({
     }
   };
 
+  const renderContent = () => {
+    if (loading) {
+      return (
+        <ActivityIndicator
+          color={variant === 'outline' || variant === 'ghost' ? colors.primary : colors.white}
+          size="small"
+        />
+      );
+    }
+
+    return (
+      <View style={styles.contentContainer}>
+        {icon && iconPosition === 'left' && (
+          <View style={[styles.iconContainer, styles.iconLeft]}>
+            {icon}
+          </View>
+        )}
+        <Text style={[styles.text, getTextStyle(), getTextSize()]}>{title}</Text>
+        {icon && iconPosition === 'right' && (
+          <View style={[styles.iconContainer, styles.iconRight]}>
+            {icon}
+          </View>
+        )}
+      </View>
+    );
+  };
+
+  if (variant === 'gradient') {
+    return (
+      <TouchableOpacity
+        style={[styles.button, getButtonStyle(), style]}
+        onPress={onPress}
+        disabled={disabled || loading}
+        activeOpacity={0.8}
+      >
+        <LinearGradient
+          colors={[colors.primary, colors.primaryLight]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={styles.gradientBackground}
+        >
+          {renderContent()}
+        </LinearGradient>
+      </TouchableOpacity>
+    );
+  }
+
   return (
     <TouchableOpacity
       style={[styles.button, getButtonStyle(), style]}
@@ -93,89 +153,136 @@ export default function Button({
       disabled={disabled || loading}
       activeOpacity={0.8}
     >
-      {loading ? (
-        <ActivityIndicator
-          color={variant === 'outline' ? colors.primary : colors.white}
-          size="small"
-        />
-      ) : (
-        <View style={styles.contentContainer}>
-          {icon && <View style={styles.iconContainer}>{icon}</View>}
-          <Text style={[styles.text, getTextStyle(), getTextSize()]}>{title}</Text>
-        </View>
-      )}
+      {renderContent()}
     </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
   button: {
-    borderRadius: 16,
+    borderRadius: borderRadius.xl,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 14,
-    paddingHorizontal: 20,
+    paddingVertical: spacing.sm + 6,
+    paddingHorizontal: spacing.lg,
+    overflow: 'hidden',
   },
+  
   contentContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
   },
+  
   iconContainer: {
-    marginRight: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
+  
+  iconLeft: {
+    marginRight: spacing.sm,
+  },
+  
+  iconRight: {
+    marginLeft: spacing.sm,
+  },
+  
   text: {
-    fontWeight: '600',
+    fontWeight: typography.weights.semibold,
     textAlign: 'center',
-    fontSize: 16,
-    letterSpacing: 0.3,
+    fontSize: typography.sizes.base,
+    letterSpacing: 0.5,
+    lineHeight: typography.sizes.base * typography.lineHeights.tight,
   },
+  
   // Variant styles
   primaryButton: {
     backgroundColor: colors.primary,
-    ...shadows.button,
+    ...shadows.primary,
   },
+  
   secondaryButton: {
-    backgroundColor: colors.accent,
-    ...shadows.small,
+    backgroundColor: colors.secondary,
+    ...shadows.secondary,
   },
+  
   outlineButton: {
-    backgroundColor: 'transparent',
+    backgroundColor: colors.transparent,
     borderWidth: 2,
     borderColor: colors.primary,
+    ...shadows.none,
   },
+  
+  ghostButton: {
+    backgroundColor: colors.transparent,
+    ...shadows.none,
+  },
+  
+  gradientButton: {
+    backgroundColor: colors.transparent,
+    ...shadows.primary,
+  },
+  
+  gradientBackground: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: spacing.sm + 6,
+    paddingHorizontal: spacing.lg,
+    borderRadius: borderRadius.xl,
+  },
+  
   // Text styles
   primaryText: {
-    color: colors.white,
+    color: colors.textInverse,
   },
+  
   secondaryText: {
-    color: colors.primaryDark,
+    color: colors.textInverse,
   },
+  
   outlineText: {
     color: colors.primary,
   },
+  
+  ghostText: {
+    color: colors.primary,
+  },
+  
+  gradientText: {
+    color: colors.textInverse,
+  },
+  
   // Size styles
   smallButton: {
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderRadius: 12,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
+    borderRadius: borderRadius.lg,
   },
+  
   largeButton: {
-    paddingVertical: 16,
-    paddingHorizontal: 24,
+    paddingVertical: spacing.md + 2,
+    paddingHorizontal: spacing.xl,
+    borderRadius: borderRadius['2xl'],
   },
+  
   smallText: {
-    fontSize: 14,
+    fontSize: typography.sizes.sm,
   },
+  
   largeText: {
-    fontSize: 16,
+    fontSize: typography.sizes.lg,
+    fontWeight: typography.weights.bold,
   },
+  
   // Width style
   fullWidthButton: {
     width: '100%',
   },
+  
   // Disabled style
   disabledButton: {
-    opacity: 0.6,
+    opacity: 0.5,
+    backgroundColor: colors.interactiveDisabled,
   },
 });

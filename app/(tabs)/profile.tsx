@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { Image } from 'expo-image';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter, Stack } from 'expo-router';
 import { Settings, Heart, Wallet, Star, Calendar, LogOut, ChevronRight, Users, Edit, ChefHat, Globe } from 'lucide-react-native';
-import { colors, shadows } from '@/constants/colors';
+import { colors, shadows, typography, borderRadius, spacing } from '@/constants/colors';
 import Button from '@/components/Button';
 import { useUserStore } from '@/store/useUserStore';
 import { useTranslation } from '@/store/useLanguageStore';
@@ -67,8 +68,6 @@ export default function ProfileScreen() {
     router.push('/(tabs)/discover');
   };
 
-
-
   return (
     <View style={styles.container}>
       <Stack.Screen 
@@ -82,11 +81,17 @@ export default function ProfileScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        <View style={styles.header}>
+        {/* Enhanced Header with Gradient */}
+        <LinearGradient
+          colors={[colors.primary, colors.primaryLight]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.headerGradient}
+        >
           <View style={styles.headerTop}>
             <Text style={styles.headerTitle}>{t('profile')}</Text>
             <TouchableOpacity style={styles.settingsButton} hitSlop={10}>
-              <Settings size={24} color={colors.text} />
+              <Settings size={24} color={colors.textInverse} />
             </TouchableOpacity>
           </View>
           
@@ -99,7 +104,7 @@ export default function ProfileScreen() {
                 transition={200}
               />
               <TouchableOpacity style={styles.editAvatarButton}>
-                <Edit size={16} color={colors.white} />
+                <Edit size={16} color={colors.textInverse} />
               </TouchableOpacity>
             </View>
             
@@ -108,148 +113,165 @@ export default function ProfileScreen() {
               <Text style={styles.bio}>{currentUser.bio}</Text>
             </View>
           </View>
-        </View>
+        </LinearGradient>
       
-      <View style={styles.statsContainer}>
-        <View style={styles.statItem}>
-          <Text style={styles.statValue}>12</Text>
-          <Text style={styles.statLabel}>Matches</Text>
-        </View>
-        
-        <View style={styles.statDivider} />
-        
-        <View style={styles.statItem}>
-          <Text style={styles.statValue}>8</Text>
-          <Text style={styles.statLabel}>Meetups</Text>
-        </View>
-        
-        <View style={styles.statDivider} />
-        
-        <View style={styles.statItem}>
-          <Text style={styles.statValue}>{favorites.length}</Text>
-          <Text style={styles.statLabel}>Favorites</Text>
-        </View>
-      </View>
-      
-      <View style={styles.interestsContainer}>
-        <Text style={styles.sectionTitle}>My Interests</Text>
-        <View style={styles.interestTags}>
-          {currentUser.interests.map((interest, index) => (
-            <View key={index} style={styles.interestTag}>
-              <Text style={styles.interestText}>{interest}</Text>
+        {/* Enhanced Stats Container */}
+        <View style={styles.statsContainer}>
+          <View style={styles.statItem}>
+            <View style={styles.statIconContainer}>
+              <Heart size={20} color={colors.primary} />
             </View>
-          ))}
+            <Text style={styles.statValue}>12</Text>
+            <Text style={styles.statLabel}>Matches</Text>
+          </View>
+          
+          <View style={styles.statDivider} />
+          
+          <View style={styles.statItem}>
+            <View style={styles.statIconContainer}>
+              <Users size={20} color={colors.secondary} />
+            </View>
+            <Text style={styles.statValue}>8</Text>
+            <Text style={styles.statLabel}>Meetups</Text>
+          </View>
+          
+          <View style={styles.statDivider} />
+          
+          <View style={styles.statItem}>
+            <View style={styles.statIconContainer}>
+              <Star size={20} color={colors.warning} />
+            </View>
+            <Text style={styles.statValue}>{favorites.length}</Text>
+            <Text style={styles.statLabel}>Favorites</Text>
+          </View>
         </View>
-      </View>
-      
-      <View style={styles.walletCard}>
-        <View style={styles.walletHeader}>
-          <Text style={styles.walletTitle}>Matchy Points</Text>
-          <Wallet size={20} color={colors.primary} />
-        </View>
         
-        <Text style={styles.pointsValue}>{walletSummary.balance}</Text>
-        <Text style={styles.pointsLabel}>Available Points</Text>
-        
-        <Button
-          title="View Wallet"
-          variant="outline"
-          onPress={navigateToWallet}
-          style={styles.walletButton}
-        />
-      </View>
-      
-      <View style={styles.menuContainer}>
-        <TouchableOpacity style={styles.menuItem} onPress={navigateToWallet}>
-          <View style={styles.menuIconContainer}>
-            <Wallet size={20} color={colors.white} />
-          </View>
-          <Text style={styles.menuText}>{t('myWallet')}</Text>
-          <ChevronRight size={20} color={colors.textLight} />
-        </TouchableOpacity>
-        
-        <TouchableOpacity style={styles.menuItem} onPress={navigateToReviews}>
-          <View style={[styles.menuIconContainer, { backgroundColor: colors.info }]}>
-            <Star size={20} color={colors.white} />
-          </View>
-          <Text style={styles.menuText}>{t('myReviews')}</Text>
-          <ChevronRight size={20} color={colors.textLight} />
-        </TouchableOpacity>
-        
-        <TouchableOpacity style={styles.menuItem} onPress={navigateToEvents}>
-          <View style={[styles.menuIconContainer, { backgroundColor: colors.warning }]}>
-            <Calendar size={20} color={colors.white} />
-          </View>
-          <Text style={styles.menuText}>{t('myEvents')}</Text>
-          <ChevronRight size={20} color={colors.textLight} />
-        </TouchableOpacity>
-        
-        <TouchableOpacity style={styles.menuItem} onPress={() => {
-          // Removed Alert for direct navigation
-          router.push('/invite');
-        }} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-          <View style={[styles.menuIconContainer, { backgroundColor: colors.secondary }]}>
-            <Users size={20} color={colors.white} />
-          </View>
-          <Text style={styles.menuText}>{t('inviteFriends')}</Text>
-          <ChevronRight size={20} color={colors.textLight} />
-        </TouchableOpacity>
-        
-        <TouchableOpacity style={styles.menuItem} onPress={() => setShowLanguageSelector(true)}>
-          <View style={[styles.menuIconContainer, { backgroundColor: colors.accent }]}>
-            <Globe size={20} color={colors.primaryDark} />
-          </View>
-          <Text style={styles.menuText}>{t('language')}</Text>
-          <ChevronRight size={20} color={colors.textLight} />
-        </TouchableOpacity>
-        
-        <TouchableOpacity style={styles.menuItem} onPress={() => router.push('/(restaurant)/reservations')}>
-          <View style={[styles.menuIconContainer, { backgroundColor: colors.success }]}>
-            <ChefHat size={20} color={colors.white} />
-          </View>
-          <Text style={styles.menuText}>{t('restaurantDashboard')}</Text>
-          <ChevronRight size={20} color={colors.textLight} />
-        </TouchableOpacity>
-        
-        <TouchableOpacity style={styles.menuItem} onPress={handleLogout}>
-          <View style={[styles.menuIconContainer, { backgroundColor: colors.error }]}>
-            <LogOut size={20} color={colors.white} />
-          </View>
-          <Text style={styles.menuText}>{t('logout')}</Text>
-          <ChevronRight size={20} color={colors.textLight} />
-        </TouchableOpacity>
-      </View>
-      
-      {favoriteBRCs.length > 0 && (
-        <View style={styles.favoritesContainer}>
-          <Text style={styles.sectionTitle}>Favorite Places</Text>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.favoritesScroll}
-          >
-            {favoriteBRCs.map((brc) => (
-              <TouchableOpacity 
-                key={brc.id} 
-                style={styles.favoriteItem}
-                onPress={() => router.push(`/brc/${brc.id}`)}
-              >
-                <Image
-                  source={{ uri: brc.image }}
-                  style={styles.favoriteImage}
-                  contentFit="cover"
-                  transition={200}
-                />
-                <View style={styles.favoriteOverlay}>
-                  <Heart size={16} color={colors.primary} fill={colors.primary} />
-                </View>
-                <Text style={styles.favoriteName} numberOfLines={1}>{brc.name}</Text>
-                <Text style={styles.favoriteType}>{brc.type}</Text>
-              </TouchableOpacity>
+        <View style={styles.interestsContainer}>
+          <Text style={styles.sectionTitle}>My Interests</Text>
+          <View style={styles.interestTags}>
+            {currentUser.interests.map((interest, index) => (
+              <View key={index} style={styles.interestTag}>
+                <Text style={styles.interestText}>{interest}</Text>
+              </View>
             ))}
-          </ScrollView>
+          </View>
         </View>
-      )}
+        
+        {/* Enhanced Wallet Card with Gradient */}
+        <View style={styles.walletCard}>
+          <LinearGradient
+            colors={[colors.secondary, colors.secondaryLight]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={styles.walletGradient}
+          >
+            <View style={styles.walletHeader}>
+              <Text style={styles.walletTitle}>Matchy Points</Text>
+              <Wallet size={24} color={colors.textInverse} />
+            </View>
+            
+            <Text style={styles.pointsValue}>{walletSummary.balance}</Text>
+            <Text style={styles.pointsLabel}>Available Points</Text>
+            
+            <Button
+              title="View Wallet"
+              variant="ghost"
+              onPress={navigateToWallet}
+              style={styles.walletButton}
+            />
+          </LinearGradient>
+        </View>
+        
+        <View style={styles.menuContainer}>
+          <TouchableOpacity style={styles.menuItem} onPress={navigateToWallet}>
+            <View style={styles.menuIconContainer}>
+              <Wallet size={20} color={colors.white} />
+            </View>
+            <Text style={styles.menuText}>{t('myWallet')}</Text>
+            <ChevronRight size={20} color={colors.textLight} />
+          </TouchableOpacity>
+          
+          <TouchableOpacity style={styles.menuItem} onPress={navigateToReviews}>
+            <View style={[styles.menuIconContainer, { backgroundColor: colors.info }]}>
+              <Star size={20} color={colors.white} />
+            </View>
+            <Text style={styles.menuText}>{t('myReviews')}</Text>
+            <ChevronRight size={20} color={colors.textLight} />
+          </TouchableOpacity>
+          
+          <TouchableOpacity style={styles.menuItem} onPress={navigateToEvents}>
+            <View style={[styles.menuIconContainer, { backgroundColor: colors.warning }]}>
+              <Calendar size={20} color={colors.white} />
+            </View>
+            <Text style={styles.menuText}>{t('myEvents')}</Text>
+            <ChevronRight size={20} color={colors.textLight} />
+          </TouchableOpacity>
+          
+          <TouchableOpacity style={styles.menuItem} onPress={() => {
+            router.push('/invite');
+          }} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+            <View style={[styles.menuIconContainer, { backgroundColor: colors.secondary }]}>
+              <Users size={20} color={colors.white} />
+            </View>
+            <Text style={styles.menuText}>{t('inviteFriends')}</Text>
+            <ChevronRight size={20} color={colors.textLight} />
+          </TouchableOpacity>
+          
+          <TouchableOpacity style={styles.menuItem} onPress={() => setShowLanguageSelector(true)}>
+            <View style={[styles.menuIconContainer, { backgroundColor: colors.accent }]}>
+              <Globe size={20} color={colors.primaryDark} />
+            </View>
+            <Text style={styles.menuText}>{t('language')}</Text>
+            <ChevronRight size={20} color={colors.textLight} />
+          </TouchableOpacity>
+          
+          <TouchableOpacity style={styles.menuItem} onPress={() => router.push('/(restaurant)/reservations')}>
+            <View style={[styles.menuIconContainer, { backgroundColor: colors.success }]}>
+              <ChefHat size={20} color={colors.white} />
+            </View>
+            <Text style={styles.menuText}>{t('restaurantDashboard')}</Text>
+            <ChevronRight size={20} color={colors.textLight} />
+          </TouchableOpacity>
+          
+          <TouchableOpacity style={styles.menuItem} onPress={handleLogout}>
+            <View style={[styles.menuIconContainer, { backgroundColor: colors.error }]}>
+              <LogOut size={20} color={colors.white} />
+            </View>
+            <Text style={styles.menuText}>{t('logout')}</Text>
+            <ChevronRight size={20} color={colors.textLight} />
+          </TouchableOpacity>
+        </View>
+        
+        {favoriteBRCs.length > 0 && (
+          <View style={styles.favoritesContainer}>
+            <Text style={styles.sectionTitle}>Favorite Places</Text>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.favoritesScroll}
+            >
+              {favoriteBRCs.map((brc) => (
+                <TouchableOpacity 
+                  key={brc.id} 
+                  style={styles.favoriteItem}
+                  onPress={() => router.push(`/brc/${brc.id}`)}
+                >
+                  <Image
+                    source={{ uri: brc.image }}
+                    style={styles.favoriteImage}
+                    contentFit="cover"
+                    transition={200}
+                  />
+                  <View style={styles.favoriteOverlay}>
+                    <Heart size={16} color={colors.primary} fill={colors.primary} />
+                  </View>
+                  <Text style={styles.favoriteName} numberOfLines={1}>{brc.name}</Text>
+                  <Text style={styles.favoriteType}>{brc.type}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+        )}
       </ScrollView>
       
       <LanguageSelector
@@ -263,247 +285,315 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.backgroundLight,
+    backgroundColor: colors.backgroundSecondary,
   },
+  
   scrollView: {
     flex: 1,
   },
+  
   scrollContent: {
     paddingBottom: 100,
   },
-  header: {
-    backgroundColor: colors.white,
+  
+  headerGradient: {
     paddingTop: 60,
-    paddingBottom: 24,
-    paddingHorizontal: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.backgroundLight,
+    paddingBottom: spacing.xl,
+    paddingHorizontal: spacing.md,
+    borderBottomLeftRadius: borderRadius['3xl'],
+    borderBottomRightRadius: borderRadius['3xl'],
   },
+  
   headerTop: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 24,
+    marginBottom: spacing.lg,
   },
+  
   headerTitle: {
-    fontSize: 32,
-    fontWeight: '700',
-    color: colors.text,
+    fontSize: typography.sizes['4xl'],
+    fontWeight: typography.weights.extrabold,
+    color: colors.textInverse,
   },
+  
   profileInfo: {
     flexDirection: 'row',
     alignItems: 'center',
   },
+  
   avatarContainer: {
     position: 'relative',
-    marginRight: 16,
+    marginRight: spacing.md,
   },
+  
   avatar: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+    width: 90,
+    height: 90,
+    borderRadius: 45,
+    borderWidth: 4,
+    borderColor: colors.textInverse,
   },
+  
   editAvatarButton: {
     position: 'absolute',
     bottom: 0,
     right: 0,
-    backgroundColor: colors.primary,
-    width: 28,
-    height: 28,
-    borderRadius: 14,
+    backgroundColor: colors.secondary,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 2,
-    borderColor: colors.white,
+    borderWidth: 3,
+    borderColor: colors.textInverse,
+    ...shadows.medium,
   },
+  
   nameContainer: {
     flex: 1,
   },
+  
   name: {
-    fontSize: 22,
-    fontWeight: '600',
-    color: colors.text,
-    marginBottom: 4,
+    fontSize: typography.sizes['2xl'],
+    fontWeight: typography.weights.bold,
+    color: colors.textInverse,
+    marginBottom: spacing.xs,
   },
+  
   bio: {
-    fontSize: 14,
-    color: colors.textLight,
+    fontSize: typography.sizes.base,
+    color: colors.textInverse,
+    opacity: 0.9,
   },
+  
   settingsButton: {
-    padding: 8,
-    backgroundColor: colors.backgroundLight,
-    borderRadius: 20,
+    padding: spacing.sm,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: borderRadius.full,
   },
+  
   statsContainer: {
     flexDirection: 'row',
-    backgroundColor: colors.white,
-    borderRadius: 16,
-    marginHorizontal: 16,
-    marginTop: 16,
-    marginBottom: 16,
-    padding: 16,
-    ...shadows.small,
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius['2xl'],
+    marginHorizontal: spacing.md,
+    marginTop: -spacing.lg,
+    marginBottom: spacing.lg,
+    padding: spacing.lg,
+    ...shadows.large,
   },
+  
   statItem: {
     flex: 1,
     alignItems: 'center',
   },
+  
+  statIconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: borderRadius.full,
+    backgroundColor: colors.backgroundSecondary,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: spacing.sm,
+  },
+  
   statValue: {
-    fontSize: 20,
-    fontWeight: '700',
+    fontSize: typography.sizes['2xl'],
+    fontWeight: typography.weights.extrabold,
     color: colors.text,
-    marginBottom: 4,
+    marginBottom: spacing.xs,
   },
+  
   statLabel: {
-    fontSize: 14,
+    fontSize: typography.sizes.sm,
     color: colors.textLight,
+    fontWeight: typography.weights.medium,
   },
+  
   statDivider: {
     width: 1,
-    height: '80%',
-    backgroundColor: colors.backgroundLight,
+    height: '60%',
+    backgroundColor: colors.borderLight,
+    alignSelf: 'center',
   },
+  
   interestsContainer: {
-    backgroundColor: colors.white,
-    borderRadius: 16,
-    marginHorizontal: 16,
-    marginBottom: 16,
-    padding: 16,
-    ...shadows.small,
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius['2xl'],
+    marginHorizontal: spacing.md,
+    marginBottom: spacing.lg,
+    padding: spacing.lg,
+    ...shadows.medium,
   },
+  
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
+    fontSize: typography.sizes.xl,
+    fontWeight: typography.weights.bold,
     color: colors.text,
-    marginBottom: 12,
+    marginBottom: spacing.md,
   },
+  
   interestTags: {
     flexDirection: 'row',
     flexWrap: 'wrap',
   },
+  
   interestTag: {
     backgroundColor: colors.accent,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 20,
-    marginRight: 8,
-    marginBottom: 8,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    borderRadius: borderRadius.full,
+    marginRight: spacing.sm,
+    marginBottom: spacing.sm,
   },
+  
   interestText: {
-    fontSize: 14,
+    fontSize: typography.sizes.sm,
     color: colors.primaryDark,
-    fontWeight: '500',
+    fontWeight: typography.weights.medium,
   },
+  
   walletCard: {
-    backgroundColor: colors.white,
-    borderRadius: 16,
-    marginHorizontal: 16,
-    marginBottom: 16,
-    padding: 16,
-    ...shadows.small,
+    borderRadius: borderRadius['2xl'],
+    marginHorizontal: spacing.md,
+    marginBottom: spacing.lg,
+    overflow: 'hidden',
+    ...shadows.large,
   },
+  
+  walletGradient: {
+    padding: spacing.lg,
+  },
+  
   walletHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 12,
+    marginBottom: spacing.md,
   },
+  
   walletTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: colors.text,
+    fontSize: typography.sizes.xl,
+    fontWeight: typography.weights.bold,
+    color: colors.textInverse,
   },
+  
   pointsValue: {
-    fontSize: 32,
-    fontWeight: '700',
-    color: colors.primary,
-    marginBottom: 4,
+    fontSize: typography.sizes['4xl'],
+    fontWeight: typography.weights.extrabold,
+    color: colors.textInverse,
+    marginBottom: spacing.xs,
   },
+  
   pointsLabel: {
-    fontSize: 14,
-    color: colors.textLight,
-    marginBottom: 16,
+    fontSize: typography.sizes.base,
+    color: colors.textInverse,
+    opacity: 0.9,
+    marginBottom: spacing.lg,
   },
+  
   walletButton: {
     alignSelf: 'flex-start',
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderColor: colors.textInverse,
   },
+  
   menuContainer: {
-    backgroundColor: colors.white,
-    borderRadius: 16,
-    marginHorizontal: 16,
-    marginBottom: 16,
-    ...shadows.small,
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius['2xl'],
+    marginHorizontal: spacing.md,
+    marginBottom: spacing.lg,
+    overflow: 'hidden',
+    ...shadows.medium,
   },
+  
   menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 16,
+    padding: spacing.lg,
     borderBottomWidth: 1,
-    borderBottomColor: colors.backgroundLight,
+    borderBottomColor: colors.borderLight,
   },
+  
   menuIconContainer: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 44,
+    height: 44,
+    borderRadius: borderRadius.lg,
     backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 12,
+    marginRight: spacing.md,
+    ...shadows.small,
   },
+  
   menuText: {
     flex: 1,
-    fontSize: 16,
+    fontSize: typography.sizes.base,
+    fontWeight: typography.weights.medium,
     color: colors.text,
   },
+  
   favoritesContainer: {
-    marginHorizontal: 16,
-    marginBottom: 30,
+    marginHorizontal: spacing.md,
+    marginBottom: spacing['2xl'],
   },
+  
   favoritesScroll: {
-    paddingRight: 16,
+    paddingRight: spacing.md,
   },
+  
   favoriteItem: {
     width: 120,
-    marginRight: 12,
+    marginRight: spacing.sm,
   },
+  
   favoriteImage: {
     width: 120,
     height: 120,
-    borderRadius: 12,
-    marginBottom: 8,
+    borderRadius: borderRadius.lg,
+    marginBottom: spacing.sm,
   },
+  
   favoriteOverlay: {
     position: 'absolute',
-    top: 8,
-    right: 8,
-    backgroundColor: colors.white,
-    borderRadius: 12,
-    padding: 6,
+    top: spacing.sm,
+    right: spacing.sm,
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.lg,
+    padding: spacing.xs,
+    ...shadows.small,
   },
+  
   favoriteName: {
-    fontSize: 14,
-    fontWeight: '500',
+    fontSize: typography.sizes.sm,
+    fontWeight: typography.weights.medium,
     color: colors.text,
-    marginBottom: 2,
+    marginBottom: spacing.xs,
   },
+  
   favoriteType: {
-    fontSize: 12,
+    fontSize: typography.sizes.xs,
     color: colors.textLight,
     textTransform: 'capitalize',
   },
+  
   loginPrompt: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 32,
+    padding: spacing.xl,
   },
+  
   loginPromptTitle: {
-    fontSize: 24,
-    fontWeight: '700',
+    fontSize: typography.sizes['2xl'],
+    fontWeight: typography.weights.bold,
     color: colors.text,
-    marginBottom: 24,
+    marginBottom: spacing.lg,
     textAlign: 'center',
   },
+  
   loginButton: {
     width: 200,
   },
