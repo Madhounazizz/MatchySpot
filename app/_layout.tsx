@@ -9,6 +9,7 @@ import { colors } from "@/constants/colors";
 import { useUserStore } from "@/store/useUserStore";
 import { BRCChatProvider } from "@/store/useBRCChatStore";
 import { LanguageProvider } from "@/store/useLanguageStore";
+import { TokenProvider } from "@/store/useTokenStore";
 
 
 export const unstable_settings = {
@@ -67,8 +68,9 @@ function RootLayoutNav() {
 
   return (
     <LanguageProvider>
-      <BRCChatProvider>
-        <StatusBar style="dark" />
+      <TokenProvider>
+        <BRCChatProvider>
+          <StatusBar style="dark" />
       <Stack
         screenOptions={{
           headerStyle: {
@@ -186,8 +188,9 @@ function RootLayoutNav() {
             <Stack.Screen name="modal" options={{ presentation: "modal" }} />
           </>
         )}
-      </Stack>
-      </BRCChatProvider>
+        </Stack>
+        </BRCChatProvider>
+      </TokenProvider>
     </LanguageProvider>
   );
 }

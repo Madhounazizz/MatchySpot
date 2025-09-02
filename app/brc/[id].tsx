@@ -610,10 +610,12 @@ const styles = StyleSheet.create({
     color: colors.white,
   },
   actionsContainer: {
+    flexDirection: 'row',
     gap: 12,
     marginBottom: 100,
   },
   actionButton: {
+    flex: 1,
     marginHorizontal: 0,
   },
   footer: {

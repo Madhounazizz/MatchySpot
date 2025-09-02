@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, ScrollView, TouchableOpacity, Alert, TextInput, Platform } from 'react-native';
 import { useRouter, useLocalSearchParams, Stack } from 'expo-router';
-import { Calendar, Clock, Users, CreditCard, ChevronRight, MapPin, ArrowLeft, Check, Star, MessageSquare, Shield } from 'lucide-react-native';
+import { Calendar, Clock, Users, CreditCard, ChevronRight, MapPin, ArrowLeft, Check, Star, MessageSquare, Shield, Coins } from 'lucide-react-native';
 import { Image } from 'expo-image';
 import { colors, shadows } from '@/constants/colors';
 import Button from '@/components/Button';
 import { brcs } from '@/mocks/brcs';
+import { useTokens } from '@/store/useTokenStore';
 
 const timeSlots = [
   '11:00', '11:30', '12:00', '12:30', '13:00', '13:30',
@@ -19,6 +20,7 @@ export default function BookingScreen() {
   const router = useRouter();
   const params = useLocalSearchParams<{ brcId?: string }>();
   const brcId = params.brcId;
+  const { balance, spendTokens, hasEnoughTokens } = useTokens();
   
   console.log('BookingScreen - brcId:', brcId);
   console.log('BookingScreen - all params:', params);
@@ -58,17 +60,35 @@ export default function BookingScreen() {
       setStep(3);
     } else if (step === 3) {
       console.log('Completing booking');
-      // Complete booking - navigate to success screen
-      router.push({
-        pathname: '/booking/success',
-        params: {
-          brcId: selectedBRC?.id,
-          date: getDateText(),
-          time: time,
-          guests: guests.toString(),
-          table: selectedTable,
-        },
-      });
+      
+      // Check if user has enough tokens
+      if (!hasEnoughTokens(20)) {
+        Alert.alert(
+          'Insufficient Tokens',
+          `You need 20 tokens to make a reservation. You currently have ${balance} tokens. Earn more tokens by posting reviews!`,
+          [{ text: 'OK' }]
+        );
+        return;
+      }
+      
+      // Deduct tokens for reservation
+      const success = spendTokens(20, 'Table reservation', selectedBRC?.id, selectedBRC?.name);
+      
+      if (success) {
+        // Complete booking - navigate to success screen
+        router.push({
+          pathname: '/booking/success',
+          params: {
+            brcId: selectedBRC?.id,
+            date: getDateText(),
+            time: time,
+            guests: guests.toString(),
+            table: selectedTable,
+          },
+        });
+      } else {
+        Alert.alert('Error', 'Failed to process reservation. Please try again.');
+      }
     } else {
       console.log('Cannot continue - missing requirements:', { step, time, selectedTable });
       // Show helpful message
@@ -484,8 +504,11 @@ export default function BookingScreen() {
             
             <View style={styles.totalSection}>
               <View style={styles.totalRow}>
-                <Text style={styles.totalLabel}>Reservation Fee</Text>
-                <Text style={styles.totalValue}>Free</Text>
+                <Text style={styles.totalLabel}>Reservation Cost</Text>
+                <View style={styles.tokenCost}>
+                  <Coins size={16} color={colors.primary} />
+                  <Text style={styles.tokenCostText}>20 tokens</Text>
+                </View>
               </View>
               {selectedTable === 'Private Booth' && (
                 <View style={styles.totalRow}>
@@ -494,11 +517,35 @@ export default function BookingScreen() {
                 </View>
               )}
               <View style={[styles.totalRow, styles.totalRowFinal]}>
-                <Text style={styles.totalLabelFinal}>Total</Text>
-                <Text style={styles.totalValueFinal}>
-                  {selectedTable === 'Private Booth' ? '$25.00' : 'Free'}
-                </Text>
+                <Text style={styles.totalLabelFinal}>Total Cost</Text>
+                <View style={styles.totalCostContainer}>
+                  <View style={styles.tokenCost}>
+                    <Coins size={18} color={colors.primary} />
+                    <Text style={styles.totalTokenCost}>20 tokens</Text>
+                  </View>
+                  {selectedTable === 'Private Booth' && (
+                    <Text style={styles.totalValueFinal}>+ $25.00</Text>
+                  )}
+                </View>
               </View>
+              
+              <View style={styles.balanceInfo}>
+                <Text style={styles.balanceLabel}>Your Balance:</Text>
+                <View style={styles.balanceAmount}>
+                  <Coins size={16} color={hasEnoughTokens(20) ? colors.success : colors.error} />
+                  <Text style={[styles.balanceText, { color: hasEnoughTokens(20) ? colors.success : colors.error }]}>
+                    {balance} tokens
+                  </Text>
+                </View>
+              </View>
+              
+              {!hasEnoughTokens(20) && (
+                <View style={styles.insufficientTokensWarning}>
+                  <Text style={styles.warningText}>
+⚠️ You need 20 tokens to make this reservation. Post reviews to earn more tokens!
+                  </Text>
+                </View>
+              )}
             </View>
           </View>
         )}
@@ -994,5 +1041,58 @@ const styles = StyleSheet.create({
   },
   fullWidthButton: {
     flex: 1,
+  },
+  tokenCost: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  tokenCostText: {
+    fontSize: 15,
+    color: colors.primary,
+    fontWeight: '600',
+    marginLeft: 4,
+  },
+  totalCostContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  totalTokenCost: {
+    fontSize: 18,
+    color: colors.primary,
+    fontWeight: '700',
+    marginLeft: 4,
+  },
+  balanceInfo: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 12,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: colors.backgroundDark,
+  },
+  balanceLabel: {
+    fontSize: 14,
+    color: colors.textLight,
+  },
+  balanceAmount: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  balanceText: {
+    fontSize: 14,
+    fontWeight: '600',
+    marginLeft: 4,
+  },
+  insufficientTokensWarning: {
+    backgroundColor: colors.error + '20',
+    borderRadius: 8,
+    padding: 12,
+    marginTop: 12,
+  },
+  warningText: {
+    fontSize: 13,
+    color: colors.error,
+    textAlign: 'center',
   },
 });
