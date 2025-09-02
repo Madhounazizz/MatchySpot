@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, View, ScrollView, Text, TouchableOpacity, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
-import * as Notifications from 'expo-notifications';
 import { 
   Bell, 
   BellRing, 
@@ -16,17 +15,6 @@ import {
 import { colors, shadows } from '@/constants/colors';
 import { useLanguage } from '@/store/useLanguageStore';
 import { useTokens } from '@/store/useTokenStore';
-
-// Configure notifications
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: false,
-    shouldShowBanner: true,
-    shouldShowList: true,
-  }),
-});
 
 interface NotificationItem {
   id: string;
@@ -103,125 +91,58 @@ export default function NotificationsScreen() {
   useLanguage();
   useTokens();
   const [notifications, setNotifications] = useState<NotificationItem[]>(mockNotifications);
-  const [permissionStatus, setPermissionStatus] = useState<string>('unknown');
 
-  useEffect(() => {
-    const initNotifications = async () => {
-      await checkNotificationPermissions();
-      setupNotificationListeners();
+  const scheduleTestNotification = () => {
+    const newNotification: NotificationItem = {
+      id: Date.now().toString(),
+      type: 'booking',
+      title: 'Test Notification 🧪',
+      message: 'This is a test notification from your BRC app!',
+      timestamp: 'Just now',
+      isRead: false,
+      data: { type: 'test' },
+      icon: <Bell size={20} color={colors.primary} />,
+      color: colors.primary,
     };
-    initNotifications();
-  }, []);
-
-  const checkNotificationPermissions = async () => {
-    try {
-      const { status } = await Notifications.getPermissionsAsync();
-      setPermissionStatus(status);
-      
-      if (status !== 'granted') {
-        const { status: newStatus } = await Notifications.requestPermissionsAsync();
-        setPermissionStatus(newStatus);
-      }
-    } catch (error) {
-      console.error('Error checking notification permissions:', error);
-    }
+    setNotifications(prev => [newNotification, ...prev]);
+    Alert.alert('Simulated', 'Added a test notification locally. Push is disabled in Expo Go SDK 53.');
   };
 
-  const setupNotificationListeners = () => {
-    // Listen for notifications received while app is running
-    const notificationListener = Notifications.addNotificationReceivedListener((notification: any) => {
-      console.log('Notification received:', notification);
-      // Add to notifications list
-      const newNotification: NotificationItem = {
-        id: Date.now().toString(),
-        type: 'booking',
-        title: notification.request.content.title || 'New Notification',
-        message: notification.request.content.body || '',
-        timestamp: 'Just now',
-        isRead: false,
-        data: notification.request.content.data,
-        icon: <Bell size={20} color={colors.primary} />,
-        color: colors.primary
-      };
-      setNotifications(prev => [newNotification, ...prev]);
-    });
-
-    // Listen for notification taps
-    const responseListener = Notifications.addNotificationResponseReceivedListener((response: any) => {
-      console.log('Notification tapped:', response);
-      handleNotificationPress(response.notification.request.content.data);
-    });
-
-    return () => {
-      Notifications.removeNotificationSubscription(notificationListener);
-      Notifications.removeNotificationSubscription(responseListener);
+  const scheduleBookingReminder = (brcName: string, time: string) => {
+    const n: NotificationItem = {
+      id: Date.now().toString(),
+      type: 'event',
+      title: 'Booking Reminder 📅',
+      message: `Your reservation at ${brcName} is in 1 hour (${time})`,
+      timestamp: 'Just now',
+      isRead: false,
+      data: { type: 'booking_reminder', brcName, time },
+      icon: <Calendar size={20} color={colors.info} />,
+      color: colors.info,
     };
+    setNotifications(prev => [n, ...prev]);
   };
 
-  const scheduleTestNotification = async () => {
-    if (permissionStatus !== 'granted') {
-      Alert.alert('Permission Required', 'Please enable notifications to receive updates.');
-      return;
-    }
-
-    try {
-      await Notifications.scheduleNotificationAsync({
-        content: {
-          title: 'Test Notification 🧪',
-          body: 'This is a test notification from your BRC app!',
-          data: { type: 'test' },
-        },
-        trigger: null,
-      });
-      
-      Alert.alert('Success', 'Test notification scheduled for 2 seconds from now!');
-    } catch (error) {
-      console.error('Error scheduling notification:', error);
-      Alert.alert('Error', 'Failed to schedule notification');
-    }
-  };
-
-  const scheduleBookingReminder = async (brcName: string, time: string) => {
-    if (permissionStatus !== 'granted') return;
-
-    try {
-      await Notifications.scheduleNotificationAsync({
-        content: {
-          title: 'Booking Reminder 📅',
-          body: `Your reservation at ${brcName} is in 1 hour (${time})`,
-          data: { type: 'booking_reminder', brcName, time },
-        },
-        trigger: null,
-      });
-    } catch (error) {
-      console.error('Error scheduling booking reminder:', error);
-    }
-  };
-
-  const schedulePromoAlert = async (brcName: string, discount: number) => {
-    if (permissionStatus !== 'granted') return;
-
-    try {
-      await Notifications.scheduleNotificationAsync({
-        content: {
-          title: 'Special Offer! 🔥',
-          body: `${discount}% off at ${brcName}! Limited time only.`,
-          data: { type: 'promo', brcName, discount },
-        },
-        trigger: null,
-      });
-    } catch (error) {
-      console.error('Error scheduling promo alert:', error);
-    }
+  const schedulePromoAlert = (brcName: string, discount: number) => {
+    const n: NotificationItem = {
+      id: Date.now().toString(),
+      type: 'promo',
+      title: 'Special Offer! 🔥',
+      message: `${discount}% off at ${brcName}! Limited time only.`,
+      timestamp: 'Just now',
+      isRead: false,
+      data: { type: 'promo', brcName, discount },
+      icon: <Gift size={20} color={colors.primary} />,
+      color: colors.primary,
+    };
+    setNotifications(prev => [n, ...prev]);
   };
 
   const handleNotificationPress = (notification: NotificationItem) => {
-    // Mark as read
     setNotifications(prev => 
       prev.map(n => n.id === notification.id ? { ...n, isRead: true } : n)
     );
 
-    // Handle different notification types
     switch (notification.type) {
       case 'booking':
         if (notification.data?.brcId) {
@@ -266,7 +187,6 @@ export default function NotificationsScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.contentContainer}
       >
-        {/* Header */}
         <View style={styles.header}>
           <View style={styles.headerLeft}>
             <BellRing size={24} color={colors.primary} />
@@ -285,28 +205,19 @@ export default function NotificationsScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* Permission Status */}
-        {permissionStatus !== 'granted' && (
-          <View style={styles.permissionCard}>
-            <Bell size={24} color={colors.warning} />
-            <View style={styles.permissionText}>
-              <Text style={styles.permissionTitle}>Enable Notifications</Text>
-              <Text style={styles.permissionSubtitle}>
-                Get notified about bookings, events, and special offers
-              </Text>
-            </View>
-            <TouchableOpacity 
-              style={styles.enableButton}
-              onPress={checkNotificationPermissions}
-            >
-              <Text style={styles.enableButtonText}>Enable</Text>
-            </TouchableOpacity>
+        <View style={styles.permissionCard}>
+          <Bell size={24} color={colors.warning} />
+          <View style={styles.permissionText}>
+            <Text style={styles.permissionTitle}>Push unavailable in Expo Go</Text>
+            <Text style={styles.permissionSubtitle}>
+              In-app notifications work here. For real push, use a development build.
+            </Text>
           </View>
-        )}
+        </View>
 
-        {/* Actions */}
         <View style={styles.actionsContainer}>
           <TouchableOpacity 
+            testID="mark-all-read"
             style={styles.actionButton}
             onPress={markAllAsRead}
             disabled={unreadCount === 0}
@@ -321,6 +232,7 @@ export default function NotificationsScreen() {
           </TouchableOpacity>
           
           <TouchableOpacity 
+            testID="schedule-test"
             style={styles.actionButton}
             onPress={scheduleTestNotification}
           >
@@ -329,7 +241,6 @@ export default function NotificationsScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* Notifications List */}
         <View style={styles.notificationsContainer}>
           {notifications.length === 0 ? (
             <View style={styles.emptyState}>
@@ -343,6 +254,7 @@ export default function NotificationsScreen() {
             notifications.map((notification) => (
               <TouchableOpacity
                 key={notification.id}
+                testID={`notification-${notification.id}`}
                 style={[
                   styles.notificationItem,
                   !notification.isRead && styles.unreadNotification
@@ -369,6 +281,7 @@ export default function NotificationsScreen() {
                     </Text>
                   </View>
                   <TouchableOpacity
+                    testID={`clear-${notification.id}`}
                     style={styles.closeButton}
                     onPress={() => clearNotification(notification.id)}
                   >
@@ -381,11 +294,11 @@ export default function NotificationsScreen() {
           )}
         </View>
 
-        {/* Demo Actions */}
         <View style={styles.demoContainer}>
           <Text style={styles.demoTitle}>🧪 Demo Notification Types</Text>
           <View style={styles.demoButtons}>
             <TouchableOpacity
+              testID="demo-booking-reminder"
               style={styles.demoButton}
               onPress={() => scheduleBookingReminder('Coastal Breeze', '19:00')}
             >
@@ -394,6 +307,7 @@ export default function NotificationsScreen() {
             </TouchableOpacity>
             
             <TouchableOpacity
+              testID="demo-promo-alert"
               style={[styles.demoButton, { backgroundColor: colors.warning }]}
               onPress={() => schedulePromoAlert('Neon Lounge', 25)}
             >
@@ -403,18 +317,14 @@ export default function NotificationsScreen() {
           </View>
         </View>
 
-        {/* Implementation Notes */}
         <View style={styles.implementationContainer}>
           <Text style={styles.implementationTitle}>📱 Notification Features</Text>
           <Text style={styles.implementationText}>
-            ✅ Push notification permissions{'\n'}
-            ✅ Local notification scheduling{'\n'}
-            ✅ Notification handling & routing{'\n'}
-            ✅ Unread count & management{'\n'}
-            🔄 Server-side push notifications{'\n'}
-            🔄 Notification preferences{'\n'}
-            🔄 Rich notifications with images{'\n'}
-            🔄 Notification categories & actions
+            ✅ In-app notifications list
+            {'\n'}
+            ✅ Unread count & management
+            {'\n'}
+            🔄 Server push requires a dev build (outside Expo Go)
           </Text>
         </View>
       </ScrollView>
@@ -495,17 +405,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: colors.textLight,
     lineHeight: 20,
-  },
-  enableButton: {
-    backgroundColor: colors.warning,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 8,
-  },
-  enableButtonText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: colors.white,
   },
   actionsContainer: {
     flexDirection: 'row',
