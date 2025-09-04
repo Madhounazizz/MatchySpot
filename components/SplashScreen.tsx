@@ -1,6 +1,5 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, Animated, Dimensions } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import { colors } from '@/constants/colors';
 
 const { width, height } = Dimensions.get('window');
@@ -86,12 +85,7 @@ export default function SplashScreen({ onFinish }: SplashScreenProps) {
 
   return (
     <View style={styles.container}>
-      <LinearGradient
-        colors={[colors.primary, colors.primaryLight, colors.accent]}
-        style={styles.gradient}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-      >
+      <View style={styles.gradient}>
         <Animated.View
           style={[
             styles.content,
@@ -155,7 +149,7 @@ export default function SplashScreen({ onFinish }: SplashScreenProps) {
           <View style={[styles.foodDot, { backgroundColor: colors.italian }]} />
           <View style={[styles.foodDot, { backgroundColor: colors.tunisian }]} />
         </View>
-      </LinearGradient>
+      </View>
     </View>
   );
 }
@@ -168,6 +162,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: colors.primary,
   },
   content: {
     alignItems: 'center',
