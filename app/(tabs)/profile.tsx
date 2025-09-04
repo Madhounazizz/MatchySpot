@@ -220,7 +220,7 @@ export default function ProfileScreen() {
         </TouchableOpacity>
       </View>
       
-      {favoriteBRCs.length > 0 && (
+      {favoriteBRCs.length > 0 ? (
         <View style={styles.favoritesContainer}>
           <Text style={styles.sectionTitle}>Favorite Places</Text>
           <ScrollView
@@ -249,7 +249,7 @@ export default function ProfileScreen() {
             ))}
           </ScrollView>
         </View>
-      )}
+      ) : null}
       </ScrollView>
       
       <LanguageSelector
