@@ -68,7 +68,7 @@ export default function HomeScreen() {
         >
           <View style={styles.header}>
             <Text style={styles.greeting}>Hello, Alex 👋</Text>
-            <Text style={styles.subtitle}>Discover amazing cuisines & connect with food lovers</Text>
+            <Text style={styles.subtitle}>Discover amazing cuisines & connect with food lovers around you</Text>
           </View>
         </LinearGradient>
         
@@ -81,23 +81,25 @@ export default function HomeScreen() {
         />
         
         {/* Food Categories Section */}
-        <SectionHeader
-          title="Explore Cuisines"
-          icon={<ChefHat size={20} color={colors.primary} />}
-        />
-        
-        <View style={styles.foodCategoriesContainer}>
-          {foodCategories.map((category) => (
-            <FoodCategoryCard
-              key={category.id}
-              category={category}
-              onPress={(categoryId) => {
-                console.log('Selected cuisine:', categoryId);
-                // Navigate to cuisine-specific restaurants
-                router.push('/discover');
-              }}
-            />
-          ))}
+        <View style={styles.cuisineSection}>
+          <SectionHeader
+            title="Explore World Cuisines"
+            icon={<ChefHat size={20} color={colors.primary} />}
+          />
+          
+          <View style={styles.foodCategoriesContainer}>
+            {foodCategories.map((category) => (
+              <FoodCategoryCard
+                key={category.id}
+                category={category}
+                onPress={(categoryId) => {
+                  console.log('Selected cuisine:', categoryId);
+                  // Navigate to cuisine-specific restaurants
+                  router.push('/discover');
+                }}
+              />
+            ))}
+          </View>
         </View>
         
         <SectionHeader
@@ -293,11 +295,17 @@ const styles = StyleSheet.create({
     color: colors.textLight,
     textAlign: 'center',
   },
+  cuisineSection: {
+    backgroundColor: colors.backgroundLight,
+    marginHorizontal: 8,
+    borderRadius: 20,
+    paddingVertical: 8,
+    marginBottom: 24,
+  },
   foodCategoriesContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
-    marginBottom: 24,
   },
 });

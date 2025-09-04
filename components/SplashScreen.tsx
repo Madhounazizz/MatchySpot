@@ -65,9 +65,11 @@ export default function SplashScreen({ onFinish }: SplashScreenProps) {
           ]}
         >
           <View style={styles.logoContainer}>
-            <Text style={styles.logoEmoji}>🍽️</Text>
-            <Text style={styles.appName}>Matchy</Text>
-            <Text style={styles.appNameSecond}>Matchy</Text>
+            <View style={styles.logoCircle}>
+              <Text style={styles.logoEmoji}>🍽️</Text>
+            </View>
+            <Text style={styles.appName}>FoodieConnect</Text>
+            <View style={styles.brandLine} />
           </View>
           
           <Animated.View
@@ -79,8 +81,8 @@ export default function SplashScreen({ onFinish }: SplashScreenProps) {
               },
             ]}
           >
-            <Text style={styles.tagline}>Social Hospitality</Text>
-            <Text style={styles.subtitle}>Find • Dine • Connect</Text>
+            <Text style={styles.tagline}>Discover Amazing Cuisines</Text>
+            <Text style={styles.subtitle}>Find • Taste • Share • Connect</Text>
           </Animated.View>
         </Animated.View>
         
@@ -109,30 +111,38 @@ const styles = StyleSheet.create({
   },
   logoContainer: {
     alignItems: 'center',
-    marginBottom: 40,
+    marginBottom: 50,
+  },
+  logoCircle: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 24,
+    borderWidth: 3,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
   },
   logoEmoji: {
-    fontSize: 80,
-    marginBottom: 20,
+    fontSize: 60,
   },
   appName: {
-    fontSize: 42,
+    fontSize: 36,
     fontWeight: '800',
     color: colors.white,
-    letterSpacing: -1,
-    textShadowColor: 'rgba(0, 0, 0, 0.1)',
+    letterSpacing: -0.5,
+    textShadowColor: 'rgba(0, 0, 0, 0.2)',
     textShadowOffset: { width: 0, height: 2 },
     textShadowRadius: 4,
+    marginBottom: 12,
   },
-  appNameSecond: {
-    fontSize: 42,
-    fontWeight: '300',
-    color: colors.white,
-    letterSpacing: -1,
-    marginTop: -8,
-    textShadowColor: 'rgba(0, 0, 0, 0.1)',
-    textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 4,
+  brandLine: {
+    width: 60,
+    height: 3,
+    backgroundColor: colors.white,
+    borderRadius: 2,
+    opacity: 0.8,
   },
   taglineContainer: {
     alignItems: 'center',

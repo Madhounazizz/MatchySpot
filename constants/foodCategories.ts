@@ -3,43 +3,43 @@ export const foodCategories = [
     id: 'chinese',
     name: 'Chinese',
     emoji: '🥢',
-    color: '#FF6B6B',
-    description: 'Authentic Chinese cuisine'
+    color: '#E74C3C',
+    description: 'Authentic Chinese flavors'
   },
   {
     id: 'french',
     name: 'French',
     emoji: '🥐',
-    color: '#4ECDC4',
-    description: 'Classic French dishes'
+    color: '#3498DB',
+    description: 'Elegant French cuisine'
   },
   {
     id: 'italian',
     name: 'Italian',
     emoji: '🍝',
-    color: '#45B7D1',
-    description: 'Traditional Italian flavors'
+    color: '#27AE60',
+    description: 'Traditional Italian pasta'
   },
   {
     id: 'tunisian',
     name: 'Tunisian',
     emoji: '🌶️',
-    color: '#96CEB4',
-    description: 'Spicy Tunisian specialties'
+    color: '#F39C12',
+    description: 'Spicy North African'
   },
   {
     id: 'mediterranean',
     name: 'Mediterranean',
     emoji: '🫒',
-    color: '#FECA57',
-    description: 'Fresh Mediterranean cuisine'
+    color: '#9B59B6',
+    description: 'Fresh Mediterranean'
   },
   {
     id: 'japanese',
     name: 'Japanese',
     emoji: '🍣',
-    color: '#FF9FF3',
-    description: 'Authentic Japanese dishes'
+    color: '#E67E22',
+    description: 'Authentic Sushi & More'
   }
 ];
 
@@ -53,7 +53,9 @@ export const cuisineTypes = [
   'american',
   'mexican',
   'indian',
-  'thai'
+  'thai',
+  'korean',
+  'vietnamese'
 ] as const;
 
 export type CuisineType = typeof cuisineTypes[number];
