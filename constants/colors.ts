@@ -24,6 +24,11 @@ export const colors = {
   overlayLight: 'rgba(0, 0, 0, 0.2)',
   card: '#FFFFFF',
   border: '#E5E7EB',
+  // Food category colors
+  chinese: '#DC2626',
+  french: '#7C3AED',
+  italian: '#059669',
+  tunisian: '#EA580C',
 };
 
 export const shadows = {

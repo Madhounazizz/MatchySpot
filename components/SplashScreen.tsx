@@ -13,39 +13,76 @@ export default function SplashScreen({ onFinish }: SplashScreenProps) {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(0.3)).current;
   const slideAnim = useRef(new Animated.Value(50)).current;
+  const rotateAnim = useRef(new Animated.Value(0)).current;
+  const pulseAnim = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
+    // Pulse animation for logo
+    const pulseAnimation = Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulseAnim, {
+          toValue: 1.1,
+          duration: 1000,
+          useNativeDriver: true,
+        }),
+        Animated.timing(pulseAnim, {
+          toValue: 1,
+          duration: 1000,
+          useNativeDriver: true,
+        }),
+      ])
+    );
+
+    // Rotation animation for decorative elements
+    const rotateAnimation = Animated.loop(
+      Animated.timing(rotateAnim, {
+        toValue: 1,
+        duration: 20000,
+        useNativeDriver: true,
+      })
+    );
+
     const animationSequence = Animated.sequence([
       Animated.parallel([
         Animated.timing(fadeAnim, {
           toValue: 1,
-          duration: 800,
+          duration: 1000,
           useNativeDriver: true,
         }),
         Animated.spring(scaleAnim, {
           toValue: 1,
-          tension: 50,
-          friction: 7,
+          tension: 40,
+          friction: 8,
           useNativeDriver: true,
         }),
       ]),
       Animated.timing(slideAnim, {
         toValue: 0,
-        duration: 600,
+        duration: 800,
         useNativeDriver: true,
       }),
-      Animated.delay(1200),
+      Animated.delay(1500),
       Animated.timing(fadeAnim, {
         toValue: 0,
-        duration: 500,
+        duration: 600,
         useNativeDriver: true,
       }),
     ]);
 
+    pulseAnimation.start();
+    rotateAnimation.start();
+    
     animationSequence.start(() => {
+      pulseAnimation.stop();
+      rotateAnimation.stop();
       onFinish();
     });
-  }, [fadeAnim, scaleAnim, slideAnim, onFinish]);
+
+    return () => {
+      pulseAnimation.stop();
+      rotateAnimation.stop();
+    };
+  }, [fadeAnim, scaleAnim, slideAnim, rotateAnim, pulseAnim, onFinish]);
 
   return (
     <View style={styles.container}>
@@ -65,9 +102,16 @@ export default function SplashScreen({ onFinish }: SplashScreenProps) {
           ]}
         >
           <View style={styles.logoContainer}>
-            <View style={styles.logoCircle}>
+            <Animated.View 
+              style={[
+                styles.logoCircle,
+                {
+                  transform: [{ scale: pulseAnim }]
+                }
+              ]}
+            >
               <Text style={styles.logoEmoji}>🍽️</Text>
-            </View>
+            </Animated.View>
             <Text style={styles.appName}>FoodieConnect</Text>
             <View style={styles.brandLine} />
           </View>
@@ -86,10 +130,30 @@ export default function SplashScreen({ onFinish }: SplashScreenProps) {
           </Animated.View>
         </Animated.View>
         
-        <View style={styles.decorativeElements}>
+        <Animated.View 
+          style={[
+            styles.decorativeElements,
+            {
+              transform: [{
+                rotate: rotateAnim.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: ['0deg', '360deg'],
+                })
+              }]
+            }
+          ]}
+        >
           <View style={[styles.circle, styles.circle1]} />
           <View style={[styles.circle, styles.circle2]} />
           <View style={[styles.circle, styles.circle3]} />
+        </Animated.View>
+        
+        {/* Food category indicators */}
+        <View style={styles.foodIndicators}>
+          <View style={[styles.foodDot, { backgroundColor: colors.chinese }]} />
+          <View style={[styles.foodDot, { backgroundColor: colors.french }]} />
+          <View style={[styles.foodDot, { backgroundColor: colors.italian }]} />
+          <View style={[styles.foodDot, { backgroundColor: colors.tunisian }]} />
         </View>
       </LinearGradient>
     </View>
@@ -189,5 +253,21 @@ const styles = StyleSheet.create({
     height: 100,
     top: height * 0.3,
     left: width * 0.1,
+  },
+  foodIndicators: {
+    position: 'absolute',
+    bottom: 80,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    zIndex: 3,
+  },
+  foodDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginHorizontal: 6,
+    opacity: 0.8,
   },
 });

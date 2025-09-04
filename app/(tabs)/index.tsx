@@ -13,6 +13,7 @@ import UserCard from '@/components/UserCard';
 import { brcs, featuredBRCs, nearbyBRCs } from '@/mocks/brcs';
 import { upcomingEvents } from '@/mocks/events';
 import { suggestedUsers } from '@/mocks/users';
+import FoodCategories, { FoodCategory } from '@/components/FoodCategories';
 
 const categories = [
   { id: 'all', name: 'All' },
@@ -47,6 +48,12 @@ export default function HomeScreen() {
     router.push('/(tabs)/discover');
   };
 
+  const handleFoodCategoryPress = (category: FoodCategory) => {
+    console.log('Selected food category:', category.name);
+    // Navigate to category-specific restaurants
+    router.push('/discover');
+  };
+
 
 
   const filteredBRCs = selectedCategory === 'all' 
@@ -77,6 +84,12 @@ export default function HomeScreen() {
           selectedCategory={selectedCategory}
           onSelectCategory={handleCategorySelect}
         />
+        
+        <SectionHeader
+          title="Food Categories"
+        />
+        
+        <FoodCategories onCategoryPress={handleFoodCategoryPress} />
         
 
         <SectionHeader
