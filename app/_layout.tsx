@@ -36,7 +36,7 @@ function RootLayoutNav() {
       <TokenProvider>
         <BRCChatProvider>
           <StatusBar style="dark" />
-      <Stack
+          <Stack
         screenOptions={{
           headerStyle: {
             backgroundColor: colors.white,
@@ -153,7 +153,7 @@ function RootLayoutNav() {
             <Stack.Screen name="modal" options={{ presentation: "modal" }} />
           </>
         )}
-        </Stack>
+          </Stack>
         </BRCChatProvider>
       </TokenProvider>
     </LanguageProvider>
