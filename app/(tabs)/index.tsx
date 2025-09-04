@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, ScrollView, Text, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Coffee, Utensils, Wine, Sparkles, QrCode } from 'lucide-react-native';
+import { Coffee, Utensils, Wine, Sparkles, QrCode, ChefHat } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors } from '@/constants/colors';
 import SearchBar from '@/components/SearchBar';
@@ -10,9 +10,11 @@ import SectionHeader from '@/components/SectionHeader';
 import BRCCard from '@/components/BRCCard';
 import EventCard from '@/components/EventCard';
 import UserCard from '@/components/UserCard';
+import FoodCategoryCard from '@/components/FoodCategoryCard';
 import { brcs, featuredBRCs, nearbyBRCs } from '@/mocks/brcs';
 import { upcomingEvents } from '@/mocks/events';
 import { suggestedUsers } from '@/mocks/users';
+import { foodCategories } from '@/constants/foodCategories';
 
 const categories = [
   { id: 'all', name: 'All' },
@@ -60,10 +62,15 @@ export default function HomeScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.contentContainer}
       >
-        <View style={styles.header}>
-          <Text style={styles.greeting}>Hello, Alex 👋</Text>
-          <Text style={styles.subtitle}>Find your perfect match today</Text>
-        </View>
+        <LinearGradient
+          colors={[colors.primary + '10', colors.accent + '20', colors.white]}
+          style={styles.headerGradient}
+        >
+          <View style={styles.header}>
+            <Text style={styles.greeting}>Hello, Alex 👋</Text>
+            <Text style={styles.subtitle}>Discover amazing cuisines & connect with food lovers</Text>
+          </View>
+        </LinearGradient>
         
         <SearchBar />
         
@@ -72,6 +79,26 @@ export default function HomeScreen() {
           selectedCategory={selectedCategory}
           onSelectCategory={handleCategorySelect}
         />
+        
+        {/* Food Categories Section */}
+        <SectionHeader
+          title="Explore Cuisines"
+          icon={<ChefHat size={20} color={colors.primary} />}
+        />
+        
+        <View style={styles.foodCategoriesContainer}>
+          {foodCategories.map((category) => (
+            <FoodCategoryCard
+              key={category.id}
+              category={category}
+              onPress={(categoryId) => {
+                console.log('Selected cuisine:', categoryId);
+                // Navigate to cuisine-specific restaurants
+                router.push('/discover');
+              }}
+            />
+          ))}
+        </View>
         
         <SectionHeader
           title="Featured Places"
@@ -166,10 +193,13 @@ const styles = StyleSheet.create({
   contentContainer: {
     paddingBottom: 100,
   },
+  headerGradient: {
+    paddingTop: 20,
+    paddingBottom: 16,
+    marginBottom: 8,
+  },
   header: {
     paddingHorizontal: 16,
-    paddingTop: 20,
-    paddingBottom: 8,
   },
   greeting: {
     fontSize: 28,
@@ -262,5 +292,12 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: colors.textLight,
     textAlign: 'center',
+  },
+  foodCategoriesContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    marginBottom: 24,
   },
 });

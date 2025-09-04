@@ -11,6 +11,7 @@ import { BRCChatProvider } from "@/store/useBRCChatStore";
 import { LanguageProvider } from "@/store/useLanguageStore";
 import { TokenProvider } from "@/store/useTokenStore";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import SplashScreenComponent from "@/components/SplashScreen";
 
 
 export const unstable_settings = {
@@ -25,6 +26,7 @@ export default function RootLayout() {
     ...FontAwesome.font,
   });
   const [timeoutError, setTimeoutError] = useState(false);
+  const [showSplash, setShowSplash] = useState(true);
 
   // Set a timeout to prevent infinite loading
   useEffect(() => {
@@ -51,6 +53,10 @@ export default function RootLayout() {
       SplashScreen.hideAsync().catch(e => console.log('Error hiding splash:', e));
     }
   }, [loaded, timeoutError]);
+
+  if (showSplash) {
+    return <SplashScreenComponent onFinish={() => setShowSplash(false)} />;
+  }
 
   if (!loaded && !timeoutError) {
     return (

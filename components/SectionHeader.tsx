@@ -7,16 +7,21 @@ type SectionHeaderProps = {
   title: string;
   onSeeAllPress?: () => void;
   showSeeAll?: boolean;
+  icon?: React.ReactNode;
 };
 
 export default function SectionHeader({
   title,
   onSeeAllPress,
   showSeeAll = true,
+  icon,
 }: SectionHeaderProps) {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{title}</Text>
+      <View style={styles.titleContainer}>
+        {icon && <View style={styles.iconContainer}>{icon}</View>}
+        <Text style={styles.title}>{title}</Text>
+      </View>
       
       {showSeeAll && (
         <TouchableOpacity
@@ -39,6 +44,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
     marginBottom: 12,
+  },
+  titleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  iconContainer: {
+    marginRight: 8,
   },
   title: {
     fontSize: 18,
