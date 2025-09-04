@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, ScrollView, Text, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Coffee, Utensils, Wine, Sparkles, QrCode, ChefHat } from 'lucide-react-native';
+import { Coffee, Utensils, Wine, Sparkles, QrCode } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors } from '@/constants/colors';
 import SearchBar from '@/components/SearchBar';
@@ -10,11 +10,9 @@ import SectionHeader from '@/components/SectionHeader';
 import BRCCard from '@/components/BRCCard';
 import EventCard from '@/components/EventCard';
 import UserCard from '@/components/UserCard';
-import FoodCategoryCard from '@/components/FoodCategoryCard';
 import { brcs, featuredBRCs, nearbyBRCs } from '@/mocks/brcs';
 import { upcomingEvents } from '@/mocks/events';
 import { suggestedUsers } from '@/mocks/users';
-import { foodCategories } from '@/constants/foodCategories';
 
 const categories = [
   { id: 'all', name: 'All' },
@@ -80,28 +78,7 @@ export default function HomeScreen() {
           onSelectCategory={handleCategorySelect}
         />
         
-        {/* Food Categories Section */}
-        <View style={styles.cuisineSection}>
-          <SectionHeader
-            title="Explore World Cuisines"
-            icon={<ChefHat size={20} color={colors.primary} />}
-          />
-          
-          <View style={styles.foodCategoriesContainer}>
-            {foodCategories.map((category) => (
-              <FoodCategoryCard
-                key={category.id}
-                category={category}
-                onPress={(categoryId) => {
-                  console.log('Selected cuisine:', categoryId);
-                  // Navigate to cuisine-specific restaurants
-                  router.push('/discover');
-                }}
-              />
-            ))}
-          </View>
-        </View>
-        
+
         <SectionHeader
           title="Featured Places"
           onSeeAllPress={handleSeeAllBRCs}
@@ -295,17 +272,5 @@ const styles = StyleSheet.create({
     color: colors.textLight,
     textAlign: 'center',
   },
-  cuisineSection: {
-    backgroundColor: colors.backgroundLight,
-    marginHorizontal: 8,
-    borderRadius: 20,
-    paddingVertical: 8,
-    marginBottom: 24,
-  },
-  foodCategoriesContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-  },
+
 });
