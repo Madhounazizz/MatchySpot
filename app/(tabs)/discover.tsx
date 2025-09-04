@@ -165,8 +165,6 @@ export default function DiscoverScreen() {
 
   return (
     <View style={styles.container}>
-
-
       <View style={styles.cardsContainer}>{renderCards()}</View>
       
       <View style={styles.buttonsContainer}>
