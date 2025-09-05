@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, FlatList, KeyboardAvoidingView, Platform } from 'react-native';
 import { Image } from 'expo-image';
 import { useLocalSearchParams, Stack, useRouter } from 'expo-router';
-import { Send, MapPin, Calendar, Image as ImageIcon } from 'lucide-react-native';
+import { Send, MapPin, Image as ImageIcon } from 'lucide-react-native';
 import { colors, shadows } from '@/constants/colors';
 import { conversations, chatMessages } from '@/mocks/conversations';
 import { brcs } from '@/mocks/brcs';
@@ -181,11 +181,6 @@ export default function ChatDetailScreen() {
         <TouchableOpacity style={styles.suggestionButton} onPress={handleSuggestBRC}>
           <MapPin size={20} color={colors.primary} />
           <Text style={styles.suggestionText}>Suggest Place</Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity style={styles.suggestionButton}>
-          <Calendar size={20} color={colors.primary} />
-          <Text style={styles.suggestionText}>Plan Meetup</Text>
         </TouchableOpacity>
       </View>
       
