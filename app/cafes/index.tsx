@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { StyleSheet, View, ScrollView, Text, TouchableOpacity, Alert, FlatList } from 'react-native';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
-import { MapPin, Star, Clock, Wifi, Coffee, ChevronRight, Shield, Heart, Filter, Award, TrendingUp, BookOpen, Cake } from 'lucide-react-native';
+import { MapPin, Star, Clock, Coffee, ChevronRight, Shield, Heart, Filter, TrendingUp } from 'lucide-react-native';
 import { colors, shadows } from '@/constants/colors';
 import { brcs } from '@/mocks/brcs';
 import SearchBar from '@/components/SearchBar';
@@ -27,11 +27,7 @@ export default function CafesScreen() {
 
   const filters = [
     { id: 'all', label: t('allCafes'), icon: Coffee },
-    { id: 'specialty', label: t('specialtyCoffee'), icon: Award },
-    { id: 'wifi', label: t('workFriendly'), icon: Wifi },
-    { id: 'pastries', label: t('freshPastries'), icon: Cake },
     { id: 'trending', label: t('trending'), icon: TrendingUp },
-    { id: 'study', label: t('studySpots'), icon: BookOpen },
   ];
 
   const filteredCafes = useMemo(() => {
@@ -50,16 +46,8 @@ export default function CafesScreen() {
     if (selectedFilter !== 'all') {
       filtered = filtered.filter(cafe => {
         switch (selectedFilter) {
-          case 'specialty':
-            return cafe.tags.some(tag => tag.toLowerCase().includes('coffee') || tag.toLowerCase().includes('artisanal'));
-          case 'wifi':
-            return cafe.tags.some(tag => tag.toLowerCase().includes('wifi') || tag.toLowerCase().includes('study'));
-          case 'pastries':
-            return cafe.tags.some(tag => tag.toLowerCase().includes('pastries') || tag.toLowerCase().includes('baked'));
           case 'trending':
             return cafe.rating >= 4.5 && cafe.reviewCount >= 200;
-          case 'study':
-            return cafe.tags.some(tag => tag.toLowerCase().includes('study') || tag.toLowerCase().includes('wifi'));
           default:
             return true;
         }
@@ -250,45 +238,7 @@ export default function CafesScreen() {
           </View>
         )}
         
-        {/* Quick Categories */}
-        <View style={styles.categoriesContainer}>
-          <TouchableOpacity 
-            style={styles.categoryItem}
-            onPress={() => setSelectedFilter('specialty')}
-          >
-            <View style={styles.categoryIcon}>
-              <Award size={20} color={colors.primary} />
-            </View>
-            <Text style={styles.categoryText}>{t('specialty')}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity 
-            style={styles.categoryItem}
-            onPress={() => setSelectedFilter('wifi')}
-          >
-            <View style={styles.categoryIcon}>
-              <Wifi size={20} color={colors.primary} />
-            </View>
-            <Text style={styles.categoryText}>{t('workFriendly')}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity 
-            style={styles.categoryItem}
-            onPress={() => setSelectedFilter('pastries')}
-          >
-            <View style={styles.categoryIcon}>
-              <Cake size={20} color={colors.primary} />
-            </View>
-            <Text style={styles.categoryText}>{t('pastries')}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity 
-            style={styles.categoryItem}
-            onPress={() => setSelectedFilter('study')}
-          >
-            <View style={styles.categoryIcon}>
-              <BookOpen size={20} color={colors.primary} />
-            </View>
-            <Text style={styles.categoryText}>{t('studySpots')}</Text>
-          </TouchableOpacity>
-        </View>
+
 
         {/* All Cafes */}
         <View style={styles.listContainer}>
@@ -491,31 +441,7 @@ const styles = StyleSheet.create({
   horizontalList: {
     paddingLeft: 16,
   },
-  categoriesContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    marginTop: 24,
-    marginBottom: 16,
-  },
-  categoryItem: {
-    alignItems: 'center',
-    flex: 1,
-  },
-  categoryIcon: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: colors.accent,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  categoryText: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: colors.text,
-  },
+
   sectionTitle: {
     fontSize: 18,
     fontWeight: '600',
