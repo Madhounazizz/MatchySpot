@@ -1,6 +1,6 @@
 import React from "react";
 import { Tabs } from "expo-router";
-import { Calendar, ChefHat, LayoutGrid, Menu, Package, Settings, BarChart3, Users } from "lucide-react-native";
+import { Calendar, Menu, Settings, BarChart3, Users } from "lucide-react-native";
 import { colors } from "@/constants/colors";
 
 export default function RestaurantTabLayout() {
@@ -45,30 +45,7 @@ export default function RestaurantTabLayout() {
           ),
         }}
       />
-      <Tabs.Screen
-        name="orders"
-        options={{
-          title: "Orders",
-          tabBarIcon: ({ color, focused }) => (
-            <ChefHat 
-              size={focused ? 24 : 22} 
-              color={color}
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="tables"
-        options={{
-          title: "Table Mgmt",
-          tabBarIcon: ({ color, focused }) => (
-            <LayoutGrid 
-              size={focused ? 24 : 22} 
-              color={color}
-            />
-          ),
-        }}
-      />
+
       <Tabs.Screen
         name="menu"
         options={{
@@ -81,18 +58,7 @@ export default function RestaurantTabLayout() {
           ),
         }}
       />
-      <Tabs.Screen
-        name="inventory"
-        options={{
-          title: "Inventory",
-          tabBarIcon: ({ color, focused }) => (
-            <Package 
-              size={focused ? 24 : 22} 
-              color={color}
-            />
-          ),
-        }}
-      />
+
       <Tabs.Screen
         name="analytics"
         options={{
