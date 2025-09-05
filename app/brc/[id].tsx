@@ -340,19 +340,30 @@ export default function BRCDetailScreen() {
 
       
       <View style={styles.footer}>
-        <View style={styles.footerContent}>
-          <View>
-            <Text style={styles.footerTitle}>Ready to visit?</Text>
-            <Text style={styles.footerSubtitle}>Book your table now</Text>
+        <LinearGradient
+          colors={[colors.primary, colors.primaryDark]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={styles.footerGradient}
+        >
+          <View style={styles.footerContent}>
+            <View style={styles.footerInfo}>
+              <Text style={styles.footerTitle}>Ready to visit?</Text>
+              <Text style={styles.footerSubtitle}>Book your table now</Text>
+            </View>
+            
+            <TouchableOpacity
+              style={styles.bookButton}
+              onPress={handleBookTable}
+              activeOpacity={0.8}
+            >
+              <View style={styles.bookButtonContent}>
+                <Calendar size={22} color={colors.white} />
+                <Text style={styles.bookButtonText}>Book Table</Text>
+              </View>
+            </TouchableOpacity>
           </View>
-          
-          <Button
-            title="Book Table"
-            onPress={handleBookTable}
-            style={styles.bookButton}
-            icon={<Calendar size={20} color={colors.white} />}
-          />
-        </View>
+        </LinearGradient>
       </View>
     </View>
   );
@@ -623,28 +634,53 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: colors.white,
-    borderTopWidth: 1,
-    borderTopColor: colors.backgroundLight,
     ...shadows.large,
+  },
+  footerGradient: {
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
   },
   footerContent: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 20,
+    paddingTop: 24,
+  },
+  footerInfo: {
+    flex: 1,
   },
   footerTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: colors.text,
+    fontSize: 20,
+    fontWeight: '700',
+    color: colors.white,
+    marginBottom: 2,
   },
   footerSubtitle: {
-    fontSize: 14,
-    color: colors.textLight,
+    fontSize: 15,
+    color: 'rgba(255, 255, 255, 0.8)',
+    fontWeight: '500',
   },
   bookButton: {
-    width: 160,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: 20,
+    paddingVertical: 14,
+    paddingHorizontal: 24,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+    ...shadows.medium,
+  },
+  bookButtonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  bookButtonText: {
+    color: colors.white,
+    fontSize: 16,
+    fontWeight: '700',
+    marginLeft: 8,
+    letterSpacing: 0.5,
   },
   reviewsHeader: {
     flexDirection: 'row',
