@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, View, Text, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { Image } from 'expo-image';
 import { useRouter, Stack } from 'expo-router';
-import { Settings, Heart, Wallet, Star, Calendar, LogOut, ChevronRight, Users, Edit, ChefHat, Globe } from 'lucide-react-native';
+import { Settings, Heart, Wallet, Star, LogOut, ChevronRight, Users, Edit, Globe } from 'lucide-react-native';
 import { colors, shadows } from '@/constants/colors';
 import Button from '@/components/Button';
 import { useUserStore } from '@/store/useUserStore';
@@ -62,11 +62,6 @@ export default function ProfileScreen() {
   const navigateToReviews = () => {
     router.push('/reviews');
   };
-
-  const navigateToEvents = () => {
-    router.push('/(tabs)/discover');
-  };
-
 
 
   return (
@@ -176,14 +171,7 @@ export default function ProfileScreen() {
           <ChevronRight size={20} color={colors.textLight} />
         </TouchableOpacity>
         
-        <TouchableOpacity style={styles.menuItem} onPress={navigateToEvents}>
-          <View style={[styles.menuIconContainer, { backgroundColor: colors.warning }]}>
-            <Calendar size={20} color={colors.white} />
-          </View>
-          <Text style={styles.menuText}>{t('myEvents')}</Text>
-          <ChevronRight size={20} color={colors.textLight} />
-        </TouchableOpacity>
-        
+
         <TouchableOpacity style={styles.menuItem} onPress={() => {
           // Removed Alert for direct navigation
           router.push('/invite');
@@ -203,14 +191,7 @@ export default function ProfileScreen() {
           <ChevronRight size={20} color={colors.textLight} />
         </TouchableOpacity>
         
-        <TouchableOpacity style={styles.menuItem} onPress={() => router.push('/(restaurant)/reservations')}>
-          <View style={[styles.menuIconContainer, { backgroundColor: colors.success }]}>
-            <ChefHat size={20} color={colors.white} />
-          </View>
-          <Text style={styles.menuText}>{t('restaurantDashboard')}</Text>
-          <ChevronRight size={20} color={colors.textLight} />
-        </TouchableOpacity>
-        
+
         <TouchableOpacity style={styles.menuItem} onPress={handleLogout}>
           <View style={[styles.menuIconContainer, { backgroundColor: colors.error }]}>
             <LogOut size={20} color={colors.white} />
