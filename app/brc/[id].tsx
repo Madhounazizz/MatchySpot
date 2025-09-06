@@ -3,7 +3,7 @@ import { StyleSheet, View, Text, ScrollView, TouchableOpacity } from 'react-nati
 import { Image } from 'expo-image';
 import { useLocalSearchParams, Stack, useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Heart, Star, MapPin, Clock, Phone, Share, Calendar, MessageCircle, ThumbsUp } from 'lucide-react-native';
+import { Heart, Star, MapPin, Clock, Phone, Share, Wine, MessageCircle, ThumbsUp } from 'lucide-react-native';
 import { colors, shadows } from '@/constants/colors';
 import Button from '@/components/Button';
 import { brcs } from '@/mocks/brcs';
@@ -39,18 +39,13 @@ export default function BRCDetailScreen() {
     toggleFavorite(brc.id);
   };
 
-  const handleBookTable = () => {
-    console.log('Navigating to booking with brcId:', brc.id);
-    try {
-      router.push({
-        pathname: '/booking',
-        params: { brcId: brc.id }
-      });
-    } catch (error) {
-      console.error('Navigation error:', error);
-      // Fallback navigation
-      router.push('/booking');
-    }
+  const handleBarAccess = () => {
+    console.log('Accessing bar for brcId:', brc.id);
+    // Navigate to bar interface or show bar menu
+    router.push({
+      pathname: '/menu/[brcId]',
+      params: { brcId: brc.id }
+    });
   };
   
 
@@ -348,18 +343,18 @@ export default function BRCDetailScreen() {
         >
           <View style={styles.footerContent}>
             <View style={styles.footerInfo}>
-              <Text style={styles.footerTitle}>Ready to visit?</Text>
-              <Text style={styles.footerSubtitle}>Book your table now</Text>
+              <Text style={styles.footerTitle}>Ready for drinks?</Text>
+              <Text style={styles.footerSubtitle}>Explore our bar menu</Text>
             </View>
             
             <TouchableOpacity
-              style={styles.bookButton}
-              onPress={handleBookTable}
+              style={styles.barButton}
+              onPress={handleBarAccess}
               activeOpacity={0.8}
             >
-              <View style={styles.bookButtonContent}>
-                <Calendar size={22} color={colors.white} />
-                <Text style={styles.bookButtonText}>Book Table</Text>
+              <View style={styles.barButtonContent}>
+                <Wine size={24} color={colors.primary} />
+                <Text style={styles.barButtonText}>Bar Menu</Text>
               </View>
             </TouchableOpacity>
           </View>
@@ -661,25 +656,24 @@ const styles = StyleSheet.create({
     color: 'rgba(255, 255, 255, 0.8)',
     fontWeight: '500',
   },
-  bookButton: {
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    borderRadius: 20,
-    paddingVertical: 14,
-    paddingHorizontal: 24,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.3)',
-    ...shadows.medium,
+  barButton: {
+    backgroundColor: colors.white,
+    borderRadius: 24,
+    paddingVertical: 16,
+    paddingHorizontal: 28,
+    ...shadows.large,
+    elevation: 8,
   },
-  bookButtonContent: {
+  barButtonContent: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  bookButtonText: {
-    color: colors.white,
-    fontSize: 16,
+  barButtonText: {
+    color: colors.primary,
+    fontSize: 18,
     fontWeight: '700',
-    marginLeft: 8,
+    marginLeft: 10,
     letterSpacing: 0.5,
   },
   reviewsHeader: {
