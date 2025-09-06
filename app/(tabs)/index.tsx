@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, ScrollView, Text } from 'react-native';
+import { StyleSheet, View, ScrollView, Text, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Coffee, Utensils, Wine, Sparkles } from 'lucide-react-native';
+import { Coffee, Utensils, Wine, Sparkles, QrCode } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors } from '@/constants/colors';
 import SearchBar from '@/components/SearchBar';
@@ -9,8 +9,10 @@ import CategoryPills from '@/components/CategoryPills';
 import SectionHeader from '@/components/SectionHeader';
 import BRCCard from '@/components/BRCCard';
 import EventCard from '@/components/EventCard';
-import { featuredBRCs, nearbyBRCs } from '@/mocks/brcs';
+import UserCard from '@/components/UserCard';
+import { brcs, featuredBRCs, nearbyBRCs } from '@/mocks/brcs';
 import { upcomingEvents } from '@/mocks/events';
+import { suggestedUsers } from '@/mocks/users';
 
 
 const categories = [
@@ -50,7 +52,9 @@ export default function HomeScreen() {
 
 
 
-
+  const filteredBRCs = selectedCategory === 'all' 
+    ? brcs 
+    : brcs.filter(brc => brc.type === selectedCategory);
 
   return (
     <View style={styles.container}>
@@ -130,7 +134,33 @@ export default function HomeScreen() {
           ))}
         </ScrollView>
         
-
+        {/* QR Scanner Section */}
+        <SectionHeader
+          title="Scan QR Code"
+        />
+        
+        <View style={styles.qrScannerSection}>
+          <TouchableOpacity
+            style={styles.qrScannerButton}
+            onPress={() => router.push('/qr-scanner')}
+          >
+            <View style={styles.qrIconContainer}>
+              <QrCode size={28} color={colors.primary} />
+            </View>
+            <View style={styles.qrTextContainer}>
+              <Text style={styles.qrButtonText}>Scan QR Code</Text>
+              <Text style={styles.qrSubText}>Order food & join chatroom</Text>
+            </View>
+          </TouchableOpacity>
+          
+          {/* Test QR Codes Link */}
+          <TouchableOpacity
+            style={styles.testQRButton}
+            onPress={() => router.push('/test-qr')}
+          >
+            <Text style={styles.testQRText}>📱 View Test QR Codes</Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
     </View>
   );
@@ -180,7 +210,10 @@ const styles = StyleSheet.create({
     paddingRight: 8,
     paddingBottom: 24,
   },
-
+  usersContainer: {
+    paddingHorizontal: 16,
+    marginBottom: 24,
+  },
   nearbyContainer: {
     paddingLeft: 16,
     paddingRight: 8,
@@ -189,6 +222,60 @@ const styles = StyleSheet.create({
   nearbyCardWrapper: {
     marginRight: 12,
   },
-
+  qrScannerSection: {
+    paddingHorizontal: 16,
+    paddingBottom: 24,
+  },
+  qrScannerButton: {
+    backgroundColor: colors.white,
+    borderRadius: 16,
+    padding: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  qrIconContainer: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: colors.backgroundLight,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 16,
+  },
+  qrTextContainer: {
+    flex: 1,
+  },
+  qrButtonText: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: colors.text,
+    marginBottom: 4,
+  },
+  qrSubText: {
+    fontSize: 14,
+    color: colors.textLight,
+  },
+  testQRButton: {
+    backgroundColor: colors.backgroundLight,
+    borderRadius: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  testQRText: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: colors.textLight,
+    textAlign: 'center',
+  },
 
 });
