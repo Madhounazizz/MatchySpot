@@ -43,7 +43,11 @@ export default function ForgotPasswordScreen() {
         }
       });
       
-      setEmailSent(true);
+      // Navigate to verification screen instead of showing success
+      router.push({
+        pathname: '/auth/verify-code',
+        params: { email: trimmedEmail, type: 'reset' }
+      });
     } catch (error) {
       console.error('Reset password error:', error);
       setShowError('Failed to send reset email. Please try again.');
