@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, ScrollView, TouchableOpacity, Switch, Alert } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Stack, useRouter } from 'expo-router';
 import { 
   ArrowLeft, 
@@ -11,8 +12,10 @@ import {
   FileText, 
   Shield,
   ChevronRight,
-  Trash2
+  Trash2,
+  Settings as SettingsIcon
 } from 'lucide-react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { colors, shadows } from '@/constants/colors';
 import { useTranslation } from '@/store/useLanguageStore';
 import LanguageSelector from '@/components/LanguageSelector';
@@ -20,6 +23,7 @@ import LanguageSelector from '@/components/LanguageSelector';
 export default function SettingsScreen() {
   const router = useRouter();
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
   const [showLanguageSelector, setShowLanguageSelector] = useState(false);
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [darkModeEnabled, setDarkModeEnabled] = useState(false);
@@ -49,27 +53,34 @@ export default function SettingsScreen() {
     <View style={styles.container}>
       <Stack.Screen
         options={{
-          headerShown: true,
-          title: 'Settings',
-          headerStyle: {
-            backgroundColor: colors.white,
-          },
-          headerTitleStyle: {
-            fontSize: 18,
-            fontWeight: '600',
-            color: colors.text,
-          },
-          headerLeft: () => (
-            <TouchableOpacity
-              onPress={() => router.back()}
-              style={styles.backButton}
-              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-            >
-              <ArrowLeft size={24} color={colors.text} />
-            </TouchableOpacity>
-          ),
+          headerShown: false,
         }}
       />
+
+      <LinearGradient
+        colors={['#667eea', '#764ba2']}
+        style={[styles.headerGradient, { paddingTop: insets.top + 20 }]}
+      >
+        <View style={styles.headerTop}>
+          <TouchableOpacity
+            onPress={() => router.back()}
+            style={styles.backButton}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <ArrowLeft size={24} color={colors.white} />
+          </TouchableOpacity>
+        </View>
+        
+        <View style={styles.headerContent}>
+          <View style={styles.iconBadge}>
+            <SettingsIcon size={24} color="#667eea" />
+          </View>
+          <Text style={styles.headerTitle}>Settings</Text>
+          <Text style={styles.headerSubtitle}>
+            Manage your preferences and account settings
+          </Text>
+        </View>
+      </LinearGradient>
 
       <ScrollView
         style={styles.scrollView}
@@ -77,7 +88,7 @@ export default function SettingsScreen() {
         contentContainerStyle={styles.contentContainer}
       >
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Preferences</Text>
+          <Text style={styles.sectionTitle}>PREFERENCES</Text>
           
           <View style={styles.settingItem}>
             <View style={styles.settingLeft}>
@@ -133,7 +144,7 @@ export default function SettingsScreen() {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Privacy & Security</Text>
+          <Text style={styles.sectionTitle}>PRIVACY & SECURITY</Text>
           
           <TouchableOpacity style={styles.settingItem}>
             <View style={styles.settingLeft}>
@@ -168,7 +179,7 @@ export default function SettingsScreen() {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>About</Text>
+          <Text style={styles.sectionTitle}>ABOUT</Text>
           
           <TouchableOpacity style={styles.settingItem}>
             <View style={styles.settingLeft}>
@@ -211,7 +222,7 @@ export default function SettingsScreen() {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Danger Zone</Text>
+          <Text style={styles.sectionTitle}>DANGER ZONE</Text>
           
           <TouchableOpacity 
             style={[styles.settingItem, styles.dangerItem]}
@@ -248,29 +259,72 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.backgroundLight,
   },
+  headerGradient: {
+    paddingTop: 60,
+    paddingBottom: 32,
+    paddingHorizontal: 20,
+  },
+  headerTop: {
+    marginBottom: 20,
+  },
   backButton: {
-    padding: 8,
-    marginLeft: 8,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  headerContent: {
+    alignItems: 'center',
+  },
+  iconBadge: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: colors.white,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 16,
+    ...shadows.medium,
+  },
+  headerTitle: {
+    fontSize: 28,
+    fontWeight: '700',
+    color: colors.white,
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  headerSubtitle: {
+    fontSize: 15,
+    color: 'rgba(255, 255, 255, 0.9)',
+    lineHeight: 22,
+    textAlign: 'center',
+    paddingHorizontal: 20,
   },
   scrollView: {
     flex: 1,
+    marginTop: -20,
   },
   contentContainer: {
+    paddingTop: 20,
     paddingBottom: 100,
   },
   section: {
     backgroundColor: colors.white,
     marginBottom: 16,
+    marginHorizontal: 16,
+    borderRadius: 16,
     paddingVertical: 8,
+    ...shadows.small,
   },
   sectionTitle: {
-    fontSize: 14,
-    fontWeight: '600',
+    fontSize: 13,
+    fontWeight: '700',
     color: colors.textLight,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
+    letterSpacing: 1,
     paddingHorizontal: 16,
-    paddingTop: 8,
+    paddingTop: 12,
     paddingBottom: 12,
   },
   settingItem: {
@@ -278,7 +332,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingVertical: 14,
     borderBottomWidth: 1,
     borderBottomColor: colors.backgroundLight,
   },
@@ -288,25 +342,26 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   iconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 12,
+    marginRight: 14,
   },
   settingTextContainer: {
     flex: 1,
   },
   settingTitle: {
     fontSize: 16,
-    fontWeight: '500',
+    fontWeight: '600',
     color: colors.text,
-    marginBottom: 2,
+    marginBottom: 3,
   },
   settingSubtitle: {
     fontSize: 13,
     color: colors.textLight,
+    lineHeight: 18,
   },
   dangerItem: {
     borderBottomWidth: 0,
