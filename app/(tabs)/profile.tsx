@@ -80,7 +80,11 @@ export default function ProfileScreen() {
         <View style={styles.header}>
           <View style={styles.headerTop}>
             <Text style={styles.headerTitle}>{t('profile')}</Text>
-            <TouchableOpacity style={styles.settingsButton} hitSlop={10}>
+            <TouchableOpacity 
+              style={styles.settingsButton} 
+              hitSlop={10}
+              onPress={() => router.push('/settings')}
+            >
               <Settings size={24} color={colors.text} />
             </TouchableOpacity>
           </View>

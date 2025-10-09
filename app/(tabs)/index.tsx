@@ -41,11 +41,11 @@ export default function HomeScreen() {
   };
 
   const handleSeeAllBRCs = () => {
-    router.push('/discover');
+    router.push('/featured-places');
   };
 
   const handleSeeAllEvents = () => {
-    router.push('/(tabs)/discover');
+    router.push('/upcoming-events');
   };
 
 
